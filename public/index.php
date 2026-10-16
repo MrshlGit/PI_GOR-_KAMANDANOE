@@ -1,20 +1,45 @@
-<?php
 
-use Illuminate\Foundation\Application;
-use Illuminate\Http\Request;
 
-define('LARAVEL_START', microtime(true));
+<!DOCTYPE html>
+<html>
 
-// Determine if the application is in maintenance mode...
-if (file_exists($maintenance = __DIR__.'/../storage/framework/maintenance.php')) {
-    require $maintenance;
-}
+<head>
 
-// Register the Composer autoloader...
-require __DIR__.'/../vendor/autoload.php';
+    <title>GOR Kamandanoe</title>
 
-// Bootstrap Laravel and handle the request...
-/** @var Application $app */
-$app = require_once __DIR__.'/../bootstrap/app.php';
+    <link rel="stylesheet" href="view/style.css">
 
-$app->handleRequest(Request::capture());
+</head>
+
+<body>
+
+    <div class="navbar">
+
+        <span class="logo">
+            GOR Kamandanoe
+        </span>
+
+        <div class="menu">
+            <a href="../resources/views/login_view.php">Login</a>
+            <a href="../resources/views/register_view.php">Daftar</a>
+        </div>
+
+    </div>
+
+    <div class="hero">
+
+        <h1>Booking Lapangan Badminton</h1>
+
+        <p>
+            Sistem Informasi GOR Kamandanoe
+        </p>
+
+        <a href="view/login_view.php" class="btn">
+            Mulai Booking
+        </a>
+
+    </div>
+
+</body>
+
+</html>

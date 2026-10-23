@@ -4,7 +4,7 @@ $conn = mysqli_connect(
     "localhost",
     "root",
     "",
-    "gorkamandanoe_baru"
+    "database_gorkamandanoe"
 );
 
 if(!$conn){

@@ -7,7 +7,7 @@
 
     <title>GOR Kamandanoe</title>
 
-    <link rel="stylesheet" href="../resources/views/style.css">
+    <link rel="stylesheet" href="../resources/css/style.css">
     <!-- asu kayang -->
 </head>
 

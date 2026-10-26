@@ -1,5 +1,5 @@
 <?php
-include("../controller/register.php");
+include("../../app/Http/Controllers/register.php");
 ?>
 
 <!DOCTYPE html>
@@ -39,7 +39,7 @@ include("../controller/register.php");
 
         <div class="link">
             Sudah punya akun?
-            <a href="login.php">Login</a>
+            <a href="login_view.php">Login</a>
         </div>
 
     </div>

@@ -33,14 +33,19 @@ if (isset($_POST['register'])) {
         }
     }
 
+ 
+
     if ($hitung < 8) {
         echo "
             <script>
                 alert('password minimal 8 karakter');
                 window.location='../view/register_view.php';
             </script>
+            
             ";
     }
+
+       
 
     mysqli_query(
         $conn,
@@ -57,7 +62,7 @@ if (isset($_POST['register'])) {
     echo "
     <script>
         alert('Registrasi berhasil');
-        window.location='../view/login_view.php';
+        window.location='../../../resources/views/login_view.php';
     </script>
     ";
 }

@@ -1,0 +1,284 @@
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: Verdana, Geneva, Tahoma, sans-serif;
+        text-decoration: none;
+    }
+    
+    body {
+        background: #f2f2f2;
+    }
+    
+    .besar {
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .atas {
+        display: flex;
+        flex-direction: row;
+        width: 100%;
+    }
+    
+    .panel {
+        background-color: black;
+        width: 100%;
+        height: 50px;
+        display: flex;
+        flex-direction: row;
+    }
+    
+    .book {
+        padding: 10px;
+    }
+    
+    .book a {
+        color: white;
+        text-decoration: none;
+        margin-left: auto;
+    }
+    
+    .navbar {
+        background-color: white;
+        padding: 20px;
+        height: 80px;
+        width: 40%;
+        display: flex;
+        align-items: center;
+        position: relative;
+        z-index: 10;
+        box-shadow: 0 10px 10px -6px rgba(0, 0, 0, 0.5);
+    }
+    
+    .navbar2 {
+        display: flex;
+        flex-direction: row;
+        width: 60%;
+        background-color: white;
+        height: 80px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        z-index: 10;
+        box-shadow: 0 10px 10px -6px rgba(0, 0, 0, 0.5);
+    }
+    
+    .navbar2 a {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .navbar2 a:hover {
+        color: black;
+        transform: translateY(-8px);
+    }
+    
+    .navbar2 a {
+        padding: 10px;
+        margin: 10px;
+        text-decoration: none;
+        color: #ff6b00;
+        background-color: white;
+        border-radius: 10px;
+    }
+    
+    .logo {
+        background-color: white;
+        object-fit: cover;
+        width: 80px;
+        height: 80px;
+    }
+    
+    .navbar h1 {
+        color: #ff6b00;
+        text-align: center;
+        /* flex: 1; */
+    }
+    
+    .hero {
+        background-image: url(../img/tampildepan1.jpg);
+        background-size: cover;
+        background-position: center 40%;
+        color: #ff6b00;
+        text-align: center;
+        padding: 100px 20px;
+        height: 400px;
+    }
+    
+    .hero h1 {
+        font-size: 45px;
+    }
+    
+    .hero p {
+        margin-top: 10px;
+         display:flex;
+        justify-content:center;
+        align-items:center;
+    }
+    
+    .btn {
+        display: inline-block;
+        background: white;
+        color: #ff6b00;
+        margin-top: 170px;
+        margin-right: 500px;
+        padding: 15px;
+        text-decoration: none;
+        border-radius: 25px;
+        box-shadow: 0 10px 10px rgba(0, 0, 0, 0.5);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .btn:hover {
+        background-color: #ff6b00;
+        /* Berubah jadi oranye */
+        color: white;
+        /* Tulisan berubah jadi putih */
+    }
+    
+    .container {
+        /* width: 100%; */
+        height: 500px;
+        margin: 0;
+        display: flex;
+        flex-direction: row;
+        gap: 20px;
+        background-color: white;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .card {
+        width: 500px;
+        height: 450px;
+        background-image: url(../img/karpet2.jpg);
+        background-position: center;
+        background-size: cover;
+        /* padding: 20px; */
+        border-radius: 30px;
+        box-shadow: 10px 8px 10px rgba(0, 0, 0, 0.5);
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        text-align: center;
+        align-items: center;
+        /* object-fit: cover; */
+        display: flex;
+        flex-direction: row;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .cards {
+        width: 500px;
+        height: 450px;
+        background-image: url(../img/kayu2.jpg);
+        background-position: center;
+        background-size: cover;
+        /* padding: 20px; */
+        border-radius: 30px;
+        box-shadow: 10px 8px 10px rgba(0, 0, 0, 0.5);
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        text-align: center;
+        align-items: center;
+        /* object-fit: cover; */
+        display: flex;
+        flex-direction: row;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .card:hover,
+    .cards:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 20px 30px rgba(0, 0, 0, 0.3);
+    }
+    
+    .latar {
+        background-color: #ff6b00;
+        height: 100%;
+        width: 70%;
+        border-radius: 30px;
+        padding: 20px;
+        text-align: left;
+        background: linear-gradient(to right, rgba(255, 110, 0, 1) 0%, rgba(255, 110, 0, 0) 100%);
+    }
+    
+    .latar h2 {
+        color: white;
+    }
+    
+    .latar p {
+        color: white;
+    }
+    
+    .container2 {
+        height: 500px;
+        display: flex;
+        flex-direction: row;
+        gap: 10px;
+        background-color: white;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .card2 {
+        background-color: green;
+        display: flex;
+        flex-direction: column;
+        border-radius: 30px;
+        box-shadow: 10px 8px 10px rgba(0, 0, 0, 0.5);
+        width: 400px;
+        height: 350px;
+    }
+    
+    .topik {
+        background-color: #ff6b00;
+        height: 50px;
+        border-top-right-radius: 30px;
+        border-top-left-radius: 30px;
+        text-align: center;
+        padding-top: 10px;
+        color: white;
+    }
+    
+    .isi1,
+    .isi2,
+    .isi3 {
+        flex: 1;
+        width: 100%;
+        background-position: center center;
+        background-size: cover;
+        background-repeat: no-repeat;
+        border-bottom-right-radius: 30px;
+        border-bottom-left-radius: 30px;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .isi1 a,
+    .isi2 a,
+    .isi3 a {
+        display: block;
+        width: 100%;
+        height: 100%;
+    }
+    
+    .isi1 {
+        background-image: url(../img/12.jpg);
+    }
+    
+    .isi2 {
+        background-image: url(../img/13.jpg);
+    }
+    
+    .isi3 {
+        background-image: url(../img/14.jpg);
+    }
+    
+    .isi1:hover,
+    .isi2:hover,
+    .isi3:hover {
+        transform: scale(1.06);
+        /* Gambar otomatis nge-zoom membesar sebanyak 6% */
+    }

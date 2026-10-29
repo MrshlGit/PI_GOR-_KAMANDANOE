@@ -4,18 +4,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\ControllerDaftarTagihan;
 
-<<<<<<< HEAD
-// Rute Login & Register (dari update GitHub)
+// Rute Login & Register
 Route::get('/', [LoginController::class, 'index'])->name('login');
-=======
-// Route::get('/', [LoginController::class, 'index'])->name('login');
-
-
-Route::get('/', function () {
-    return view('login_view');
-})->name('login');
-
->>>>>>> 2de267ddf7b9b61755f0922ae214cb70ac25ec79
 Route::post('/login', [LoginController::class, 'login']);
 
 Route::get('/register', function () {
@@ -24,5 +14,5 @@ Route::get('/register', function () {
 
 Route::post('/logout', [LoginController::class, 'logout']);
 
-// Rute Daftar Tagihan (milikmu)
+// Rute Daftar Tagihan
 Route::get('/daftar-tagihan', [ControllerDaftarTagihan::class, 'index']);

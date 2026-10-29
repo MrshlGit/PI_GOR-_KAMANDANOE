@@ -1,6 +1,6 @@
-<?php
-include("../../app/Http/Controllers/login.php");
-?>
+<!-- <?php
+// include("../../app/Http/Controllers/login.php");
+?> -->
 
 <!DOCTYPE html>
 <html>

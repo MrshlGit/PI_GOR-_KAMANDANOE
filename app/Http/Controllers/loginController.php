@@ -10,7 +10,7 @@ class LoginController extends Controller
     // Menampilkan halaman login
     public function index()
     {
-        return view('login');
+        return view('login_view');
     }
 
     // Memproses login

@@ -3,7 +3,12 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
 
-Route::get('/', [LoginController::class, 'index'])->name('login');
+// Route::get('/', [LoginController::class, 'index'])->name('login');
+
+
+Route::get('/', function () {
+    return view('login_view');
+})->name('login');
 
 Route::post('/login', [LoginController::class, 'login']);
 

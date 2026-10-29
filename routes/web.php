@@ -1,11 +1,11 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-<<<<<<< Updated upstream
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\ControllerDaftarTagihan;
 
+// Rute Login & Register (dari update GitHub)
 Route::get('/', [LoginController::class, 'index'])->name('login');
-
 Route::post('/login', [LoginController::class, 'login']);
 
 Route::get('/register', function () {
@@ -13,13 +13,6 @@ Route::get('/register', function () {
 })->name('register');
 
 Route::post('/logout', [LoginController::class, 'logout']);
-=======
-use App\Http\Controllers\ControllerDaftarTagihan;
 
-Route::get('/', function () {
-    return view('login_view');
-});
-
-// Pastikan baris ini ada di web.php
+// Rute Daftar Tagihan (milikmu)
 Route::get('/daftar-tagihan', [ControllerDaftarTagihan::class, 'index']);
->>>>>>> Stashed changes

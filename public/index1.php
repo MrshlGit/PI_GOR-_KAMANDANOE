@@ -1,0 +1,45 @@
+
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>GOR Kamandanoe</title>
+
+    <link rel="stylesheet" href="../resources/css/style.css">
+    <!-- asu kayang -->
+</head>
+
+<body>
+
+    <div class="navbar">
+
+        <span class="logo">
+            GOR Kamandanoe
+        </span>
+
+        <div class="menu">
+            <a href="../resources/views/login_view.php">Login</a>
+            <a href="../resources/views/register_view.php">Daftar</a>
+        </div>
+
+    </div>
+
+    <div class="hero">
+
+        <h1>Booking Lapangan Badminton</h1>
+
+        <p>
+            Sistem Informasi GOR Kamandanoe
+        </p>
+
+        <a href="../resources/views/login_view.php" class="btn">
+            Mulai Booking
+        </a>
+
+    </div>
+
+</body>
+
+</html>

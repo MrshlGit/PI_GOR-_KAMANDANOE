@@ -1,45 +1,17 @@
+<?php
 
+use Illuminate\Foundation\Application;
+use Illuminate\Http\Request;
 
-<!DOCTYPE html>
-<html>
+define('LARAVEL_START', microtime(true));
 
-<head>
+if (file_exists($maintenance = __DIR__.'/../storage/framework/maintenance.php')) {
+    require $maintenance;
+}
 
-    <title>GOR Kamandanoe</title>
+require __DIR__.'/../vendor/autoload.php';
 
-    <link rel="stylesheet" href="../resources/css/style.css">
-    <!-- asu kayang -->
-</head>
+/** @var Application $app */
+$app = require_once __DIR__.'/../bootstrap/app.php';
 
-<body>
-
-    <div class="navbar">
-
-        <span class="logo">
-            GOR Kamandanoe
-        </span>
-
-        <div class="menu">
-            <a href="../resources/views/login_view.php">Login</a>
-            <a href="../resources/views/register_view.php">Daftar</a>
-        </div>
-
-    </div>
-
-    <div class="hero">
-
-        <h1>Booking Lapangan Badminton</h1>
-
-        <p>
-            Sistem Informasi GOR Kamandanoe
-        </p>
-
-        <a href="../resources/views/login_view.php" class="btn">
-            Mulai Booking
-        </a>
-
-    </div>
-
-</body>
-
-</html>
+$app->handleRequest(Request::capture());

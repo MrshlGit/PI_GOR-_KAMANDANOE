@@ -90,7 +90,7 @@
             </div>
             <div class="card-body">
               <div class="form-row">
-                <label>Nama Custemer</label>
+                <label>Nama Customer</label>
                 <input type="text" value="{{ $customer['nama'] }}" readonly class="input-white">
               </div>
               <div class="form-row">

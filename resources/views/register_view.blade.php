@@ -1,5 +1,5 @@
 <?php
-include("../../app/Http/Controllers/register.php");
+// include("../../app/Http/Controllers/register.php");
 ?>
 
 <!DOCTYPE html>
@@ -39,7 +39,7 @@ include("../../app/Http/Controllers/register.php");
 
         <div class="link">
             Sudah punya akun?
-            <a href="login_view.php">Login</a>
+            <a href="{{ route('login') }}">Login</a>
         </div>
 
     </div>

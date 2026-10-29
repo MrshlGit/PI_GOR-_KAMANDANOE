@@ -28,6 +28,9 @@
             <button type="submit" name="login" class="button">
                 LOGIN
             </button>
+               
+            <a href="{{ route('register') }}">belum punya akun?</a>
+            
 
         </form>
 

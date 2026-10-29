@@ -34,7 +34,7 @@
             Sistem Informasi GOR Kamandanoe
         </p>
 
-        <a href="view/login_view.php" class="btn">
+        <a href="../resources/views/login_view.php" class="btn">
             Mulai Booking
         </a>
 

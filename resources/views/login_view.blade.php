@@ -106,13 +106,13 @@
         <form action="{{ url('/login') }}" method="POST">
             @csrf
 
-            <label for="email">Email</label>
+            <label for="email">Username</label>
             <input
-                type="email"
+                type="text"
                 id="email"
-                name="email"
-                value="{{ old('email') }}"
-                placeholder="Masukkan email"
+                name="username"
+                value="{{ old('username') }}"
+                placeholder="Masukkan username"
                 required
             >
 

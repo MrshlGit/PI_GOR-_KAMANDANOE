@@ -16,4 +16,8 @@ Route::get('/register', function () {
     return view('register_view');
 })->name('register');
 
+Route::get('/dashboard', function () {
+    return view('dashboardUser');
+})->name('dashboard');
+
 Route::post('/logout', [LoginController::class, 'logout']);

@@ -1,4 +1,4 @@
-<?php
+<!-- <?php
 // include("../../app/Http/Controllers/register.php");
 ?>
 
@@ -46,4 +46,25 @@
 
 </body>
 
-</html>
+</html> -->
+@if ($errors->any())
+    <div style="color:red">
+        @foreach ($errors->all() as $error)
+            <p>{{ $error }}</p>
+        @endforeach
+    </div>
+@endif
+
+<form method="POST" action="/register">
+    @csrf
+
+    <input type="text" name="username" class="input" placeholder="Username" value="{{ old('username') }}" required>
+    <input type="text" name="noHp" class="input" placeholder="Ex: 082299998888" value="{{ old('noHp') }}" required>
+    <input type="email" name="email" class="input" placeholder="user@gmail.com" value="{{ old('email') }}" required>
+    <input type="password" name="password" class="input" placeholder="Password" required>
+    <input type="password" name="password_confirmation" class="input" placeholder="Ulangi password" required>
+
+    <button type="submit" class="button">DAFTAR</button>
+</form>
+
+<a href="/">Sudah punya akun? Login</a>

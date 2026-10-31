@@ -1,0 +1,30 @@
+:root{--o:#f5964f;--o-d:#e8803a;--ink:#222;--muted:#6b6b6b;--line:#eee}
+*{box-sizing:border-box}
+body{margin:0;font-family:'Inter',system-ui,sans-serif;color:var(--ink)}
+.wrap{width:min(1100px,100% - 40px);margin-inline:auto}
+.nav{position:sticky;top:0;background:#fff;border-bottom:1px solid var(--line);z-index:5}
+.nav-in{display:flex;justify-content:space-between;align-items:center;height:64px}
+.logo{font:900 1.05rem 'Lato',sans-serif;color:var(--o-d);text-decoration:none;letter-spacing:.02em}
+.nav nav{display:flex;align-items:center;gap:6px}
+.nav nav a{padding:8px 12px;text-decoration:none;color:var(--ink);font-weight:500;font-size:.9rem}
+.btn,.btn-outline,.btn-ghost{display:inline-block;padding:9px 18px;border-radius:9px;font-weight:600;font-size:.9rem;text-decoration:none}
+.btn{background:var(--o);color:#fff!important}.btn:hover{background:var(--o-d)}
+.btn-ghost{border:1px solid var(--line)}
+.btn-outline{border:1.5px solid #fff;color:#fff}
+.btn-lg{padding:13px 26px;font-size:1rem}
+.hero{background:linear-gradient(180deg,#ea7240,#c85a2c 55%,#6b3314);color:#fff;padding:90px 0}
+.eyebrow{text-transform:uppercase;letter-spacing:.08em;font-size:.8rem;opacity:.9;margin:0 0 14px}
+.hero h1{font:900 clamp(2.4rem,6vw,4.4rem)/1.05 'Lato',sans-serif;margin:0 0 16px}
+.lead{font-size:1.1rem;opacity:.9;max-width:44ch;margin:0 0 26px}
+.cta{display:flex;gap:12px;flex-wrap:wrap}
+.alamat{margin-top:34px;font-size:.8rem;opacity:.85}
+.section{padding:56px 0 8px}
+.section h2{margin:0 0 20px;font-size:1.5rem}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px}
+.card-l{border:1px solid var(--line);border-radius:14px;padding:22px;border-top:4px solid var(--o)}
+.card-l h3{margin:0 0 4px}.card-l p{margin:0 0 14px;color:var(--muted)}
+.steps{list-style:none;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
+.steps li{background:#fdf1e8;border-radius:12px;padding:16px;display:flex;gap:12px;align-items:center}
+.steps b{display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--o);color:#fff;flex:none}
+.foot{margin-top:56px;padding:22px;text-align:center;color:var(--muted);border-top:1px solid var(--line);font-size:.85rem}
+@media(max-width:640px){.nav nav a:not(.btn):not(.btn-ghost){display:none}}

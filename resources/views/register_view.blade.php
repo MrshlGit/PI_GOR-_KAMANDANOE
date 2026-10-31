@@ -1,70 +1,88 @@
-<!-- <?php
-// include("../../app/Http/Controllers/register.php");
-?>
-
 <!DOCTYPE html>
-<html>
-
+<html lang="id">
 <head>
-
-    <title>Register</title>
-
-    <link rel="stylesheet" href="../css/style.css">
-
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Daftar · GOR Kamandanoe</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lato:wght@700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('css/auth.css') }}">
 </head>
-
 <body>
+<div class="auth">
 
-    <div class="form-container">
+    @include('auth_side')
 
-        <h2>DAFTAR</h2>
+    <main class="auth-main">
+        <div class="card">
 
-        <form method="POST">
+            <div class="tabs">
+                <a href="/login">Login</a>
+                <a href="/register" class="on">Daftar Akun</a>
+            </div>
 
+            <h1>Buat Akun Baru</h1>
+            <p class="sub">Lengkapi data berikut untuk mulai memesan lapangan GOR Kamandanoe</p>
 
+            @if ($errors->any())
+                <div class="alert alert-err">
+                    @foreach ($errors->all() as $error)<p>{{ $error }}</p>@endforeach
+                </div>
+            @endif
 
-            <input type="text" name="username" class="input" placeholder="Username" required>
+            <form method="POST" action="/register">
+                @csrf
 
-            <input type="text" name="noHp" class="input" placeholder="Ex: 082299998888" required>
+                <div class="field">
+                    <label for="username">Username</label>
+                    <div class="input-wrap">
+                        <svg class="ic"><use href="#i-user"/></svg>
+                        <input class="input" id="username" name="username" value="{{ old('username') }}" placeholder="Username" required>
+                    </div>
+                </div>
 
-            <input type="text" name="email" class="input" placeholder="user@gmail.com" required>
+                <div class="field">
+                    <label for="email">Email</label>
+                    <div class="input-wrap">
+                        <svg class="ic"><use href="#i-mail"/></svg>
+                        <input class="input" id="email" type="email" name="email" value="{{ old('email') }}" placeholder="user@gmail.com" required>
+                    </div>
+                </div>
 
-            <input type="password" name="password" class="input" placeholder="Password" required>
+                <div class="field">
+                    <label for="noHp">No. Telepon</label>
+                    <div class="input-wrap">
+                        <svg class="ic"><use href="#i-phone"/></svg>
+                        <input class="input" id="noHp" name="noHp" value="{{ old('noHp') }}" placeholder="082299998888" required>
+                    </div>
+                </div>
 
-            <button type="submit" name="register" class="button">
-                DAFTAR
-            </button>
+                <div class="field">
+                    <label for="password">Password</label>
+                    <div class="input-wrap">
+                        <svg class="ic"><use href="#i-lock"/></svg>
+                        <input class="input" id="password" type="password" name="password" placeholder="Minimal 8 karakter" required>
+                        <button type="button" class="eye" onclick="lihatPassword(this)" aria-label="Tampilkan password"><svg><use href="#i-eye"/></svg></button>
+                    </div>
+                </div>
 
-        </form>
+                <div class="field">
+                    <label for="password_confirmation">Ulangi Password</label>
+                    <div class="input-wrap">
+                        <svg class="ic"><use href="#i-lock"/></svg>
+                        <input class="input" id="password_confirmation" type="password" name="password_confirmation" placeholder="Ulangi password" required>
+                        <button type="button" class="eye" onclick="lihatPassword(this)" aria-label="Tampilkan password"><svg><use href="#i-eye"/></svg></button>
+                    </div>
+                </div>
 
-        <div class="link">
-            Sudah punya akun?
-            <a href="{{ route('login') }}">Login</a>
+                <label class="check"><input type="checkbox" name="setuju" required> Setuju dengan ketentuan pengguna</label>
+
+                <button type="submit" class="button">Daftar →</button>
+            </form>
+
+            <p class="switch">Sudah punya akun? <a href="/login">Login</a></p>
         </div>
+    </main>
 
-    </div>
-
+</div>
 </body>
-
-</html> -->
-@if ($errors->any())
-    <div style="color:red">
-        @foreach ($errors->all() as $error)
-            <p>{{ $error }}</p>
-        @endforeach
-    </div>
-@endif
-
-<form method="POST" action="/register">
-    @csrf
-
-    <input type="text" name="username" class="input" placeholder="Username" value="{{ old('username') }}" required>
-    <input type="text" name="noHp" class="input" placeholder="Ex: 082299998888" value="{{ old('noHp') }}" required>
-    <input type="email" name="email" class="input" placeholder="user@gmail.com" value="{{ old('email') }}" required>
-    <input type="password" name="password" class="input" placeholder="Password" required>
-    <input type="password" name="password_confirmation" class="input" placeholder="Ulangi password" required>
-
-    <button type="submit" class="button">DAFTAR</button>
-</form>
-
-<a href="/">Sudah punya akun? Login</a>
+</html>

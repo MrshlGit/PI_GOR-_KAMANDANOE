@@ -31,6 +31,6 @@ class RegisterController extends Controller
             'role'     => 'user',
         ]);
 
-        return redirect('/')->with('success', 'Registrasi berhasil, silakan login');
+        return redirect('/login')->with('success', 'Registrasi berhasil, silakan login');
     }
 }

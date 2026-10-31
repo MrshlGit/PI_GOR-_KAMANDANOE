@@ -1,142 +1,66 @@
-```html
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
-
-    <style>
-        * {
-            box-sizing: border-box;
-        }
-
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: Arial, sans-serif;
-            background-color: #f1f5f9;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-        }
-
-        .login-container {
-            width: 100%;
-            max-width: 400px;
-            padding: 30px;
-            background-color: white;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        h2 {
-            text-align: center;
-            margin-bottom: 10px;
-            color: #1e293b;
-        }
-
-        .description {
-            text-align: center;
-            color: #64748b;
-            margin-bottom: 25px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 7px;
-            font-weight: bold;
-        }
-
-        input {
-            width: 100%;
-            padding: 12px;
-            margin-bottom: 18px;
-            border: 1px solid #cbd5e1;
-            border-radius: 6px;
-        }
-
-        button {
-            width: 100%;
-            padding: 12px;
-            background-color: #2563eb;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-
-        button:hover {
-            background-color: #1d4ed8;
-        }
-
-        .register-link {
-            text-align: center;
-            margin-top: 20px;
-        }
-
-        .register-link a {
-            color: #2563eb;
-            text-decoration: none;
-        }
-
-        .error {
-            color: #dc2626;
-            font-size: 14px;
-            margin-bottom: 15px;
-        }
-    </style>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Login · GOR Kamandanoe</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lato:wght@700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('css/auth.css') }}">
 </head>
-
 <body>
-    <div class="login-container">
-        <h2>Login</h2>
-        <p class="description">Silakan masuk ke akun Anda</p>
+<div class="auth">
 
-        @if ($errors->any())
-            <div class="error">
-                @foreach ($errors->all() as $error)
-                    <p>{{ $error }}</p>
-                @endforeach
+    @include('auth_side')
+
+    <main class="auth-main">
+        <div class="card">
+
+            <div class="tabs">
+                <a href="/login" class="on">Login</a>
+                <a href="/register">Daftar Akun</a>
             </div>
-        @endif
-        
-        @if (session('success'))
-            <p style="color:green">{{ session('success') }}</p>
-        @endif
 
-        <form action="{{ url('/login') }}" method="POST">
-            @csrf
+            <h1>Masuk ke Akun Anda</h1>
+            <p class="sub">Silahkan masuk ke akun GOR Kamandanoe anda untuk melanjutkan pemesanan lapangan</p>
 
-            <label for="email">Username</label>
-            <input
-                type="text"
-                id="email"
-                name="username"
-                value="{{ old('username') }}"
-                placeholder="Masukkan username"
-                required
-            >
+            @if (session('success'))
+                <div class="alert alert-ok">{{ session('success') }}</div>
+            @endif
+            @if ($errors->any())
+                <div class="alert alert-err">
+                    @foreach ($errors->all() as $error)<p>{{ $error }}</p>@endforeach
+                </div>
+            @endif
 
-            <label for="password">Password</label>
-            <input
-                type="password"
-                id="password"
-                name="password"
-                placeholder="Masukkan password"
-                required
-            >
+            <form method="POST" action="/login">
+                @csrf
 
-            <button type="submit">Login</button>
-        </form>
+                <div class="field">
+                    <label for="username">Username</label>
+                    <div class="input-wrap">
+                        <svg class="ic"><use href="#i-user"/></svg>
+                        <input class="input" id="username" name="username" value="{{ old('username') }}" placeholder="Username" required autofocus>
+                    </div>
+                </div>
 
-        <div class="register-link">
-            Belum punya akun?
-            <a href="{{ route('register') }}">Daftar di sini</a>
+                <div class="field">
+                    <div class="label-row"><label for="password" style="margin:0">Password</label><a href="#">Lupa Kata Sandi?</a></div>
+                    <div class="input-wrap">
+                        <svg class="ic"><use href="#i-lock"/></svg>
+                        <input class="input" id="password" type="password" name="password" placeholder="Minimal 8 karakter" required>
+                        <button type="button" class="eye" onclick="lihatPassword(this)" aria-label="Tampilkan password"><svg><use href="#i-eye"/></svg></button>
+                    </div>
+                </div>
+
+                <label class="check"><input type="checkbox" name="setuju" checked> Saya menyetujui ketentuan pengguna</label>
+
+                <button type="submit" class="button">Login →</button>
+            </form>
+
+            <p class="switch">Belum punya akun? <a href="/register">Daftar akun</a></p>
         </div>
-    </div>
+    </main>
+
+</div>
 </body>
 </html>
-```

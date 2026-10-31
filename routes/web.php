@@ -8,6 +8,10 @@ use App\Http\Controllers\RegisterController;
 
 
 Route::get('/', function () {
+    return view('home_view');
+})->name('home');
+
+Route::get('/login', function () {
     return view('login_view');
 })->name('login');
 

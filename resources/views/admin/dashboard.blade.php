@@ -1,0 +1,1 @@
+<h1>Halo Admin, {{ auth()->user()->username }}</h1>

@@ -17,6 +17,10 @@ Route::get('/login', function () {
 
 Route::post('/login', [LoginController::class, 'login']);
 
+Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
+    Route::get('/', fn () => view('admin.dashboard'))->name('admin.dashboard');
+});
+
 Route::get('/register', function () {
     return view('register_view');
 })->name('register');

@@ -104,6 +104,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lato:wght@700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/home.css') }}">
 </head>
+    <script src="{{ asset('js/home.js') }}" defer></script>
 <body>
 
 <header class="nav">
@@ -116,9 +117,10 @@
             <a href="#peraturan">Peraturan</a>
         </nav>
 
-        <div class="nav-auth">
-            <a href="/login" class="btn-ghost">Masuk</a>
-            <a href="/register" class="btn">Daftar</a>
+        <div class="nav-auth" id="navAuth">
+            <span class="pill"></span>
+            <a href="/login" class="na">Masuk</a>
+             <a href="/register" class="na is-active">Daftar</a>
         </div>
     </div>
 </header>

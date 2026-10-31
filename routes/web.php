@@ -25,6 +25,6 @@ Route::post('/register', [RegisterController::class, 'register']);
 
 Route::get('/dashboard', function () {
     return view('dashboardUser');
-})->name('dashboard');
+})->middleware('auth')->name('dashboard');
 
 Route::post('/logout', [LoginController::class, 'logout']);

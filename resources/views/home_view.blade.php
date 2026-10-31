@@ -107,27 +107,70 @@
 <body>
 
 <header class="nav">
-    <div class="wrap nav-in">
+    <div class="nav-in">
         <a href="/" class="logo">GOR KAMANDANOE</a>
-        <nav>
+
+        <nav class="nav-menu">
             <a href="#lapangan">Lapangan</a>
             <a href="#cara">Cara Booking</a>
+            <a href="#peraturan">Peraturan</a>
+        </nav>
+
+        <div class="nav-auth">
             <a href="/login" class="btn-ghost">Masuk</a>
             <a href="/register" class="btn">Daftar</a>
-        </nav>
+        </div>
     </div>
 </header>
 
 <section class="hero">
-    <div class="wrap">
-        <p class="eyebrow">Portal pemesanan lapangan</p>
-        <h1>Booking lapangan,<br>tanpa antre.</h1>
-        <p class="lead">Cek jadwal, pilih jam, dan bayar. Semua dari HP kamu.</p>
-        <div class="cta">
-            <a href="/register" class="btn btn-lg">Daftar &amp; booking</a>
-            <a href="/login" class="btn-outline btn-lg">Sudah punya akun</a>
+    <div class="hero-card">
+        <div class="hero-bg" style="--bg:url('{{ asset('img/lapangan.jpeg') }}')"></div>
+        <div class="hero-stars" aria-hidden="true">
+    <svg width="0" height="0" style="position:absolute">
+        <defs>
+            <path id="plus" pathLength="1"
+                  d="M35 0H65V35H100V65H65V100H35V65H0V35H35Z"/>
+        </defs>
+    </svg>
+
+    <!-- besar -->
+    <div class="xx" style="--x:52%;--y:16%;--s:70px; --r:35deg; --t:8s; --d:0s">
+        <svg viewBox="0 0 100 100"><use href="#plus" class="f"/><use href="#plus" class="o"/><use href="#plus" class="o o2"/><use href="#plus" class="o o3"/></svg>
+    </div>
+    <div class="xx" style="--x:93%;--y:14%;--s:120px;--r:0deg;  --t:9s; --d:1.5s">
+        <svg viewBox="0 0 100 100"><use href="#plus" class="f"/><use href="#plus" class="o"/><use href="#plus" class="o o2"/><use href="#plus" class="o o3"/></svg>
+    </div>
+    <div class="xx" style="--x:44%;--y:82%;--s:110px;--r:-10deg;--t:9s; --d:3s">
+        <svg viewBox="0 0 100 100"><use href="#plus" class="f"/><use href="#plus" class="o"/><use href="#plus" class="o o2"/><use href="#plus" class="o o3"/></svg>
+    </div>
+
+    <!-- kecil (pendamping) -->
+    <div class="xx" style="--x:60%;--y:12%;--s:26px;--r:-20deg;--t:8s; --d:.8s">
+        <svg viewBox="0 0 100 100"><use href="#plus" class="f"/><use href="#plus" class="o"/></svg>
+    </div>
+    <div class="xx" style="--x:88%;--y:84%;--s:36px;--r:25deg; --t:7s; --d:2.2s">
+        <svg viewBox="0 0 100 100"><use href="#plus" class="f"/><use href="#plus" class="o"/><use href="#plus" class="o o2"/></svg>
+    </div>
+    <div class="xx" style="--x:30%;--y:60%;--s:30px;--r:40deg; --t:8s; --d:4.5s">
+        <svg viewBox="0 0 100 100"><use href="#plus" class="f"/><use href="#plus" class="o"/></svg>
+    </div>
+</div>
+
+        <div class="hero-text">
+            <p class="eyebrow">Portal pemesanan lapangan</p>
+            <h1>Booking lapangan,<br><em>tanpa antre.</em></h1>
+            <p class="lead">Cek jadwal, pilih jam, dan bayar. Semua dari HP kamu.</p>
+            <div class="cta">
+                <a href="/register" class="btn btn-lg">Daftar &amp; booking</a>
+                <a href="/login" class="btn-outline btn-lg">Sudah punya akun</a>
+            </div>
+            <p class="alamat">Jl. Kadisoka, Maguwoharjo, Depok, Sleman, D.I. Yogyakarta 55281 · Buka 08.00 – 22.00</p>
         </div>
-        <p class="alamat">Jl. Kadisoka, Maguwoharjo, Depok, Sleman, D.I. Yogyakarta 55281 · Buka 08.00 – 22.00</p>
+
+        <div class="hero-person">
+            <img src="{{ asset('img/pemain.png') }}" alt="Pemain badminton" onerror="this.style.display='none'">
+        </div>
     </div>
 </section>
 
@@ -149,6 +192,36 @@
         <li><b>3</b> Pilih lapangan, tanggal, dan jam</li>
         <li><b>4</b> Bayar via QRIS atau Cash</li>
     </ol>
+</section>
+
+@php
+    $peraturan = [
+        ['Dilarang merokok', 'Seluruh area gedung dan lapangan bebas asap rokok, termasuk rokok elektrik.'],
+        ['Wajib sepatu olahraga', 'Gunakan sepatu olahraga bersol karet non-marking. Sepatu bersol keras atau yang meninggalkan bekas dilarang.'],
+        ['Datang tepat waktu', 'Waktu bermain sesuai jam booking. Keterlambatan tidak memperpanjang waktu bermain.'],
+        ['Dilarang alkohol dan narkoba', 'Dilarang membawa atau mengonsumsi minuman beralkohol dan zat terlarang di area GOR.'],
+        ['Jaga kebersihan', 'Buang sampah pada tempatnya. Makanan dan minuman hanya di area yang disediakan, bukan di lapangan.'],
+        ['Jaga fasilitas', 'Dilarang merusak net, tiang, lantai, dan fasilitas lain. Kerusakan akibat kelalaian menjadi tanggung jawab penyewa.'],
+        ['Pembayaran sebelum bermain', 'Booking dianggap sah setelah pembayaran. Pembatalan mengikuti kebijakan pengelola.'],
+        ['Barang pribadi', 'Simpan barang berharga dengan baik. Pengelola tidak bertanggung jawab atas kehilangan.'],
+    ];
+@endphp
+
+<section id="peraturan" class="wrap section">
+    <h2>Peraturan GOR</h2>
+    <p class="section-sub">Demi kenyamanan bersama, mohon patuhi aturan berikut.</p>
+
+    <div class="rules">
+        @foreach ($peraturan as $i => [$judul, $isi])
+            <div @class(['rule', 'rule-no' => $i === 0])>
+                <b>{{ $i + 1 }}</b>
+                <div>
+                    <h3>{{ $judul }}</h3>
+                    <p>{{ $isi }}</p>
+                </div>
+            </div>
+        @endforeach
+    </div>
 </section>
 
 <footer class="foot">© {{ date('Y') }} GOR Kamandanoe</footer>

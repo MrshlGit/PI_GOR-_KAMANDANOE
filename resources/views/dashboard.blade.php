@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#ff8737">
     <title>Dashboard — GOR Kamandanoe</title>
-    <link rel="stylesheet" href="{{ asset('css/dashboard.css') }}">
+    @vite('resources/css/dashboard.css')
 </head>
 <body>
     <div class="dashboard-shell" id="dashboard">
@@ -185,7 +185,7 @@
             </section>
 
             <footer class="page-footer">
-                <span><i class="footer-dot"></i> Mode tampilan — belum terhubung ke database</span>
+                <span><i class="footer-dot"></i> Mode tampilan — Belum terhubung ke database</span>
                 <span>GOR Kamandanoe <span aria-hidden="true">✳</span> Dashboard</span>
             </footer>
         </main>

@@ -2,61 +2,54 @@
 
 namespace App\Http\Controllers;
 
-use App\Model\User;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class LoginController extends Controller
 {
-    // Menampilkan halaman login
     public function index()
     {
+        if (Auth::check()) {
+            return $this->redirectByRole(Auth::user());
+        }
+
         return view('login_view');
     }
 
-    // Memproses login
     public function login(Request $request)
     {
         $credentials = $request->validate([
-            'username' => 'required',
-            'password' => 'required',
+            'username' => ['required', 'string'],
+            'password' => ['required', 'string'],
         ]);
 
-        if (Auth::attempt($credentials)) {
-            $request->session()->regenerate();
-
-            return redirect()->intended('/dashboard');
+        if (!Auth::attempt([
+            'username' => $credentials['username'],
+            'password' => $credentials['password'],
+        ])) {
+            return back()->withErrors([
+                'username' => 'Username atau password salah.',
+            ])->onlyInput('username');
         }
 
-        return back()->withErrors([
-            'username' => 'Username atau password salah.',
-        ])->onlyInput('username');
+        $request->session()->regenerate();
+
+        return $this->redirectByRole(Auth::user());
     }
 
-    public function cekDataUSer(Request $request)
+    public function cekDataUser(Request $request)
     {
-
+        $username = $request->input('username');
         $user = User::where('username', $username)->first();
-        // $username = $request->input('username');
-        // $password = $request->input('password');
 
-        if($user){
+        if ($user) {
             return response()->json($user);
         }
 
         return response()->json(['message' => 'User tidak ditemukan'], 404);
-
-        // Cek apakah username dan password cocok dengan data di database
-        // if (Auth::attempt(['username' => $username, 'password' => $password])) {
-        //     // Jika cocok, redirect ke halaman dashboard atau halaman yang diinginkan
-        //     return redirect()->intended('/dashboard');
-        // } else {
-        //     // Jika tidak cocok, redirect kembali ke halaman login dengan pesan error
-        //     return redirect()->back()->withErrors(['login' => 'Username atau password salah.']);
-        // }
     }
 
-    // Logout
     public function logout(Request $request)
     {
         Auth::logout();
@@ -64,6 +57,15 @@ class LoginController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect('/login');
+        return redirect()->route('login');
+    }
+
+    protected function redirectByRole(User $user)
+    {
+        if ($user->role === 'admin') {
+            return redirect()->route('dashboard');
+        }
+
+        return redirect()->route('user.dashboard');
     }
 }

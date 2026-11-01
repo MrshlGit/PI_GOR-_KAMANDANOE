@@ -1,23 +1,17 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LoginController;
-
-// Route::get('/', [LoginController::class, 'index'])->name('login');
-
+use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return view('login_view');
-})->name('login');
+    return redirect()->route('login');
+});
 
-Route::post('/login', [LoginController::class, 'login']);
+Route::get('/login', [LoginController::class, 'index'])->name('login');
+Route::post('/login', [LoginController::class, 'login'])->name('login.submit');
+Route::get('/register', fn () => view('register_view'))->name('register');
 
-Route::get('/register', function () {
-    return view('register_view');
-})->name('register');
-
-Route::get('/dashboard', function () {
-    return view('dashboardUser');
-})->name('dashboard');
-
-Route::post('/logout', [LoginController::class, 'logout']);
+Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+Route::get('/user-dashboard', fn () => view('dashboardUser'))->name('user.dashboard');
+Route::post('/logout', [LoginController::class, 'logout'])->name('logout');

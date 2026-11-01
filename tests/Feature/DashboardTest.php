@@ -6,15 +6,12 @@ use Tests\TestCase;
 
 class DashboardTest extends TestCase
 {
-    public function test_dashboard_displays_empty_statistics_without_database_data(): void
+    public function test_admin_and_user_dashboards_require_authentication(): void
     {
         $this->get('/dashboard')
-            ->assertOk()
-            ->assertSee('Dashboard')
-            ->assertSee('Total Pengguna')
-            ->assertSee('Pendapatan Bulanan')
-            ->assertSee('Rp 0')
-            ->assertSee('Belum ada pemesanan')
-            ->assertSee('Belum terhubung ke database');
+            ->assertRedirect(route('login'));
+
+        $this->get('/admin')
+            ->assertRedirect(route('login'));
     }
 }

@@ -11,8 +11,6 @@
     <div class="form-container">
 
         <h2>Booking Lapangan</h2>
-        <img class="booking-banner" src="{{ asset('img/images.jpg') }}" alt="Lapangan GOR Kamandanoe">
-
         @if (session('success'))
             <p class="success">{{ session('success') }}</p>
         @endif

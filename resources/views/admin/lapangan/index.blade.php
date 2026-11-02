@@ -98,7 +98,7 @@
                 @php($aktif = strtolower((string) $lapangan->status_lapangan) !== 'nonaktif')
                 @php($jumlahSlot = count($jadwal[$lapangan->id_lapangan] ?? []))
                 <article class="court-card">
-                    <img src="{{ asset('img/lapangan.jpeg') }}" alt="Foto {{ $lapangan->nama_lapangan }}" loading="lazy">
+                    <img src="{{ asset('img/images.jpg') }}" alt="Foto {{ $lapangan->nama_lapangan }}" loading="lazy">
                     <div class="court-card-body">
                         <div class="court-card-title">
                             <h3>{{ $lapangan->nama_lapangan }}</h3>

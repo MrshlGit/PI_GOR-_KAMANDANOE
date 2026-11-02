@@ -127,7 +127,7 @@
 
 <section class="hero">
     <div class="hero-card">
-        <div class="hero-bg" style="--bg:url('{{ asset('img/lapangan.jpeg') }}')"></div>
+        <div class="hero-bg" style="--bg:url('{{ asset('img/images.jpg') }}')"></div>
         <div class="hero-stars" aria-hidden="true">
     <svg width="0" height="0" style="position:absolute">
         <defs>

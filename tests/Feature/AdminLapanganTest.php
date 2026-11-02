@@ -71,7 +71,7 @@ class AdminLapanganTest extends TestCase
             ->assertOk()
             ->assertSee('Lapangan ini sudah dipesan oleh Admin')
             ->assertSee('Lapangan belum dipesan sama sekali')
-            ->assertSee('img/lapangan.jpeg');
+            ->assertSee('img/images.jpg');
     }
 
     public function test_admin_can_create_a_court(): void

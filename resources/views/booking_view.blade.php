@@ -11,6 +11,7 @@
     <div class="form-container">
 
         <h2>Booking Lapangan</h2>
+        <img class="booking-banner" src="{{ asset('img/images.jpg') }}" alt="Lapangan GOR Kamandanoe">
 
         @if (session('success'))
             <p class="success">{{ session('success') }}</p>
@@ -27,14 +28,25 @@
         <form method="POST" action="{{ route('booking.store') }}">
             @csrf
 
-            <select name="id_lapangan" class="input" required>
-                <option value="">Pilih lapangan</option>
+            <fieldset class="court-picker">
+                <legend>Pilih Lapangan</legend>
                 @foreach ($lapangans as $lapangan)
-                    <option value="{{ $lapangan->id_lapangan }}" @selected(old('id_lapangan') === $lapangan->id_lapangan)>
-                        {{ $lapangan->nama_lapangan }}
-                    </option>
+                    <label class="court-option">
+                        <input
+                            type="radio"
+                            name="id_lapangan"
+                            value="{{ $lapangan->id_lapangan }}"
+                            @checked(old('id_lapangan') === $lapangan->id_lapangan)
+                            required
+                        >
+                        <img src="{{ asset('img/images.jpg') }}" alt="" loading="lazy">
+                        <span>
+                            <strong>{{ $lapangan->nama_lapangan }}</strong>
+                            <small>{{ $lapangan->tipe_lantai }} · Rp {{ number_format((float) $lapangan->harga_per_jam, 0, ',', '.') }}/jam</small>
+                        </span>
+                    </label>
                 @endforeach
-            </select>
+            </fieldset>
 
             <input type="date" name="tanggal" class="input" value="{{ old('tanggal') }}" required>
 

@@ -1,6 +1,6 @@
-<?php
+<!-- <?php
 include "../controller/booking.php";
-?>
+?> -->
 <!DOCTYPE html>
 <html>
 
@@ -15,7 +15,8 @@ include "../controller/booking.php";
 
         <h2>Booking Lapangan</h2>
 
-        <form method="POST">
+        <form method="POST" action="{{ route('booking.store') }}">
+            @csrf
 
             <select name="lapangan" class="input">
                 <option>Lapangan A</option>

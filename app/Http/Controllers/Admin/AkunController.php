@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
-use App\Models\User;
+use App\Models\User\User;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\RedirectResponse;
 

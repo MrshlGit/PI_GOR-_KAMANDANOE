@@ -1,8 +1,10 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Admin;
 
 use Carbon\Carbon;
+use App\Models\Admin\Lapangan;
+use App\Models\User\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Collection;

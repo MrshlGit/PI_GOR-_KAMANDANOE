@@ -3,50 +3,40 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Booking;
+use App\Models\Lapangan;
 use App\Models\User;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class AdminController extends Controller
 {
     public function dashboard()
     {
-        $bulanIni = DB::table('booking')
-            ->whereMonth('tgl_main', now()->month)
-            ->whereYear('tgl_main', now()->year)
-            ->sum('total_bayar');
+        $bulanIni = Booking::pendapatanBulanIni();
 
         $stat = [
-            'pengguna' => User::count(),
-            'turnamen' => DB::table('turnamen')
+            'pengguna'   => User::count(),
+            'turnamen'   => DB::table('turnamen')
                 ->whereDate('tgl_pelaksanaan', '>=', today())
                 ->count(),
             'pendapatan' => $bulanIni >= 1000000
                 ? 'Rp ' . number_format($bulanIni / 1000000, 1, ',', '.') . ' jt'
                 : 'Rp ' . number_format($bulanIni, 0, ',', '.'),
-            'baru' => DB::table('booking')
-                ->whereRaw('LOWER(status_booking) = ?', ['menunggu'])
-                ->count(),
+            'baru'       => Booking::jumlahMenunggu(),
         ];
 
-        $booking = DB::table('booking')
-            ->leftJoin('user', 'user.id', '=', 'booking.id_user')
-            ->select('booking.*', 'user.username')
-            ->orderByDesc('booking.tgl_main')
-            ->limit(6)
-            ->get();
+        return view('admin.dashboard', [
+            'stat'     => $stat,
+            'booking'  => Booking::terbaru(6),
+            'lapangan' => Lapangan::denganStatus(),
+            'grafik'   => Booking::grafik('hari'),
+        ]);
+    }
 
-        // sementara data contoh (nanti diganti dari database)
-        $lapangan = [['Lapangan A', true], ['Lapangan B', true], ['Lapangan C', true], ['Lapangan D', true]];
-        $trafik = [
-            ['Senin', [90, 60, 28]],
-            ['Selasa', [90, 60, 28]],
-            ['Rabu', [90, 60, 28]],
-            ['Kamis', [90, 60, 28]],
-            ['Jumat', [90, 60, 28]],
-            ['Sabtu', [90, 60, 28]],
-            ['Minggu', [90, 60, 28]],
-        ];
-
-        return view('admin.dashboard', compact('stat', 'booking', 'lapangan', 'trafik'));
+    public function grafik(Request $request): JsonResponse
+    {
+        return response()->json(Booking::grafik((string) $request->query('periode', 'hari')));
     }
 }

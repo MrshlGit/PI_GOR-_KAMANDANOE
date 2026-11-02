@@ -1,0 +1,189 @@
+/* Penyesuaian Layout Daftar Tagihan agar rata kiri mengikuti Dashboard */
+.content-body {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+  width: 100%;
+  padding: 0;
+}
+
+/* Pastikan Header Banner, Grid, dan Tombol menyesuaikan lebar penuh ke kiri */
+.header-card {
+  border: 1.5px solid #f78333;
+  border-radius: 16px;
+  padding: 22px 30px;
+  background: #ffffff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  width: 100%;
+}
+
+.header-card h1 {
+  font-size: 28px;
+  font-weight: 800;
+  color: #000;
+  margin-bottom: 6px;
+}
+
+.header-card p {
+  font-size: 15px;
+  color: #555;
+  line-height: 1.4;
+}
+
+/* Data Grid Section (Customer & Table) */
+.data-grid {
+  display: grid;
+  grid-template-columns: 350px 1fr;
+  gap: 25px;
+  align-items: start;
+  width: 100%;
+}
+
+/* Customer Info Card */
+.customer-card {
+  border: 1.5px solid #f78333;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #ffffff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.card-title-bar {
+  background: #f78333;
+  color: #000;
+  font-size: 16px;
+  font-weight: 700;
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.card-body {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.form-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1.5px solid #eee;
+  padding-bottom: 12px;
+}
+
+.form-row:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.form-row label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+}
+
+.form-row input {
+  width: 160px;
+  padding: 7px 10px;
+  font-size: 14px;
+  border-radius: 6px;
+  border: 1.5px solid #ccc;
+  outline: none;
+}
+
+.input-white {
+  background-color: #ffffff;
+}
+
+.input-gray {
+  background-color: #f0f0f0;
+  color: #555;
+}
+
+/* Order Table Card */
+.table-card {
+  border: 1.5px solid #f78333;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #ffffff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.table-card table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table-card th, 
+.table-card td {
+  padding: 14px 16px;
+  text-align: center;
+  font-size: 14px;
+}
+
+.table-card th {
+  font-weight: 700;
+  color: #000;
+  border-bottom: 1.5px solid #ddd;
+  border-right: 1px solid #eee;
+  background-color: #fff;
+}
+
+.table-card th:last-child {
+  border-right: none;
+}
+
+.table-card td {
+  border-bottom: 1px solid #eee;
+  border-right: 1px solid #eee;
+  color: #333;
+}
+
+.table-card td:last-child {
+  border-right: none;
+}
+
+.table-card tr:last-child td {
+  border-bottom: none;
+}
+
+/* Action Footer Buttons */
+.action-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 22px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.btn:hover {
+  opacity: 0.9;
+}
+
+.btn-confirm {
+  background-color: #d1fae5;
+  color: #065f46;
+  border-color: #a7f3d0;
+}
+
+.btn-cancel {
+  background-color: #fee2e2;
+  color: #991b1b;
+  border-color: #fecaca;
+}

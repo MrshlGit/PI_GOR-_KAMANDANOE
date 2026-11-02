@@ -12,7 +12,7 @@ class BookingController extends Controller
 {
     public function create()
     {
-        $lapangans = Lapangan::all();
+        $lapangans = Lapangan::whereRaw("LOWER(COALESCE(status_lapangan, 'aktif')) != ?", ['nonaktif'])->get();
 
         return view('booking_view', compact('lapangans'));
     }
@@ -28,6 +28,12 @@ class BookingController extends Controller
 
         $lapangan = Lapangan::findOrFail($data['id_lapangan']);
 
+        if (strtolower((string) $lapangan->status_lapangan) === 'nonaktif') {
+            throw ValidationException::withMessages([
+                'id_lapangan' => 'Lapangan ini sedang tidak tersedia untuk pemesanan.',
+            ]);
+        }
+
         if ($lapangan->harga_per_jam === null) {
             throw ValidationException::withMessages([
                 'id_lapangan' => 'Harga lapangan ini belum diatur.',
@@ -41,6 +47,7 @@ class BookingController extends Controller
             'id_lapangan' => $lapangan->getKey(),
             'tgl_main' => $data['tanggal'],
             'jam_mulai' => $data['jam'].':00',
+            'durasi' => (int) $data['durasi'],
             'status_booking' => 'menunggu',
             'total_bayar' => $totalBayar,
         ]);

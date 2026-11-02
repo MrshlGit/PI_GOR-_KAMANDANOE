@@ -24,6 +24,7 @@ class Lapangan extends Model
         'harga_per_jam',
         'status_lapangan',
         'nama_lapangan',
+        'kapasitas',
     ];
 
     public function booking(): HasMany
@@ -37,10 +38,14 @@ class Lapangan extends Model
 
         return $this->booking()
             ->whereDate('tgl_main', $sekarang->toDateString())
-            ->where('jam_mulai', '<=', $sekarang->format('H:i:s'))
-            ->where('jam_mulai', '>', $sekarang->copy()->subHour()->format('H:i:s'))
-            ->whereRaw('LOWER(status_booking) != ?', ['batal'])
-            ->exists();
+            ->whereRaw('LOWER(status_booking) NOT IN (?, ?, ?)', ['batal', 'dibatalkan', 'cancelled'])
+            ->get(['jam_mulai', 'durasi'])
+            ->contains(function (Booking $booking) use ($sekarang): bool {
+                $mulai = $sekarang->copy()->setTimeFromTimeString((string) $booking->jam_mulai);
+                $selesai = $mulai->copy()->addHours(max(1, (int) $booking->durasi));
+
+                return $sekarang->greaterThanOrEqualTo($mulai) && $sekarang->lessThan($selesai);
+            });
     }
 
     public static function denganStatus(): Collection

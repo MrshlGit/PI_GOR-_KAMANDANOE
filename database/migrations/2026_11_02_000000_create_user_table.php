@@ -19,7 +19,6 @@ return new class extends Migration
             $table->string('email', 100)->nullable();
             $table->string('password');
             $table->enum('role', ['admin', 'user'])->nullable();
-            $table->primary('id');
         });
     }
 

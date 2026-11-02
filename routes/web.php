@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\AkunController;
+use App\Http\Controllers\Admin\LapanganController;
 use App\Http\Controllers\User\BookingController;
 use App\Http\Controllers\User\DashboardController;
 use App\Http\Controllers\User\LoginController;
@@ -24,6 +25,7 @@ Route::middleware(['auth', 'admin'])
         Route::get('/grafik', [AdminController::class, 'grafik'])->name('grafik');
 
         Route::resource('akun', AkunController::class)->only(['index', 'store', 'update', 'destroy']);
+        Route::resource('lapangan', LapanganController::class)->only(['index', 'store', 'update', 'destroy']);
     });
 
 Route::middleware('auth')->group(function () {

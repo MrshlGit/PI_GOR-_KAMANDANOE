@@ -29,6 +29,7 @@ class Booking extends Model
         'id_lapangan',
         'tgl_main',
         'jam_mulai',
+        'durasi',
         'status_booking',
         'total_bayar',
     ];

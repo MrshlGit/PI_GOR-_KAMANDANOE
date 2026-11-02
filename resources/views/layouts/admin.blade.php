@@ -6,6 +6,7 @@
     <title>@yield('title', 'Dashboard') · Admin GOR Kamandanoe</title>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/admin.css') }}">
+    @stack('styles')
     <script src="{{ asset('js/admin.js') }}" defer></script>
 </head>
 <body>
@@ -30,7 +31,7 @@
         ['Dashboard',            'grid',   'admin.dashboard',  'admin.dashboard'],
         ['Manajemen Akun',       'user',   'admin.akun.index', 'admin.akun.*'],
         ['Manajemen Turnamen',   'trophy', null,               null],
-        ['Manajemen Lapangan',   'pin',    null,               null],
+        ['Manajemen Lapangan',   'pin',    'admin.lapangan.index', 'admin.lapangan.*'],
         ['Manajemen Pemesanan',  'cal',    null,               null],
         ['Laporan Keuangan',     'cash',   null,               null],
     ];
@@ -72,5 +73,6 @@
     </div>
 @endif
 
+@stack('scripts')
 </body>
 </html>

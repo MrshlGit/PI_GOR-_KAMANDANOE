@@ -2,33 +2,46 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Booking;
+use App\Models\Lapangan;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 
-class bookingController extends Controller
+class bookingcontroller extends Controller
 {
     public function create()
     {
-        return view('booking_view');
+        $lapangans = Lapangan::all();
+
+        return view('booking_view', compact('lapangans'));
     }
 
     public function store(Request $request)
     {
         $data = $request->validate([
-            'lapangan' => ['required', 'string'],
+            'id_lapangan' => ['required', 'string', 'exists:lapangan,id_lapangan'],
             'tanggal' => ['required', 'date'],
-            'jam' => ['required', 'integer'],
+            'jam' => ['required', 'date_format:H:i'],
             'durasi' => ['required', 'integer', 'min:1'],
         ]);
 
-        $hargaPerJam = 50000;
+        $lapangan = Lapangan::findOrFail($data['id_lapangan']);
+
+        if ($lapangan->harga_per_jam === null) {
+            throw ValidationException::withMessages([
+                'id_lapangan' => 'Harga lapangan ini belum diatur.',
+            ]);
+        }
+
+        $totalBayar = round((float) $lapangan->harga_per_jam * (int) $data['durasi'], 2);
 
         Booking::create([
-            'lapangan' => $data['lapangan'],
-            'tanggal' => $data['tanggal'],
-            'jam' => $data['jam'],
-            'durasi' => $data['durasi'],
-            'harga' => $hargaPerJam,
-            'total_bayar' => $hargaPerJam * $data['durasi'],
+            'id_user' => $request->user()->getAuthIdentifier(),
+            'id_lapangan' => $lapangan->getKey(),
+            'tgl_main' => $data['tanggal'],
+            'jam_mulai' => $data['jam'].':00',
+            'status_booking' => 'menunggu',
+            'total_bayar' => $totalBayar,
         ]);
 
         return redirect()->route('booking.create')

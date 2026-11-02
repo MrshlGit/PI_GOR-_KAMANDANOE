@@ -4,7 +4,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\RegisterController;
-use App\Http\Controllers\BookingController;
+use App\Http\Controllers\bookingcontroller;
 use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'home_view')->name('home');
@@ -25,14 +25,10 @@ Route::middleware(['auth', 'admin'])
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+
+    Route::get('/booking', [bookingcontroller::class, 'create'])
+        ->name('booking.create');
+
+    Route::post('/booking', [bookingcontroller::class, 'store'])
+        ->name('booking.store');
 });
-
-Route::get('/booking', [BookingController::class, 'create'])
-    ->name('booking.create');
-
-Route::post('/booking', [BookingController::class, 'store'])
-    ->name('booking.store');
-
-Route::get('/booking', function () {
-    return view('booking_view');
-})->name('booking.create');

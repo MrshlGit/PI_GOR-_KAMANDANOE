@@ -1,12 +1,9 @@
-<!-- <?php
-include "../controller/booking.php";
-?> -->
 <!DOCTYPE html>
 <html>
 
 <head>
     <title>Booking Lapangan</title>
-    <link rel='stylesheet' href='boking.css'>
+    <link rel="stylesheet" href="{{ asset('css/boking.css') }}">
 </head>
 
 <body>
@@ -15,40 +12,43 @@ include "../controller/booking.php";
 
         <h2>Booking Lapangan</h2>
 
+        @if (session('success'))
+            <p class="success">{{ session('success') }}</p>
+        @endif
+
+        @if ($errors->any())
+            <div class="error">
+                @foreach ($errors->all() as $error)
+                    <p>{{ $error }}</p>
+                @endforeach
+            </div>
+        @endif
+
         <form method="POST" action="{{ route('booking.store') }}">
             @csrf
 
-            <select name="lapangan" class="input">
-                <option>Lapangan A</option>
-                <option>Lapangan B</option>
-                <option>Lapangan C</option>
-                <option>Lapangan D</option>
+            <select name="id_lapangan" class="input" required>
+                <option value="">Pilih lapangan</option>
+                @foreach ($lapangans as $lapangan)
+                    <option value="{{ $lapangan->id_lapangan }}" @selected(old('id_lapangan') === $lapangan->id_lapangan)>
+                        {{ $lapangan->nama_lapangan }}
+                    </option>
+                @endforeach
             </select>
 
-            <input type="date" name="tanggal" class="input" required>
-            <input type="hidden" name="harga" id="hidden-harga" value="50000">
-            <input type="hidden" name="total_bayar" id="hidden-total" value="50000">
+            <input type="date" name="tanggal" class="input" value="{{ old('tanggal') }}" required>
 
-            <select name="jam" class="input">
-                <option value="8">08:00</option>
-                <option value="9">09:00</option>
-                <option value="10">10:00</option>
-                <option value="11">11:00</option>
-                <option value="12">12:00</option>
-                <option value="13">13:00</option>
-                <option value="14">14:00</option>
-                <option value="15">15:00</option>
-                <option value="16">16:00</option>
-                <option value="17">17:00</option>
-                <option value="18">18:00</option>
-                <option value="19">19:00</option>
-                <option value="20">20:00</option>
-                <option value="21">21:00</option>
+            <select name="jam" class="input" required>
+                <option value="">Pilih jam</option>
+                @foreach (range(8, 21) as $hour)
+                    @php($time = sprintf('%02d:00', $hour))
+                    <option value="{{ $time }}" @selected(old('jam') === $time)>{{ $time }}</option>
+                @endforeach
             </select>
 
-            <input type="number" name="durasi" min="1" class="input" placeholder="Durasi / Jam" required>
+            <input type="number" name="durasi" min="1" class="input" placeholder="Durasi / Jam" value="{{ old('durasi') }}" required>
 
-            <button type="submit" name="booking" class="button">
+            <button type="submit" class="button" @disabled($lapangans->isEmpty())>
                 Booking Sekarang
             </button>
 

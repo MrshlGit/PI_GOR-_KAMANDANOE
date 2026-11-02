@@ -7,7 +7,6 @@ use App\Http\Controllers\User\DashboardController;
 use App\Http\Controllers\User\LoginController;
 use App\Http\Controllers\User\RegisterController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\daftartagihanController;
 
 Route::view('/', 'home_view')->name('home');
 
@@ -37,19 +36,3 @@ Route::middleware('auth')->group(function () {
     Route::post('/booking', [BookingController::class, 'store'])
         ->name('booking.store');
 });
-<<<<<<< Updated upstream
-=======
-
-Route::get('/booking', [BookingController::class, 'create'])
-    ->name('booking.create');
-
-Route::post('/booking', [BookingController::class, 'store'])
-    ->name('booking.store');
-
-Route::get('/booking', function () {
-    return view('booking_view');
-})->name('booking.create');
-
-// Route untuk Daftar Tagihan (Menggunakan TagihanController yang telah dibuat)
-Route::get('/transaksi', [daftartagihanController::class, 'index'])->name('tagihan.index');
->>>>>>> Stashed changes

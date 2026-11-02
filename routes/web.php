@@ -1,10 +1,11 @@
 <?php
 
-use App\Http\Controllers\AdminController;
-use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\LoginController;
-use App\Http\Controllers\RegisterController;
-use App\Http\Controllers\bookingcontroller;
+use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\AkunController;
+use App\Http\Controllers\User\BookingController;
+use App\Http\Controllers\User\DashboardController;
+use App\Http\Controllers\User\LoginController;
+use App\Http\Controllers\User\RegisterController;
 use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'home_view')->name('home');
@@ -20,15 +21,18 @@ Route::middleware(['auth', 'admin'])
     ->name('admin.')
     ->group(function () {
         Route::get('/', [AdminController::class, 'dashboard'])->name('dashboard');
+        Route::get('/grafik', [AdminController::class, 'grafik'])->name('grafik');
+
+        Route::resource('akun', AkunController::class)->only(['index', 'store', 'update', 'destroy']);
     });
 
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
-    Route::get('/booking', [bookingcontroller::class, 'create'])
+    Route::get('/booking', [BookingController::class, 'create'])
         ->name('booking.create');
 
-    Route::post('/booking', [bookingcontroller::class, 'store'])
+    Route::post('/booking', [BookingController::class, 'store'])
         ->name('booking.store');
 });

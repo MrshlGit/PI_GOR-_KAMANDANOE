@@ -8,6 +8,7 @@ use App\Http\Controllers\User\DashboardController;
 use App\Http\Controllers\User\LoginController;
 use App\Http\Controllers\User\RegisterController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\daftartagihanController;
 
 Route::view('/', 'home_view')->name('home');
 
@@ -37,4 +38,8 @@ Route::middleware('auth')->group(function () {
 
     Route::post('/booking', [BookingController::class, 'store'])
         ->name('booking.store');
+
+    // ===== BAGIAN DAFTAR TAGIHAN / TRANSAKSI =====
+    Route::get('/transaksi', [daftartagihanController::class, 'index'])
+        ->name('tagihan.index');
 });

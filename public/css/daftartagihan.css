@@ -1,20 +1,21 @@
-/* Penyesuaian Layout Daftar Tagihan agar rata kiri mengikuti Dashboard */
+/* Penyesuaian khusus halaman Daftar Tagihan agar pas dengan Dashboard Layout */
+
 .content-body {
   display: flex;
   flex-direction: column;
   gap: 25px;
+  max-width: 1300px;
+  margin: 0 auto;
   width: 100%;
-  padding: 0;
 }
 
-/* Pastikan Header Banner, Grid, dan Tombol menyesuaikan lebar penuh ke kiri */
+/* Header Banner Card */
 .header-card {
   border: 1.5px solid #f78333;
   border-radius: 16px;
   padding: 22px 30px;
   background: #ffffff;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-  width: 100%;
 }
 
 .header-card h1 {
@@ -36,7 +37,6 @@
   grid-template-columns: 350px 1fr;
   gap: 25px;
   align-items: start;
-  width: 100%;
 }
 
 /* Customer Info Card */

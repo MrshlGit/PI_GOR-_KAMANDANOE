@@ -12,28 +12,28 @@
 .legend-dot{width:12px;height:12px;border:1.5px solid var(--ink);border-radius:3px}
 .legend-dot.available{background:var(--hijau-bg)}
 .legend-dot.booked{background:var(--kuning)}
-.schedule-scroll{overflow:auto;border:2px solid var(--ink);border-radius:6px}
+.schedule-scroll{overflow:auto;border:2px solid var(--ink);border-radius:3px;box-shadow:4px 4px 0 var(--ink)}
 .schedule-table{width:100%;min-width:1220px;border-collapse:separate;border-spacing:0;font-size:.67rem}
 .schedule-table th,.schedule-table td{padding:7px 5px;text-align:center;border-right:1px solid #d5d9df;border-bottom:1px solid #d5d9df}
-.schedule-table thead th{position:sticky;top:0;z-index:2;background:#eef1f5;font-weight:700;white-space:nowrap}
+.schedule-table thead th{position:sticky;top:0;z-index:2;background:#fff0a3;font-weight:700;white-space:nowrap;border-bottom:2px solid var(--ink)}
 .schedule-table .court-heading,.schedule-table .court-name{position:sticky;left:0;z-index:1;width:150px;min-width:150px;text-align:left;background:#fff}
 .schedule-table .court-heading{z-index:3;background:#eef1f5}
 .schedule-table .court-name b,.schedule-table .court-name small{display:block}
 .schedule-table .court-name small{margin-top:3px;color:#777;font-size:.62rem;font-weight:400}
 .schedule-table td{min-width:62px}
-.slot{width:100%;min-height:31px;padding:4px 3px;border:1.5px solid var(--ink);border-radius:4px;font:700 .61rem 'Space Grotesk',sans-serif;cursor:pointer;transition:filter .15s,transform .15s}
-.slot:hover{filter:brightness(.94);transform:translateY(-1px)}
+.slot{width:100%;min-height:31px;padding:4px 3px;border:2px solid var(--ink);border-radius:2px;box-shadow:2px 2px 0 var(--ink);font:700 .61rem 'Space Grotesk',sans-serif;cursor:pointer;transition:filter .15s,transform .15s,box-shadow .15s}
+.slot:hover{filter:brightness(.94);transform:translate(-1px,-1px);box-shadow:3px 3px 0 var(--ink)}
 .slot-available{background:var(--hijau-bg);color:#14532d}
 .slot-booked{background:var(--kuning);color:#241b00}
 .schedule-table .empty-schedule{padding:22px;text-align:center;color:#666;font-size:.8rem}
 .court-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
-.court-card{overflow:hidden;border:2px solid var(--ink);border-radius:7px;background:#fff;box-shadow:4px 4px 0 var(--ink);transition:transform .15s,box-shadow .15s}
-.court-card:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 var(--o-d)}
+.court-card{overflow:hidden;border:2px solid var(--ink);border-radius:3px;background:#fff;box-shadow:5px 5px 0 var(--ink);transition:transform .15s,box-shadow .15s}
+.court-card:hover{transform:translate(-2px,-2px);box-shadow:7px 7px 0 var(--ink)}
 .court-card>img{display:block;width:100%;height:150px;object-fit:cover;border-bottom:2px solid var(--ink)}
 .court-card-body{padding:12px}
 .court-card-title{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:12px}
 .court-card-title h3{margin:0;font-size:.9rem}
-.court-status{display:inline-block;padding:3px 8px;border:1.5px solid var(--ink);border-radius:99px;font-size:.62rem;font-weight:700;white-space:nowrap}
+.court-status{display:inline-block;padding:3px 8px;border:2px solid var(--ink);border-radius:3px;font-size:.62rem;font-weight:700;white-space:nowrap}
 .court-status.is-active{background:var(--hijau-bg);color:#14532d}
 .court-status.is-inactive{background:var(--pink-bg);color:#9f1239}
 .court-details{display:grid;gap:7px;margin:0 0 14px;font-size:.69rem}
@@ -43,9 +43,9 @@
 .court-actions{display:flex;gap:8px}
 .court-actions .btn{flex:1}
 .empty-courts{grid-column:1/-1;margin:0;padding:24px;text-align:center;color:#666}
-.schedule-modal .modal-box{width:min(440px,100%)}
+.schedule-modal .modal-box{width:min(440px,100%);border-radius:4px;box-shadow:8px 8px 0 var(--ink)}
 .schedule-modal .muted{margin:0}
-.schedule-message{margin:18px 0 6px;padding:14px;border:2px solid var(--ink);border-radius:6px;background:#eef2fa;font-weight:700;line-height:1.5}
+.schedule-message{margin:18px 0 6px;padding:14px;border:2px solid var(--ink);border-radius:3px;background:#d9f7ff;box-shadow:3px 3px 0 var(--ink);font-weight:700;line-height:1.5}
 
 @media(max-width:1100px){.court-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:700px){.court-stats{grid-template-columns:1fr}.court-grid{grid-template-columns:1fr}.date-filter{width:100%;flex-wrap:wrap}.date-filter input{flex:1;min-width:150px}.schedule-box .box-h{align-items:flex-start}}

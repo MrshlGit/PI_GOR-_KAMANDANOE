@@ -36,6 +36,7 @@ document.addEventListener('click', e => {
   const pemicu = e.target.closest('[data-modal]');
   if (pemicu) {
     const modal = $('#' + pemicu.dataset.modal);
+    if (pemicu.dataset.status) modal.dataset.status = pemicu.dataset.status;
     const form = $('form', modal);
     form?.reset();
     if (pemicu.dataset.action && form) form.action = pemicu.dataset.action;

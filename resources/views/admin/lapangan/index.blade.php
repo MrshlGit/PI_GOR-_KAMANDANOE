@@ -62,14 +62,16 @@
                                     $dipesan = count($pemesan) > 0;
                                     $pesan = $dipesan
                                         ? 'Lapangan ini sudah dipesan oleh ' . implode(', ', $pemesan)
-                                        : 'Lapangan belum dipesan sama sekali';
+                                        : 'Lapangan ini belum dipesan.';
                                 @endphp
                                 <td>
                                     <button
                                         type="button"
                                         class="slot {{ $dipesan ? 'slot-booked' : 'slot-available' }}"
                                         data-modal="m-jadwal"
-                                        data-pesan="{{ $pesan }}"
+                                        data-status="{{ $dipesan ? 'booked' : 'available' }}"
+                                        data-pesan="{{ $dipesan ? 'Lapangan ini sudah dipesan oleh' : $pesan }}"
+                                        data-pemesan="{{ implode(', ', $pemesan) }}"
                                         data-lapangan="{{ $lapangan->nama_lapangan }}"
                                         data-jam="{{ sprintf('%02d:00 - %02d:00', $hour, $hour + 1) }}"
                                         aria-label="{{ $lapangan->nama_lapangan }}, {{ sprintf('%02d:00', $hour) }}: {{ $pesan }}"
@@ -236,9 +238,13 @@
 
     <div class="modal schedule-modal" id="m-jadwal">
         <div class="modal-box">
+            <span class="schedule-alert-icon"><svg class="ic"><use href="#i-warn"/></svg></span>
             <h3 data-isi="lapangan"></h3>
             <p class="muted" data-isi="jam"></p>
-            <p class="schedule-message" data-isi="pesan"></p>
+            <p class="schedule-message">
+                <span data-isi="pesan"></span>
+                <strong class="schedule-username" data-isi="pemesan"></strong>
+            </p>
             <div class="modal-aksi">
                 <button type="button" class="btn oren" data-tutup>Tutup</button>
             </div>

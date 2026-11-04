@@ -69,8 +69,10 @@ class AdminLapanganTest extends TestCase
         $this->actingAs($admin)
             ->get(route('admin.lapangan.index'))
             ->assertOk()
-            ->assertSee('Lapangan ini sudah dipesan oleh Admin')
-            ->assertSee('Lapangan belum dipesan sama sekali')
+            ->assertSee('Lapangan ini sudah dipesan oleh')
+            ->assertSee('data-pemesan="Admin"', false)
+            ->assertSee('data-pesan="Lapangan ini belum dipesan."', false)
+            ->assertSee('Lapangan ini belum dipesan.')
             ->assertSee('img/images.jpg');
     }
 

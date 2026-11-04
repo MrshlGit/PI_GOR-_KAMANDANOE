@@ -15,7 +15,7 @@
 .booking-table .booking-actions{display:flex;justify-content:flex-end;gap:7px;white-space:nowrap}
 .booking-actions form{display:inline-flex}
 .booking-actions .btn{padding:5px 8px;font-size:.67rem}
-.confirm-btn{background:var(--hijau-bg);color:#14532d}
+.confirm-btn{background:#fff;color:var(--ink)}
 .empty-bookings{padding:30px!important;text-align:center;color:#777}
 .booking-pagination{margin-top:16px}
 .booking-pagination nav{display:flex;justify-content:flex-end}
@@ -25,10 +25,10 @@
 .booking-pagination span[aria-current]{background:var(--kuning);font-weight:700}
 .booking-pagination span[aria-disabled]{opacity:.45}
 .offline-box{max-width:900px}
-.offline-tag{padding:5px 9px;border:2px solid var(--ink);border-radius:3px;background:var(--neo-pink);font-size:.65rem;font-weight:700;white-space:nowrap;box-shadow:3px 3px 0 var(--ink)}
+.offline-tag{padding:5px 9px;border:2px solid var(--ink);border-radius:3px;background:#fff;font-size:.65rem;font-weight:700;white-space:nowrap;box-shadow:3px 3px 0 var(--ink)}
 .offline-form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px 16px}
-.field-error{color:#b91c1c;font-size:.68rem;font-weight:600}
-.offline-note{grid-column:1/-1;margin:0;padding:10px 12px;border:2px solid var(--ink);border-radius:3px;background:#fff4bb;box-shadow:3px 3px 0 var(--ink);font-size:.73rem;line-height:1.5}
+.field-error{color:var(--o-d);font-size:.68rem;font-weight:600}
+.offline-note{grid-column:1/-1;margin:0;padding:10px 12px;border:2px solid var(--ink);border-radius:3px;background:#fff;box-shadow:3px 3px 0 var(--ink);font-size:.73rem;line-height:1.5}
 .offline-submit{justify-self:start}
 @media(max-width:1050px){.booking-stats{grid-template-columns:repeat(2,minmax(0,1fr))}.booking-filters{grid-template-columns:repeat(2,minmax(0,1fr))}.filter-search{grid-column:1/-1}.filter-actions{align-self:end}}
 @media(max-width:600px){.booking-stats{grid-template-columns:1fr 1fr;gap:12px}.booking-stats .box{padding:13px}.booking-stats .stat strong{font-size:1.45rem}.booking-stats .stat strong.money{font-size:1.1rem}.booking-filters,.offline-form{grid-template-columns:1fr}.filter-search,.offline-note{grid-column:auto}.filter-actions{width:100%}.filter-actions .btn{flex:1}.booking-list,.offline-box{padding:14px}.offline-submit{width:100%}}

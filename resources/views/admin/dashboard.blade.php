@@ -58,7 +58,7 @@
                                 };
                             @endphp
                             <tr>
-                                <td><b>{{ $b->user->username ?? 'User #' . $b->id_user }}</b></td>
+                                <td><b>{{ $b->nama_pemesan ?: ($b->user?->username ?? 'User #' . $b->id_user) }}</b></td>
                                 <td>{{ $b->lapangan->nama_lapangan ?? $b->id_lapangan }}</td>
                                 <td>
                                     {{ $b->tgl_main->format('d M Y') }}

@@ -2,16 +2,18 @@
 
 namespace App\Models\Admin;
 
-use Carbon\Carbon;
-use App\Models\Admin\Lapangan;
 use App\Models\User\User;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 
 class Booking extends Model
 {
     public const PERIODE = ['hari', 'minggu', 'bulan', 'tahun'];
+
+    public const STATUS = ['menunggu', 'dikonfirmasi', 'lunas', 'selesai', 'batal'];
 
     protected $table = 'booking';
 
@@ -27,6 +29,8 @@ class Booking extends Model
         'id_booking',
         'id_user',
         'id_lapangan',
+        'nama_pemesan',
+        'no_hp_pemesan',
         'tgl_main',
         'jam_mulai',
         'durasi',
@@ -49,6 +53,19 @@ class Booking extends Model
     public function lapangan(): BelongsTo
     {
         return $this->belongsTo(Lapangan::class, 'id_lapangan', 'id_lapangan');
+    }
+
+    protected static function booted(): void
+    {
+        static::creating(function (Booking $booking): void {
+            if (empty($booking->id_booking)) {
+                do {
+                    $id = Str::upper(Str::random(20));
+                } while (static::whereKey($id)->exists());
+
+                $booking->id_booking = $id;
+            }
+        });
     }
 
     public static function terbaru(int $batas = 6): Collection
@@ -84,8 +101,8 @@ class Booking extends Model
 
         $data = array_map(function (array $t) use ($tanggal) {
             return [
-                'label'  => $t['label'],
-                'judul'  => $t['judul'],
+                'label' => $t['label'],
+                'judul' => $t['judul'],
                 'jumlah' => $tanggal->filter(
                     fn ($tgl) => Carbon::parse($tgl)->between($t['mulai'], $t['akhir'])
                 )->count(),
@@ -93,15 +110,15 @@ class Booking extends Model
         }, $titik);
 
         return [
-            'periode'    => $periode,
+            'periode' => $periode,
             'keterangan' => [
-                'hari'   => '7 hari terakhir',
+                'hari' => '7 hari terakhir',
                 'minggu' => '8 minggu terakhir',
-                'bulan'  => '12 bulan terakhir',
-                'tahun'  => '5 tahun terakhir',
+                'bulan' => '12 bulan terakhir',
+                'tahun' => '5 tahun terakhir',
             ][$periode],
-            'total'      => array_sum(array_column($data, 'jumlah')),
-            'data'       => $data,
+            'total' => array_sum(array_column($data, 'jumlah')),
+            'data' => $data,
         ];
     }
 
@@ -116,8 +133,8 @@ class Booking extends Model
             for ($i = 6; $i >= 0; $i--) {
                 $d = $sekarang->copy()->subDays($i);
                 $hasil[] = [
-                    'label' => $hari[$d->dayOfWeek] . ' ' . $d->day,
-                    'judul' => $d->day . ' ' . $bulan[$d->month] . ' ' . $d->year,
+                    'label' => $hari[$d->dayOfWeek].' '.$d->day,
+                    'judul' => $d->day.' '.$bulan[$d->month].' '.$d->year,
                     'mulai' => $d->copy()->startOfDay(),
                     'akhir' => $d->copy()->endOfDay(),
                 ];
@@ -127,8 +144,8 @@ class Booking extends Model
                 $awal = $sekarang->copy()->startOfWeek()->subWeeks($i);
                 $akhir = $awal->copy()->endOfWeek();
                 $hasil[] = [
-                    'label' => $awal->day . ' ' . $bulan[$awal->month],
-                    'judul' => $awal->day . ' ' . $bulan[$awal->month] . ' - ' . $akhir->day . ' ' . $bulan[$akhir->month] . ' ' . $akhir->year,
+                    'label' => $awal->day.' '.$bulan[$awal->month],
+                    'judul' => $awal->day.' '.$bulan[$awal->month].' - '.$akhir->day.' '.$bulan[$akhir->month].' '.$akhir->year,
                     'mulai' => $awal,
                     'akhir' => $akhir,
                 ];
@@ -138,7 +155,7 @@ class Booking extends Model
                 $awal = $sekarang->copy()->startOfMonth()->subMonths($i);
                 $hasil[] = [
                     'label' => $bulan[$awal->month],
-                    'judul' => $bulan[$awal->month] . ' ' . $awal->year,
+                    'judul' => $bulan[$awal->month].' '.$awal->year,
                     'mulai' => $awal,
                     'akhir' => $awal->copy()->endOfMonth(),
                 ];
@@ -148,7 +165,7 @@ class Booking extends Model
                 $awal = $sekarang->copy()->startOfYear()->subYears($i);
                 $hasil[] = [
                     'label' => (string) $awal->year,
-                    'judul' => 'Tahun ' . $awal->year,
+                    'judul' => 'Tahun '.$awal->year,
                     'mulai' => $awal,
                     'akhir' => $awal->copy()->endOfYear(),
                 ];

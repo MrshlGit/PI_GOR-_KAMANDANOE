@@ -17,21 +17,21 @@ class AdminController extends Controller
         $bulanIni = Booking::pendapatanBulanIni();
 
         $stat = [
-            'pengguna'   => User::count(),
-            'turnamen'   => DB::table('turnamen')
+            'pengguna' => User::count(),
+            'turnamen' => DB::table('turnamen')
                 ->whereDate('tgl_pelaksanaan', '>=', today())
                 ->count(),
             'pendapatan' => $bulanIni >= 1000000
-                ? 'Rp ' . number_format($bulanIni / 1000000, 1, ',', '.') . ' jt'
-                : 'Rp ' . number_format($bulanIni, 0, ',', '.'),
-            'baru'       => Booking::jumlahMenunggu(),
+                ? 'Rp '.number_format($bulanIni / 1000000, 1, ',', '.').' jt'
+                : 'Rp '.number_format($bulanIni, 0, ',', '.'),
+            'baru' => Booking::jumlahMenunggu(),
         ];
 
         return view('admin.dashboard', [
-            'stat'     => $stat,
-            'booking'  => Booking::terbaru(6),
+            'stat' => $stat,
+            'booking' => Booking::terbaru(6),
             'lapangan' => Lapangan::denganStatus(),
-            'grafik'   => Booking::grafik('hari'),
+            'grafik' => Booking::grafik('hari'),
         ]);
     }
 

@@ -32,7 +32,7 @@
         ['Manajemen Akun',       'user',   'admin.akun.index', 'admin.akun.*'],
         ['Manajemen Turnamen',   'trophy', null,               null],
         ['Manajemen Lapangan',   'pin',    'admin.lapangan.index', 'admin.lapangan.*'],
-        ['Manajemen Pemesanan',  'cal',    null,               null],
+        ['Manajemen Pemesanan',  'cal',    'admin.pemesanan.index', 'admin.pemesanan.*'],
         ['Laporan Keuangan',     'cash',   null,               null],
     ];
 @endphp

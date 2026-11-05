@@ -37,21 +37,6 @@ class LoginController extends Controller
         return $this->redirectByRole(Auth::user());
     }
 
-    public function cekDataUser(Request $request)
-    {
-        $data = $request->validate([
-            'username' => ['required', 'string'],
-        ]);
-
-        $user = User::where('username', $data['username'])->first();
-
-        if ($user) {
-            return response()->json($user);
-        }
-
-        return response()->json(['message' => 'User tidak ditemukan'], 404);
-    }
-
     public function logout(Request $request): RedirectResponse
     {
         Auth::logout();

@@ -237,7 +237,7 @@ body {
     padding: 0 24px;
 }
 .hero-person img {
-    --s: 1.15;
+    --s: .85;
     --y: -6%;
     position: relative;
     z-index: 1;
@@ -398,7 +398,7 @@ body {
     .hero-person img {
         --s: 1;
         --y: 0%;
-        max-height: 300px;
+        max-height: 200px;
         max-width: 100%;
     }
 }

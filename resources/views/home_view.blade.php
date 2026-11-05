@@ -31,34 +31,13 @@
 <section class="hero">
     <div class="hero-card">
         <div class="hero-bg" style="--bg:url('{{ asset('img/lapangan.jpeg') }}')"></div>
-        <div class="hero-stars" aria-hidden="true">
-    <svg width="0" height="0" style="position:absolute">
         <defs>
             <path id="plus" pathLength="1"
                   d="M35 0H65V35H100V65H65V100H35V65H0V35H35Z"/>
         </defs>
     </svg>
 
-    <div class="xx" style="--x:52%;--y:16%;--s:70px; --r:35deg; --t:8s; --d:0s">
-        <svg viewBox="0 0 100 100"><use href="#plus" class="f"/><use href="#plus" class="o"/><use href="#plus" class="o o2"/><use href="#plus" class="o o3"/></svg>
-    </div>
-    <div class="xx" style="--x:93%;--y:14%;--s:120px;--r:0deg;  --t:9s; --d:1.5s">
-        <svg viewBox="0 0 100 100"><use href="#plus" class="f"/><use href="#plus" class="o"/><use href="#plus" class="o o2"/><use href="#plus" class="o o3"/></svg>
-    </div>
-    <div class="xx" style="--x:44%;--y:82%;--s:110px;--r:-10deg;--t:9s; --d:3s">
-        <svg viewBox="0 0 100 100"><use href="#plus" class="f"/><use href="#plus" class="o"/><use href="#plus" class="o o2"/><use href="#plus" class="o o3"/></svg>
-    </div>
-
-    <div class="xx" style="--x:60%;--y:12%;--s:26px;--r:-20deg;--t:8s; --d:.8s">
-        <svg viewBox="0 0 100 100"><use href="#plus" class="f"/><use href="#plus" class="o"/></svg>
-    </div>
-    <div class="xx" style="--x:88%;--y:84%;--s:36px;--r:25deg; --t:7s; --d:2.2s">
-        <svg viewBox="0 0 100 100"><use href="#plus" class="f"/><use href="#plus" class="o"/><use href="#plus" class="o o2"/></svg>
-    </div>
-    <div class="xx" style="--x:30%;--y:60%;--s:30px;--r:40deg; --t:8s; --d:4.5s">
-        <svg viewBox="0 0 100 100"><use href="#plus" class="f"/><use href="#plus" class="o"/></svg>
-    </div>
-</div>
+   
 
         <div class="hero-text">
             <p class="eyebrow">Portal pemesanan lapangan</p>

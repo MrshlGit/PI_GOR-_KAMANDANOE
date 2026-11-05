@@ -9,7 +9,7 @@
     @stack('styles')
     <script src="{{ asset('js/admin.js') }}" defer></script>
 </head>
-<body>
+<body class="admin-app">
 
 <svg width="0" height="0" style="position:absolute">
     <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></symbol>
@@ -32,7 +32,7 @@
         ['Manajemen Akun',       'user',   'admin.akun.index', 'admin.akun.*'],
         ['Manajemen Turnamen',   'trophy', null,               null],
         ['Manajemen Lapangan',   'pin',    'admin.lapangan.index', 'admin.lapangan.*'],
-        ['Manajemen Pemesanan',  'cal',    null,               null],
+        ['Manajemen Pemesanan',  'cal',    'admin.pemesanan.index', 'admin.pemesanan.*'],
         ['Laporan Keuangan',     'cash',   null,               null],
     ];
 @endphp

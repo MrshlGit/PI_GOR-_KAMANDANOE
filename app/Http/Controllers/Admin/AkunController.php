@@ -14,7 +14,7 @@ class AkunController extends Controller
     public function index()
     {
         return view('admin.akun.index', [
-            'users'     => User::orderBy('id')->get(),
+            'users' => User::orderBy('id')->get(),
             'ringkasan' => User::ringkasan(),
         ]);
     }

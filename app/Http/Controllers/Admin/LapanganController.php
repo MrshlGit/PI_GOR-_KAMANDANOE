@@ -29,7 +29,7 @@ class LapanganController extends Controller
             ->get();
 
         foreach ($bookings as $booking) {
-            $nama = $booking->user?->username ?? 'User #' . $booking->id_user;
+            $nama = $booking->user?->username ?? 'User #'.$booking->id_user;
             $mulai = (int) substr((string) $booking->jam_mulai, 0, 2);
 
             for ($offset = 0; $offset < max(1, (int) $booking->durasi); $offset++) {

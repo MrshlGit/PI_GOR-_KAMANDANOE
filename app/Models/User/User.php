@@ -45,13 +45,4 @@ class User extends Authenticatable
     {
         return Attribute::get(fn () => strtoupper(mb_substr($this->username ?? '?', 0, 2)));
     }
-
-    public static function ringkasan(): array
-    {
-        return [
-            'total' => static::count(),
-            'admin' => static::where('role', 'admin')->count(),
-            'user'  => static::where('role', 'user')->count(),
-        ];
-    }
 }

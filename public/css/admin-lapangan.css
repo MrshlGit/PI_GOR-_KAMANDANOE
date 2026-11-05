@@ -11,6 +11,7 @@
 .schedule-legend span{display:inline-flex;align-items:center;gap:6px}
 .legend-dot{width:12px;height:12px;border:1.5px solid var(--ink);border-radius:3px}
 .legend-dot.available{background:#fff}
+.legend-dot.pending{background:#fecaca}
 .legend-dot.booked{background:var(--kuning)}
 .schedule-scroll{overflow:auto;border:2px solid var(--ink);border-radius:3px;box-shadow:4px 4px 0 var(--ink)}
 .schedule-table{width:100%;min-width:1220px;border-collapse:separate;border-spacing:0;font-size:.67rem}
@@ -24,6 +25,7 @@
 .slot{width:100%;min-height:31px;padding:4px 3px;border:2px solid var(--ink);border-radius:2px;box-shadow:2px 2px 0 var(--ink);font:700 .61rem 'Space Grotesk',sans-serif;cursor:pointer;transition:filter .15s,transform .15s,box-shadow .15s}
 .slot:hover{filter:brightness(.94);transform:translate(-1px,-1px);box-shadow:3px 3px 0 var(--ink)}
 .slot-available{background:#fff;color:var(--ink)}
+.slot-pending{background:#fecaca;color:#991b1b}
 .slot-booked{background:var(--kuning);color:var(--ink)}
 .schedule-table .empty-schedule{padding:22px;text-align:center;color:#666;font-size:.8rem}
 .court-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
@@ -49,10 +51,16 @@
 .schedule-modal .modal-box h3{margin:0 0 6px;padding:0;text-align:center;font-size:1.25rem}
 .schedule-modal .muted{margin:0;text-align:center;font-size:.8rem}
 .schedule-message{margin:18px 0 10px;padding:14px;border:2px solid var(--ink);border-radius:3px;background:var(--kuning);box-shadow:3px 3px 0 var(--ink);font-weight:700;line-height:1.55;overflow-wrap:anywhere}
+.schedule-booking-copy,.schedule-confirm-question{margin:0}
+.schedule-confirm-question{display:none;margin-top:8px}
 .schedule-username{margin-left:4px;color:var(--o-d);font-weight:700}
-.schedule-modal:not([data-status="booked"]) .schedule-username{display:none}
+.schedule-modal:not([data-status="booked"]):not([data-status="pending"]) .schedule-username{display:none}
+.schedule-modal[data-status="pending"] .schedule-confirm-question{display:block}
 .schedule-modal .modal-aksi{justify-content:center;margin-top:18px}
 .schedule-modal .modal-aksi .btn{min-width:92px}
+.schedule-actions{display:none}
+.schedule-modal[data-status="pending"] .schedule-actions{display:block}
+.schedule-modal .schedule-actions .modal-aksi{margin-top:18px}
 
 @media(max-width:1100px){.court-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:700px){.court-stats{grid-template-columns:1fr}.court-grid{grid-template-columns:1fr}.date-filter{width:100%;flex-wrap:wrap}.date-filter input{flex:1;min-width:150px}.schedule-box .box-h{align-items:flex-start}}

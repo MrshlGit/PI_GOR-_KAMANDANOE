@@ -12,6 +12,7 @@ body.lock{overflow:hidden}
 .logo{width:42px;height:42px;border-radius:50%;background:var(--ink);color:var(--o);display:grid;place-items:center;font-size:1.2rem}
 .menu{display:flex;flex-direction:column;gap:8px;margin-top:22px}
 .menu a{display:flex;align-items:center;gap:10px;padding:10px 12px;border:2px solid transparent;border-radius:6px;color:var(--ink);text-decoration:none;font-weight:600;font-size:.9rem;transition:.15s}
+.menu .menu-disabled{display:flex;align-items:center;gap:10px;padding:10px 12px;border:2px solid transparent;border-radius:3px;color:var(--ink);font-weight:700;font-size:.9rem;cursor:default}
 .menu a:hover{background:rgba(255,255,255,.35);transform:translateX(3px)}
 .menu a.on{background:var(--kuning);border-color:var(--ink);box-shadow:3px 3px 0 var(--ink)}
 .me{margin-top:auto;padding-top:16px;border-top:2px solid var(--ink);display:flex;align-items:center;gap:10px}

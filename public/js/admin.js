@@ -39,7 +39,7 @@ document.addEventListener('click', e => {
     if (pemicu.dataset.status) modal.dataset.status = pemicu.dataset.status;
     const form = $('form', modal);
     form?.reset();
-    if (pemicu.dataset.action && form) form.action = pemicu.dataset.action;
+    if (form) form.action = pemicu.dataset.action || '';
     $$('[data-isi]', modal).forEach(el => {
       const nilai = pemicu.dataset[el.dataset.isi];
       if (nilai === undefined) return;

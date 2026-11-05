@@ -4,6 +4,7 @@ namespace App\Models\Admin;
 
 use App\Models\User\User;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Collection;
@@ -14,6 +15,8 @@ class Booking extends Model
     public const PERIODE = ['hari', 'minggu', 'bulan', 'tahun'];
 
     public const STATUS = ['menunggu', 'dikonfirmasi', 'lunas', 'selesai', 'batal'];
+
+    public const STATUS_DIBATALKAN = ['batal', 'dibatalkan', 'cancelled'];
 
     protected $table = 'booking';
 
@@ -55,6 +58,19 @@ class Booking extends Model
         return $this->belongsTo(Lapangan::class, 'id_lapangan', 'id_lapangan');
     }
 
+    public function scopeTidakDibatalkan(Builder $query): Builder
+    {
+        return $query->whereRaw(
+            'LOWER(status_booking) NOT IN (?, ?, ?)',
+            self::STATUS_DIBATALKAN
+        );
+    }
+
+    public function scopeMenunggu(Builder $query): Builder
+    {
+        return $query->whereRaw('LOWER(status_booking) = ?', ['menunggu']);
+    }
+
     protected static function booted(): void
     {
         static::creating(function (Booking $booking): void {
@@ -86,7 +102,68 @@ class Booking extends Model
 
     public static function jumlahMenunggu(): int
     {
-        return static::whereRaw('LOWER(status_booking) = ?', ['menunggu'])->count();
+        return static::menunggu()->count();
+    }
+
+    public static function daftarAdmin(array $filter): Builder
+    {
+        $query = static::with(['user:id,username', 'lapangan:id_lapangan,nama_lapangan']);
+
+        if (! empty($filter['q'])) {
+            $term = $filter['q'];
+            $query->where(function (Builder $bookings) use ($term): void {
+                $bookings->where('id_booking', 'like', "%{$term}%")
+                    ->orWhere('nama_pemesan', 'like', "%{$term}%")
+                    ->orWhere('no_hp_pemesan', 'like', "%{$term}%")
+                    ->orWhereHas('user', fn (Builder $users) => $users->where('username', 'like', "%{$term}%"));
+            });
+        }
+
+        if (! empty($filter['status'])) {
+            $query->whereRaw('LOWER(status_booking) = ?', [$filter['status']]);
+        }
+
+        if (! empty($filter['tanggal'])) {
+            $query->whereDate('tgl_main', $filter['tanggal']);
+        }
+
+        if (! empty($filter['id_lapangan'])) {
+            $query->where('id_lapangan', $filter['id_lapangan']);
+        }
+
+        return $query;
+    }
+
+    public static function statistikAdmin(): array
+    {
+        return [
+            'total' => static::count(),
+            'menunggu' => static::menunggu()->count(),
+            'hari_ini' => static::whereDate('tgl_main', today())->count(),
+            'pendapatan' => (float) static::tidakDibatalkan()
+                ->whereMonth('tgl_main', now()->month)
+                ->whereYear('tgl_main', now()->year)
+                ->sum('total_bayar'),
+        ];
+    }
+
+    public static function adaBentrok(
+        string $idLapangan,
+        string $tanggal,
+        Carbon $mulai,
+        Carbon $selesai
+    ): bool {
+        return static::query()
+            ->where('id_lapangan', $idLapangan)
+            ->whereDate('tgl_main', $tanggal)
+            ->tidakDibatalkan()
+            ->get(['jam_mulai', 'durasi'])
+            ->contains(function (self $booking) use ($tanggal, $mulai, $selesai): bool {
+                $mulaiBooking = Carbon::parse($tanggal.' '.$booking->jam_mulai);
+                $selesaiBooking = $mulaiBooking->copy()->addHours(max(1, (int) $booking->durasi));
+
+                return $mulai->lt($selesaiBooking) && $selesai->gt($mulaiBooking);
+            });
     }
 
     public static function grafik(string $periode): array

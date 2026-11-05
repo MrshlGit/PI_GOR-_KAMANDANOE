@@ -10,23 +10,13 @@
         <button class="burger" id="burger" aria-label="Menu"><svg class="ic"><use href="#i-menu"/></svg></button>
         <div class="judul">
             <h1>Manajemen Lapangan</h1>
-            <p class="muted">Atur lapangan dan pantau jadwal pemesanan per jam.</p>
         </div>
         <button type="button" class="btn kuning" data-modal="m-tambah">+ Tambah Lapangan</button>
     </div>
 
-    <section class="court-stats" aria-label="Ringkasan lapangan">
-        <div class="box court-stat"><span>Total Lapangan</span><strong>{{ $statistik['total'] }}</strong></div>
-        <div class="box court-stat"><span>Lapangan Aktif</span><strong>{{ $statistik['aktif'] }}</strong></div>
-        <div class="box court-stat"><span>Slot Terpesan · {{ \Carbon\Carbon::parse($tanggal)->format('d M Y') }}</span><strong>{{ $statistik['terpesan'] }}</strong></div>
-    </section>
-
     <section class="box schedule-box">
         <div class="box-h">
-            <div>
-                <h2>Jadwal Lapangan</h2>
-                <small class="muted">Pilih slot untuk melihat nama pemesan.</small>
-            </div>
+            <h2>Jadwal Lapangan</h2>
             <form method="GET" action="{{ route('admin.lapangan.index') }}" class="date-filter">
                 <label for="tanggal-jadwal">Tanggal</label>
                 <input id="tanggal-jadwal" type="date" name="tanggal" value="{{ $tanggal }}">
@@ -36,6 +26,7 @@
 
         <div class="schedule-legend">
             <span><i class="legend-dot available"></i>Tersedia</span>
+            <span><i class="legend-dot pending"></i>Menunggu konfirmasi</span>
             <span><i class="legend-dot booked"></i>Dipesan</span>
         </div>
 
@@ -58,24 +49,37 @@
                             </th>
                             @foreach ($jam as $hour)
                                 @php
-                                    $pemesan = array_values(array_unique($jadwal[$lapangan->id_lapangan][$hour] ?? []));
-                                    $dipesan = count($pemesan) > 0;
-                                    $pesan = $dipesan
-                                        ? 'Lapangan ini sudah dipesan oleh ' . implode(', ', $pemesan)
-                                        : 'Lapangan ini belum dipesan.';
+                                    $slotBookings = $jadwal[$lapangan->id_lapangan][$hour] ?? [];
+                                    $bookingMenunggu = collect($slotBookings)->first(
+                                        fn ($booking) => strtolower((string) $booking->status_booking) === 'menunggu'
+                                    );
+                                    $booking = $bookingMenunggu ?? ($slotBookings[0] ?? null);
+                                    $statusSlot = $bookingMenunggu ? 'pending' : ($booking ? 'booked' : 'available');
+                                    $namaPemesan = $booking
+                                        ? ($booking->nama_pemesan ?: ($booking->user?->username ?? 'User #'.$booking->id_user))
+                                        : '';
+                                    $pesan = match ($statusSlot) {
+                                        'pending' => 'Sedang dibooking oleh',
+                                        'booked' => 'Lapangan ini sedang dibooking oleh',
+                                        default => 'Lapangan ini belum dipesan.',
+                                    };
+                                    $jamSlot = sprintf('%02d:00 - %02d:00', $hour, $hour + 1);
                                 @endphp
                                 <td>
                                     <button
                                         type="button"
-                                        class="slot {{ $dipesan ? 'slot-booked' : 'slot-available' }}"
+                                        class="slot slot-{{ $statusSlot }}"
                                         data-modal="m-jadwal"
-                                        data-status="{{ $dipesan ? 'booked' : 'available' }}"
-                                        data-pesan="{{ $dipesan ? 'Lapangan ini sudah dipesan oleh' : $pesan }}"
-                                        data-pemesan="{{ implode(', ', $pemesan) }}"
+                                        data-status="{{ $statusSlot }}"
+                                        data-pesan="{{ $pesan }}"
+                                        data-pemesan="{{ $namaPemesan }}"
                                         data-lapangan="{{ $lapangan->nama_lapangan }}"
-                                        data-jam="{{ sprintf('%02d:00 - %02d:00', $hour, $hour + 1) }}"
-                                        aria-label="{{ $lapangan->nama_lapangan }}, {{ sprintf('%02d:00', $hour) }}: {{ $pesan }}"
-                                    >{{ $dipesan ? 'Dipesan' : 'Tersedia' }}</button>
+                                        data-jam="{{ $jamSlot }}"
+                                        @if ($bookingMenunggu)
+                                            data-action="{{ route('admin.lapangan.booking-status', $bookingMenunggu) }}"
+                                        @endif
+                                        aria-label="{{ $lapangan->nama_lapangan }}, {{ sprintf('%02d:00', $hour) }}: {{ $pesan }} {{ $namaPemesan }}"
+                                    >{{ $statusSlot === 'pending' ? 'Menunggu' : ($statusSlot === 'booked' ? 'Dipesan' : 'Tersedia') }}</button>
                                 </td>
                             @endforeach
                         </tr>
@@ -89,10 +93,7 @@
 
     <section class="box courts-box">
         <div class="box-h">
-            <div>
-                <h2>Status &amp; Konfigurasi Lapangan</h2>
-                <small class="muted">Foto lapangan menggunakan gambar yang tersedia di folder public/img.</small>
-            </div>
+            <h2>Status &amp; Konfigurasi Lapangan</h2>
         </div>
 
         <div class="court-grid">
@@ -241,10 +242,22 @@
             <span class="schedule-alert-icon"><svg class="ic"><use href="#i-warn"/></svg></span>
             <h3 data-isi="lapangan"></h3>
             <p class="muted" data-isi="jam"></p>
-            <p class="schedule-message">
-                <span data-isi="pesan"></span>
-                <strong class="schedule-username" data-isi="pemesan"></strong>
-            </p>
+            <div class="schedule-message">
+                <p class="schedule-booking-copy">
+                    <span data-isi="pesan"></span>
+                    <strong class="schedule-username" data-isi="pemesan"></strong>
+                </p>
+                <p class="schedule-confirm-question">Apakah kamu menyetujuinya?</p>
+            </div>
+            <form method="POST" action="" class="schedule-actions">
+                @csrf
+                @method('PATCH')
+                <input type="hidden" name="tanggal" value="{{ $tanggal }}">
+                <div class="modal-aksi">
+                    <button type="submit" name="status_booking" value="dikonfirmasi" class="btn confirm-btn">Konfirmasi</button>
+                    <button type="submit" name="status_booking" value="batal" class="btn merah">Tolak</button>
+                </div>
+            </form>
             <div class="modal-aksi">
                 <button type="button" class="btn oren" data-tutup>Tutup</button>
             </div>

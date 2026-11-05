@@ -8,14 +8,15 @@ use App\Http\Requests\UpdateUserRequest;
 use App\Models\User\User;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class AkunController extends Controller
 {
-    public function index()
+    public function index(): View
     {
         return view('admin.akun.index', [
-            'users' => User::orderBy('id')->get(),
-            'ringkasan' => User::ringkasan(),
+            'users' => User::query()->orderBy('id')->get(),
         ]);
     }
 
@@ -46,16 +47,20 @@ class AkunController extends Controller
             ->with('sukses', 'Perubahan akun berhasil disimpan.');
     }
 
-    public function destroy(User $akun): RedirectResponse
+    public function destroy(Request $request, User $akun): RedirectResponse
     {
-        if ($akun->is(auth()->user())) {
+        if ($akun->is($request->user())) {
             return redirect()->route('admin.akun.index')
                 ->with('galat', 'Anda tidak dapat menghapus akun yang sedang digunakan.');
         }
 
         try {
             $akun->delete();
-        } catch (QueryException) {
+        } catch (QueryException $exception) {
+            if ($exception->getCode() !== '23000') {
+                throw $exception;
+            }
+
             return redirect()->route('admin.akun.index')
                 ->with('galat', 'Akun tidak dapat dihapus karena masih memiliki data terkait.');
         }

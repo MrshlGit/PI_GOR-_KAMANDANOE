@@ -69,11 +69,86 @@ class AdminLapanganTest extends TestCase
         $this->actingAs($admin)
             ->get(route('admin.lapangan.index'))
             ->assertOk()
-            ->assertSee('Lapangan ini sudah dipesan oleh')
+            ->assertSee('class="menu-disabled" aria-disabled="true"', false)
+            ->assertSee('Manajemen Pemesanan')
+            ->assertSee('Sedang dibooking oleh')
+            ->assertSee('Apakah kamu menyetujuinya?')
+            ->assertSee('data-status="pending"', false)
             ->assertSee('data-pemesan="Admin"', false)
             ->assertSee('data-pesan="Lapangan ini belum dipesan."', false)
             ->assertSee('Lapangan ini belum dipesan.')
             ->assertSee('img/images.jpg');
+    }
+
+    public function test_admin_can_confirm_a_pending_booking_from_the_schedule(): void
+    {
+        $admin = User::create([
+            'username' => 'Admin',
+            'password' => 'password',
+            'role' => 'admin',
+        ]);
+        Lapangan::create([
+            'id_lapangan' => '1',
+            'nama_lapangan' => 'Lapangan A',
+            'tipe_lantai' => 'Vinyl Premium',
+            'harga_per_jam' => 50000,
+            'kapasitas' => 4,
+            'status_lapangan' => 'Aktif',
+        ]);
+        Booking::create([
+            'id_booking' => 'BOOKING-1',
+            'id_user' => $admin->id,
+            'id_lapangan' => '1',
+            'tgl_main' => today()->toDateString(),
+            'jam_mulai' => '09:00:00',
+            'durasi' => 2,
+            'status_booking' => 'menunggu',
+            'total_bayar' => 100000,
+        ]);
+
+        $this->actingAs($admin)
+            ->patch(route('admin.lapangan.booking-status', 'BOOKING-1'), [
+                'status_booking' => 'dikonfirmasi',
+                'tanggal' => today()->toDateString(),
+            ])
+            ->assertRedirect(route('admin.lapangan.index', ['tanggal' => today()->toDateString()]));
+
+        $this->assertDatabaseHas('booking', [
+            'id_booking' => 'BOOKING-1',
+            'status_booking' => 'dikonfirmasi',
+        ]);
+    }
+
+    public function test_schedule_status_action_does_not_change_a_processed_booking(): void
+    {
+        $admin = User::create([
+            'username' => 'Admin',
+            'password' => 'password',
+            'role' => 'admin',
+        ]);
+        Booking::create([
+            'id_booking' => 'BOOKING-1',
+            'id_user' => $admin->id,
+            'id_lapangan' => '1',
+            'tgl_main' => today()->toDateString(),
+            'jam_mulai' => '09:00:00',
+            'durasi' => 1,
+            'status_booking' => 'dikonfirmasi',
+            'total_bayar' => 50000,
+        ]);
+
+        $this->actingAs($admin)
+            ->patch(route('admin.lapangan.booking-status', 'BOOKING-1'), [
+                'status_booking' => 'batal',
+                'tanggal' => today()->toDateString(),
+            ])
+            ->assertRedirect(route('admin.lapangan.index', ['tanggal' => today()->toDateString()]))
+            ->assertSessionHas('galat');
+
+        $this->assertDatabaseHas('booking', [
+            'id_booking' => 'BOOKING-1',
+            'status_booking' => 'dikonfirmasi',
+        ]);
     }
 
     public function test_admin_can_create_a_court(): void

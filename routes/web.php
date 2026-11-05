@@ -31,6 +31,8 @@ Route::middleware(['auth', 'admin'])
 
         Route::resource('akun', AkunController::class)->only(['index', 'store', 'update', 'destroy']);
         Route::resource('lapangan', LapanganController::class)->only(['index', 'store', 'update', 'destroy']);
+        Route::patch('/lapangan/pemesanan/{booking}/status', [LapanganController::class, 'updateBookingStatus'])
+            ->name('lapangan.booking-status');
         Route::get('/pemesanan', [PemesananController::class, 'index'])->name('pemesanan.index');
         Route::post('/pemesanan', [PemesananController::class, 'store'])->name('pemesanan.store');
         Route::patch('/pemesanan/{booking}/status', [PemesananController::class, 'updateStatus'])
@@ -80,4 +82,3 @@ Route::post('/booking-lapangan', [BookingController::class, 'store'])
 // Ringkasan Pembayaran / Tagihan
     Route::get('/pembayaran', [RingkasanTagihanController::class, 'index'])->name('pembayaran.index');
     Route::post('/pembayaran', [RingkasanTagihanController::class, 'store'])->name('pembayaran.store');
-

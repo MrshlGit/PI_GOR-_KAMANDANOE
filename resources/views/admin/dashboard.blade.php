@@ -4,10 +4,10 @@
 @section('content')
     @php
         $kartu = [
-            ['Total Pengguna',        $stat['pengguna'],   'terdaftar di sistem',        'users',  true],
-            ['Turnamen Aktif',        $stat['turnamen'],   'terjadwal mulai hari ini',   'trophy', true],
-            ['Pendapatan Bulan Ini',  $stat['pendapatan'], 'dari pemesanan bulan ini',   'act',    false],
-            ['Pemesanan Baru',        $stat['baru'],       'perlu konfirmasi manual',    'cart',   true],
+            ['Total Pengguna',       $stat['pengguna'],   'users',  true],
+            ['Turnamen Aktif',       $stat['turnamen'],   'trophy', true],
+            ['Pendapatan Bulan Ini', $stat['pendapatan'], 'act',    false],
+            ['Pemesanan Baru',       $stat['baru'],       'cart',   true],
         ];
         $periode = ['hari' => 'Hari', 'minggu' => 'Minggu', 'bulan' => 'Bulan', 'tahun' => 'Tahun'];
     @endphp
@@ -22,11 +22,10 @@
     </div>
 
     <section class="stats">
-        @foreach ($kartu as [$label, $nilai, $ket, $ikon, $hitung])
+        @foreach ($kartu as [$label, $nilai, $ikon, $hitung])
             <div class="box stat">
                 <div class="h">{{ $label }} <span class="ico"><svg class="ic"><use href="#i-{{ $ikon }}"/></svg></span></div>
                 <strong @if ($hitung) data-count="{{ $nilai }}" @endif>{{ $nilai }}</strong>
-                <small>{{ $ket }}</small>
             </div>
         @endforeach
     </section>

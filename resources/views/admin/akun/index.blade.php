@@ -2,34 +2,16 @@
 @section('title', 'Manajemen Akun')
 
 @section('content')
-    @php
-        $kartu = [
-            ['Total Pengguna Terdaftar', $ringkasan['total'], 'k1'],
-            ['Akun Administrator',       $ringkasan['admin'], 'k2'],
-            ['Akun Player / User',       $ringkasan['user'],  'k3'],
-        ];
-    @endphp
-
     <div class="top">
         <button class="burger" id="burger" aria-label="Menu"><svg class="ic"><use href="#i-menu"/></svg></button>
         <div class="judul">
             <h1>Manajemen Akun</h1>
-            <p class="muted">Kelola akun administrator dan akun player.</p>
         </div>
         <label class="search">
             <svg class="ic"><use href="#i-search"/></svg>
             <input id="cari" type="text" placeholder="Cari pengguna...">
         </label>
     </div>
-
-    <section class="stats tiga">
-        @foreach ($kartu as [$label, $nilai, $warna])
-            <div class="box stat">
-                <div class="h">{{ $label }} <i class="dot {{ $warna }}"></i></div>
-                <strong data-count="{{ $nilai }}">{{ $nilai }}</strong>
-            </div>
-        @endforeach
-    </section>
 
     <section class="box">
         <div class="box-h">

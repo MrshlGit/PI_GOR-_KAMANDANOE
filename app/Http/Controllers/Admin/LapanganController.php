@@ -3,83 +3,72 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\ScheduleFilterRequest;
+use App\Http\Requests\Admin\StoreLapanganRequest;
+use App\Http\Requests\Admin\UpdateLapanganRequest;
+use App\Http\Requests\Admin\UpdateScheduleBookingStatusRequest;
 use App\Models\Admin\Booking;
 use App\Models\Admin\Lapangan;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
 class LapanganController extends Controller
 {
-    public function index(Request $request): View
+    public function index(ScheduleFilterRequest $request): View
     {
-        $tanggal = $request->validate([
-            'tanggal' => ['nullable', 'date_format:Y-m-d'],
-        ])['tanggal'] ?? today()->toDateString();
+        $tanggal = $request->validated()['tanggal'] ?? today()->toDateString();
 
         $lapangans = Lapangan::orderBy('id_lapangan')->get();
         $jam = range(7, 22);
-        $jadwal = [];
-        $bookings = Booking::with('user:id,username')
-            ->whereDate('tgl_main', $tanggal)
-            ->whereRaw('LOWER(status_booking) NOT IN (?, ?, ?)', ['batal', 'dibatalkan', 'cancelled'])
-            ->orderBy('jam_mulai')
-            ->get();
+        $jadwal = Lapangan::jadwalUntukTanggal($tanggal, $jam);
 
-        foreach ($bookings as $booking) {
-            $nama = $booking->user?->username ?? 'User #'.$booking->id_user;
-            $mulai = (int) substr((string) $booking->jam_mulai, 0, 2);
-
-            for ($offset = 0; $offset < max(1, (int) $booking->durasi); $offset++) {
-                $slot = $mulai + $offset;
-
-                if ($slot >= 7 && $slot <= 22) {
-                    $jadwal[$booking->id_lapangan][$slot][] = $nama;
-                }
-            }
-        }
-
-        $statistik = [
-            'total' => $lapangans->count(),
-            'aktif' => $lapangans->filter(fn (Lapangan $lapangan) => strtolower((string) $lapangan->status_lapangan) !== 'nonaktif')->count(),
-            'terpesan' => collect($jadwal)->sum(
-                fn (array $lapangan) => count($lapangan)
-            ),
-        ];
-
-        return view('admin.lapangan.index', compact('tanggal', 'jam', 'jadwal', 'lapangans', 'statistik'));
+        return view('admin.lapangan.index', compact('tanggal', 'jam', 'jadwal', 'lapangans'));
     }
 
-    public function store(Request $request): RedirectResponse
+    public function updateBookingStatus(
+        UpdateScheduleBookingStatusRequest $request,
+        Booking $booking
+    ): RedirectResponse
     {
-        $data = $request->validateWithBag('tambah', [
-            'id_lapangan' => ['required', 'string', 'max:11', Rule::unique('lapangan', 'id_lapangan')],
-            'nama_lapangan' => ['required', 'string', 'max:20'],
-            'tipe_lantai' => ['required', 'string', 'max:100'],
-            'harga_per_jam' => ['required', 'numeric', 'min:0'],
-            'kapasitas' => ['required', 'integer', 'min:1', 'max:32'],
-            'status_lapangan' => ['required', Rule::in(['Aktif', 'Nonaktif'])],
-        ]);
+        $data = $request->validated();
 
-        Lapangan::create($data);
+        $updated = DB::transaction(function () use ($booking, $data): bool {
+            $booking = Booking::whereKey($booking->getKey())->lockForUpdate()->firstOrFail();
+
+            if (strtolower((string) $booking->status_booking) !== 'menunggu') {
+                return false;
+            }
+
+            $booking->update(['status_booking' => $data['status_booking']]);
+
+            return true;
+        });
+
+        if (! $updated) {
+            return redirect()->route('admin.lapangan.index', ['tanggal' => $data['tanggal']])
+                ->with('galat', 'Pemesanan ini sudah diproses sebelumnya.');
+        }
+
+        $pesan = $data['status_booking'] === 'dikonfirmasi'
+            ? 'Pemesanan berhasil dikonfirmasi.'
+            : 'Pemesanan berhasil ditolak.';
+
+        return redirect()->route('admin.lapangan.index', ['tanggal' => $data['tanggal']])
+            ->with('sukses', $pesan);
+    }
+
+    public function store(StoreLapanganRequest $request): RedirectResponse
+    {
+        Lapangan::create($request->validated());
 
         return redirect()->route('admin.lapangan.index')
             ->with('sukses', 'Lapangan berhasil ditambahkan.');
     }
 
-    public function update(Request $request, Lapangan $lapangan): RedirectResponse
+    public function update(UpdateLapanganRequest $request, Lapangan $lapangan): RedirectResponse
     {
-        $data = $request->validateWithBag('ubah', [
-            'nama_lapangan' => ['required', 'string', 'max:20'],
-            'tipe_lantai' => ['required', 'string', 'max:100'],
-            'harga_per_jam' => ['required', 'numeric', 'min:0'],
-            'kapasitas' => ['required', 'integer', 'min:1', 'max:32'],
-            'status_lapangan' => ['required', Rule::in(['Aktif', 'Nonaktif'])],
-        ]);
-
-        $lapangan->update($data);
+        $lapangan->update($request->validated());
 
         return redirect()->route('admin.lapangan.index')
             ->with('sukses', 'Konfigurasi lapangan berhasil diperbarui.');

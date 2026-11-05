@@ -32,26 +32,52 @@ class Lapangan extends Model
         return $this->hasMany(Booking::class, 'id_lapangan', 'id_lapangan');
     }
 
-    public function sedangDipakai(): bool
+    public static function jadwalUntukTanggal(string $tanggal, array $jam): array
     {
-        $sekarang = now();
+        $jadwal = [];
+        $jamTersedia = array_fill_keys($jam, true);
 
-        return $this->booking()
-            ->whereDate('tgl_main', $sekarang->toDateString())
-            ->whereRaw('LOWER(status_booking) NOT IN (?, ?, ?)', ['batal', 'dibatalkan', 'cancelled'])
-            ->get(['jam_mulai', 'durasi'])
-            ->contains(function (Booking $booking) use ($sekarang): bool {
-                $mulai = $sekarang->copy()->setTimeFromTimeString((string) $booking->jam_mulai);
-                $selesai = $mulai->copy()->addHours(max(1, (int) $booking->durasi));
+        $bookings = Booking::with('user:id,username')
+            ->whereDate('tgl_main', $tanggal)
+            ->tidakDibatalkan()
+            ->orderBy('jam_mulai')
+            ->get();
 
-                return $sekarang->greaterThanOrEqualTo($mulai) && $sekarang->lessThan($selesai);
-            });
+        foreach ($bookings as $booking) {
+            $mulai = (int) substr((string) $booking->jam_mulai, 0, 2);
+
+            for ($offset = 0; $offset < max(1, (int) $booking->durasi); $offset++) {
+                $slot = $mulai + $offset;
+
+                if (isset($jamTersedia[$slot])) {
+                    $jadwal[$booking->id_lapangan][$slot][] = $booking;
+                }
+            }
+        }
+
+        return $jadwal;
     }
 
     public static function denganStatus(): Collection
     {
+        $sekarang = now();
+        $idLapanganDipakai = Booking::whereDate('tgl_main', $sekarang->toDateString())
+            ->tidakDibatalkan()
+            ->get(['id_lapangan', 'jam_mulai', 'durasi'])
+            ->filter(function (Booking $booking) use ($sekarang): bool {
+                $mulai = $sekarang->copy()->setTimeFromTimeString((string) $booking->jam_mulai);
+                $selesai = $mulai->copy()->addHours(max(1, (int) $booking->durasi));
+
+                return $sekarang->greaterThanOrEqualTo($mulai) && $sekarang->lessThan($selesai);
+            })
+            ->pluck('id_lapangan')
+            ->unique();
+
         return static::orderBy('id_lapangan')->get()->each(
-            fn (self $lapangan) => $lapangan->setAttribute('dipakai', $lapangan->sedangDipakai())
+            fn (self $lapangan) => $lapangan->setAttribute(
+                'dipakai',
+                $idLapanganDipakai->contains($lapangan->getKey())
+            )
         );
     }
 }

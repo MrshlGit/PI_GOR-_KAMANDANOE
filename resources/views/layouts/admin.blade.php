@@ -27,13 +27,14 @@
 </svg>
 
 @php
+    $manajemenPemesananAktif = false;
     $menu = [
-        ['Dashboard',            'grid',   'admin.dashboard',  'admin.dashboard'],
-        ['Manajemen Akun',       'user',   'admin.akun.index', 'admin.akun.*'],
-        ['Manajemen Turnamen',   'trophy', null,               null],
-        ['Manajemen Lapangan',   'pin',    'admin.lapangan.index', 'admin.lapangan.*'],
-        ['Manajemen Pemesanan',  'cal',    'admin.pemesanan.index', 'admin.pemesanan.*'],
-        ['Laporan Keuangan',     'cash',   null,               null],
+        ['Dashboard',            'grid',   'admin.dashboard',  'admin.dashboard', true],
+        ['Manajemen Akun',       'user',   'admin.akun.index', 'admin.akun.*', true],
+        ['Manajemen Turnamen',   'trophy', null,               null, true],
+        ['Manajemen Lapangan',   'pin',    'admin.lapangan.index', 'admin.lapangan.*', true],
+        ['Manajemen Pemesanan',  'cal',    'admin.pemesanan.index', 'admin.pemesanan.*', $manajemenPemesananAktif],
+        ['Laporan Keuangan',     'cash',   null,               null, true],
     ];
 @endphp
 
@@ -45,10 +46,17 @@
         </div>
 
         <nav class="menu">
-            @foreach ($menu as [$nama, $ikon, $rute, $pola])
+            @foreach ($menu as [$nama, $ikon, $rute, $pola, $aktif])
+                @if ($aktif)
                 <a href="{{ $rute ? route($rute) : '#' }}" @class(['on' => $pola && request()->routeIs($pola)])>
                     <svg class="ic"><use href="#i-{{ $ikon }}"/></svg> {{ $nama }}
                 </a>
+                @else
+                    <span class="menu-disabled" aria-disabled="true">
+                        <svg class="ic"><use href="#i-{{ $ikon }}"/></svg>
+                        {{ $nama }}
+                    </span>
+                @endif
             @endforeach
         </nav>
 

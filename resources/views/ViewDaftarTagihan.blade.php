@@ -153,9 +153,11 @@
                 <!-- Action Buttons -->
                 <div class="action-footer">
                     <button class="btn btn-confirm">
+                       <a href="{{ route('pembayaran.index') }}" class="btn btn-confirm" style="text-decoration: none;">
                         Konfirmasi
                         <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
-                    </button>
+                    </a>
+                    
                     <button class="btn btn-cancel">
                         <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
                         Batal

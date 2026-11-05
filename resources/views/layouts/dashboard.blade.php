@@ -17,7 +17,7 @@
          'icon' => '<path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0V4z"/><path d="M17 5h3v2a3 3 0 0 1-3 3M7 5H4v2a3 3 0 0 0 3 3"/>'],
         ['label' => 'Layanan Informasi',  'url' => '#',          'is' => 'layanan*',   'ready' => false,
          'icon' => '<circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/>'],
-        ['label' => 'Pemesanan',          'url' => route('booking.create'),   'is' => 'booking*',   'ready' => true,
+        ['label' => 'Pemesanan',          'url' => route('pilihBook_view'),   'is' => 'booking*',   'ready' => true,
          'icon' => '<circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/><path d="M3 4h2l2.4 11h10.2L20 7H6"/>'],
         ['label' => 'Transaksi',          'url' => '/transaksi', 'is' => 'transaksi*', 'ready' => false,
          'icon' => '<path d="M6 3h12v18l-3-2-3 2-3-2-3 2V3z"/><path d="M9 8h6M9 12h6"/>'],

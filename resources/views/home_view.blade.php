@@ -6,8 +6,8 @@
     <title>GOR Kamandanoe · Pemesanan Lapangan</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lato:wght@700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/home.css') }}">
-</head>
     <script src="{{ asset('js/home.js') }}" defer></script>
+</head>
 <body>
 
 <header class="nav">
@@ -23,7 +23,7 @@
         <div class="nav-auth" id="navAuth">
             <span class="pill"></span>
             <a href="/login" class="na">Masuk</a>
-             <a href="/register" class="na is-active">Daftar</a>
+            <a href="/register" class="na is-active">Daftar</a>
         </div>
     </div>
 </header>
@@ -72,7 +72,7 @@
         </div>
 
         <div class="hero-person">
-            <img src="{{ asset('img/pemain.png') }}" alt="Pemain badminton" onerror="this.style.display='none'">
+            <img src="{{ asset('img/kok.png') }}" alt="Pemain badminton" onerror="this.style.display='none'">
         </div>
     </div>
 </section>
@@ -80,10 +80,10 @@
 <section id="lapangan" class="wrap section">
     <h2>Pilih lapangan</h2>
     <div class="grid">
-        <div class="card-l"><h3>Lapangan A</h3><p>Lantai karpet</p><b>Rp 50.000 / jam</b></div>
-        <div class="card-l"><h3>Lapangan B</h3><p>Lantai kayu</p><b>Rp 70.000 / jam</b></div>
-        <div class="card-l"><h3>Lapangan C</h3><p>Premium</p><b>Rp 90.000 / jam</b></div>
-        <div class="card-l"><h3>Lapangan D</h3><p>Premium</p><b>Rp 90.000 / jam</b></div>
+        <div class="card-l"><h3>Lapangan 1</h3><p>Lantai karpet</p><b>Rp 40.000 / jam</b></div>
+        <div class="card-l"><h3>Lapangan 2</h3><p>Lantai karpet</p><b>Rp 40.000 / jam</b></div>
+        <div class="card-l"><h3>Lapangan 3</h3><p>Lantai kayu</p><b>Rp 30.000 / jam</b></div>
+        <div class="card-l"><h3>Lapangan 4</h3><p>Lantai kayu</p><b>Rp 30.000 / jam</b></div>
     </div>
 </section>
 

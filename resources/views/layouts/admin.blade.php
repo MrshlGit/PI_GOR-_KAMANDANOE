@@ -6,9 +6,10 @@
     <title>@yield('title', 'Dashboard') · Admin GOR Kamandanoe</title>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/admin.css') }}">
+    @stack('styles')
     <script src="{{ asset('js/admin.js') }}" defer></script>
 </head>
-<body>
+<body class="admin-app">
 
 <svg width="0" height="0" style="position:absolute">
     <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></symbol>
@@ -22,16 +23,17 @@
     <symbol id="i-cart" viewBox="0 0 24 24"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></symbol>
     <symbol id="i-act" viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></symbol>
     <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></symbol>
+    <symbol id="i-warn" viewBox="0 0 24 24"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4M12 17h.01"/></symbol>
 </svg>
 
 @php
     $menu = [
-        ['Dashboard',            'grid',   'admin.dashboard'],
-        ['Manajemen Akun',       'user',   '#'],
-        ['Manajemen Turnamen',   'trophy', '#'],
-        ['Manajemen Lapangan',   'pin',    '#'],
-        ['Manajemen Pemesanan',  'cal',    '#'],
-        ['Laporan Keuangan',     'cash',   '#'],
+        ['Dashboard',            'grid',   'admin.dashboard',  'admin.dashboard'],
+        ['Manajemen Akun',       'user',   'admin.akun.index', 'admin.akun.*'],
+        ['Manajemen Turnamen',   'trophy', null,               null],
+        ['Manajemen Lapangan',   'pin',    'admin.lapangan.index', 'admin.lapangan.*'],
+        ['Manajemen Pemesanan',  'cal',    'admin.pemesanan.index', 'admin.pemesanan.*'],
+        ['Laporan Keuangan',     'cash',   null,               null],
     ];
 @endphp
 
@@ -43,9 +45,8 @@
         </div>
 
         <nav class="menu">
-            @foreach ($menu as [$nama, $ikon, $rute])
-                <a href="{{ $rute === '#' ? '#' : route($rute) }}"
-                   @class(['on' => $rute !== '#' && request()->routeIs($rute)])>
+            @foreach ($menu as [$nama, $ikon, $rute, $pola])
+                <a href="{{ $rute ? route($rute) : '#' }}" @class(['on' => $pola && request()->routeIs($pola)])>
                     <svg class="ic"><use href="#i-{{ $ikon }}"/></svg> {{ $nama }}
                 </a>
             @endforeach
@@ -54,7 +55,7 @@
         <div class="me">
             <span class="av">{{ strtoupper(substr(auth()->user()->username, 0, 1)) }}</span>
             <div><b>{{ auth()->user()->username }}</b><small>Administrator</small></div>
-            <form method="POST" action="/logout">
+            <form method="POST" action="{{ route('logout') }}">
                 @csrf
                 <button class="out">Logout</button>
             </form>
@@ -66,5 +67,12 @@
     </main>
 </div>
 
+@if (session('sukses') || session('galat'))
+    <div class="toast {{ session('galat') ? 'err' : '' }}" id="toast" role="status">
+        {{ session('galat') ?? session('sukses') }}
+    </div>
+@endif
+
+@stack('scripts')
 </body>
 </html>

@@ -22,7 +22,7 @@
     <title>Ringkasan Pembayaran · GOR Kamandanoe</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/dashboard.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/ringkasan_pembayaran.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/ringkasantagihan.css') }}"> <!-- Sesuaikan dengan nama file css di folder public/css -->
 </head>
 <body>
 
@@ -97,13 +97,10 @@
                     <p>Silahkan upload file/foto transaksi bayar anda pada tempat file yang telah disediakan</p>
                 </div>
 
-                <!-- Grid 2-Kolom: Left (Order List & Upload) | Right (Summary Invoice) -->
+                <!-- Grid 2-Kolom -->
                 <div class="payment-grid">
                     
-                    <!-- Column Left -->
                     <div class="left-column">
-                        
-                        <!-- Table Barang -->
                         <div class="items-table-card">
                             <table>
                                 <thead>
@@ -123,18 +120,14 @@
                             </table>
                         </div>
 
-                        <!-- Area QR & Upload Bukti Pembayaran -->
                         <div class="upload-section">
                             <h3 class="section-title">Bukti Pembayaran</h3>
-                            
                             <div class="upload-row">
-                                <!-- QR Link Trigger -->
                                 <div class="qr-trigger">
                                     <svg viewBox="0 0 24 24" width="32" height="32" stroke="currentColor" stroke-width="2" fill="none"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
                                     <a href="#">Klik untuk bayar</a>
                                 </div>
 
-                                <!-- Dropzone Box Upload -->
                                 <form action="{{ route('pembayaran.store') }}" method="POST" enctype="multipart/form-data" class="dropzone-box">
                                     @csrf
                                     <div class="upload-icon-circle">
@@ -147,10 +140,8 @@
                                 </form>
                             </div>
                         </div>
-
                     </div>
 
-                    <!-- Column Right: Summary Card -->
                     <div class="right-column">
                         <div class="summary-card">
                             <h2>Ringkasan</h2>

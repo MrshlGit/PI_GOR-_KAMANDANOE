@@ -5,11 +5,10 @@ namespace App\Http\Controllers\User;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
-class PembayaranController extends Controller
+class RingkasanTagihanController extends Controller
 {
     public function index()
     {
-        // Data item pesanan
         $items = [
             ['nama' => 'Turnamen PB Juara', 'harga' => '200.000'],
             ['nama' => 'Lap 1 (Karpet)',     'harga' => '120.000'],
@@ -17,7 +16,6 @@ class PembayaranController extends Controller
             ['nama' => 'Raket',             'harga' => '45.000'],
         ];
 
-        // Data ringkasan tagihan
         $summary = [
             'tanggal'        => '19 Agus 2026',
             'petugas'        => 'P1',
@@ -28,12 +26,11 @@ class PembayaranController extends Controller
             'total'          => 'Rp. 379.000'
         ];
 
-        return view('ringkasan_pembayaran_view', compact('items', 'summary'));
+        return view('ViewRingkasanTagihan', compact('items', 'summary'));
     }
 
     public function store(Request $request)
     {
-        // Logika untuk menangani upload bukti pembayaran / proses bayar
         return redirect()->back()->with('success', 'Bukti pembayaran berhasil diunggah!');
     }
 }

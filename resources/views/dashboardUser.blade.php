@@ -11,12 +11,6 @@
         ['judul' => 'Turnamen Antar Desa', 'teks' => 'Ayo ikuti ajang kejuaraan daerah Jogja', 'img' => 'turnamen1.jpg'],
         ['judul' => 'Turnamen Antar Desa', 'teks' => 'Ayo ikuti ajang kejuaraan daerah Jogja', 'img' => 'turnamen2.jpg'],
     ];
-    $lapangan = [
-        ['nama' => 'Lapangan Kayu',   'img' => 'lapangankayu.jpg',   'harga' => 30000,
-         'desc' => 'Lapangan dengan berbahan dasar kayu, berwarnakan coklat dengan garis tepi putih.'],
-        ['nama' => 'Lapangan Karpet', 'img' => 'lapangankarpet.jpg', 'harga' => 40000,
-         'desc' => 'Lapangan dengan berbahan dasar karpet, berwarnakan coklat dengan garis tepi putih.'],
-    ];
 @endphp
 
 <section class="welcome fade-up">
@@ -42,15 +36,16 @@
     </div>
 
     <div class="cards">
-        @foreach ($lapangan as $l)
-            <article class="lap" data-nama="{{ $l['nama'] }}">
-                <div class="pic" style="--img:url('{{ asset('img/'.$l['img']) }}')"></div>
+        @foreach ($lapangans as $lapangan)
+            @php($gambar = strtolower($lapangan->tipe_lantai) === 'kayu' ? 'lapangankayu.jpg' : 'lapangankarpet.jpg')
+            <article class="lap" data-nama="{{ $lapangan->nama_lapangan }}">
+                <div class="pic" style="--img:url('{{ asset('img/'.$gambar) }}')"></div>
                 <div class="body">
-                    <h3>{{ $l['nama'] }}</h3>
-                    <p>{{ $l['desc'] }}</p>
+                    <h3>{{ $lapangan->nama_lapangan }}</h3>
+                    <p>Lapangan dengan lantai {{ strtolower($lapangan->tipe_lantai) }}.</p>
                     <div class="lap-foot">
-                        <div class="price">Rp. {{ number_format($l['harga'], 0, ',', '.') }} <small>/ jam</small></div>
-                        <a href="/booking" class="book">Booking &gt;</a>
+                        <div class="price">Rp. {{ number_format((float) $lapangan->harga_per_jam, 0, ',', '.') }} <small>/ jam</small></div>
+                        <a href="{{ route('booking.create') }}" class="book">Booking &gt;</a>
                     </div>
                 </div>
             </article>

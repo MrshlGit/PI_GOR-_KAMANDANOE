@@ -44,7 +44,7 @@
         </div>
 
         <div class="hero-person">
-            <img src="{{ asset('img/pemain.png') }}" alt="Pemain badminton" onerror="this.style.display='none'">
+            <img src="{{ asset('img/kok.png') }}" alt="Pemain badminton" onerror="this.style.display='none'">
         </div>
     </div>
 </section>
@@ -52,10 +52,10 @@
 <section id="lapangan" class="wrap section">
     <h2>Pilih lapangan</h2>
     <div class="grid">
-        <div class="card-l"><h3>Lapangan A</h3><p>Lantai karpet</p><b>Rp 50.000 / jam</b></div>
-        <div class="card-l"><h3>Lapangan B</h3><p>Lantai kayu</p><b>Rp 70.000 / jam</b></div>
-        <div class="card-l"><h3>Lapangan C</h3><p>Premium</p><b>Rp 90.000 / jam</b></div>
-        <div class="card-l"><h3>Lapangan D</h3><p>Premium</p><b>Rp 90.000 / jam</b></div>
+        <div class="card-l"><h3>Lapangan 1</h3><p>Lantai karpet</p><b>Rp 40.000 / jam</b></div>
+        <div class="card-l"><h3>Lapangan 2</h3><p>Lantai karpet</p><b>Rp 40.000 / jam</b></div>
+        <div class="card-l"><h3>Lapangan 3</h3><p>Lantai kayu</p><b>Rp 30.000 / jam</b></div>
+        <div class="card-l"><h3>Lapangan 4</h3><p>Lantai kayu</p><b>Rp 30.000 / jam</b></div>
     </div>
 </section>
 

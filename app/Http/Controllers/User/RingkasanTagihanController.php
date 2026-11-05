@@ -31,6 +31,19 @@ class RingkasanTagihanController extends Controller
 
     public function store(Request $request)
     {
+        // Validasi file yang diunggah
+        $request->validate([
+            'bukti_bayar' => 'required|image|mimes:jpeg,png,jpg,pdf|max:5000',
+        ]);
+
+        if ($request->hasFile('bukti_bayar')) {
+            // Menyimpan file bukti pembayaran secara permanen ke folder storage/app/public/bukti_pembayaran
+            $filePath = $request->file('bukti_bayar')->store('bukti_pembayaran', 'public');
+
+            // (Opsional) Di sini Anda bisa menyimpan $filePath ke database bersama data tagihan pengguna
+
+            return redirect()->route('dashboard')->with('success', 'Pembayaran berhasil dikonfirmasi dan bukti telah diunggah!');
+        }
         return redirect()->back()->with('success', 'Bukti pembayaran berhasil diunggah!');
     }
 }

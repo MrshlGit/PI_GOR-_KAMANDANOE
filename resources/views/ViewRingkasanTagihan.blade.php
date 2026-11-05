@@ -22,7 +22,7 @@
     <title>Ringkasan Pembayaran · GOR Kamandanoe</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/dashboard.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/ringkasantagihan.css') }}"> <!-- Sesuaikan dengan nama file css di folder public/css -->
+    <link rel="stylesheet" href="{{ asset('css/ringkasantagihan.css') }}">
 </head>
 <body>
 
@@ -31,7 +31,6 @@
     {{-- ===== SIDEBAR ===== --}}
     <aside class="sidebar" id="sidebar">
         <a href="/dashboard" class="brand">GOR <span>Kamandanoe</span></a>
-
         <nav class="menu">
             @foreach ($menu as $m)
                 <a href="{{ $m['url'] }}"
@@ -42,7 +41,6 @@
                 </a>
             @endforeach
         </nav>
-
         <form method="POST" action="/logout" class="logout">
             @csrf
             <button type="submit">
@@ -53,18 +51,15 @@
     </aside>
 
     <div class="main">
-
         {{-- ===== TOPBAR ===== --}}
         <header class="topbar">
             <button class="burger" id="burger" aria-label="Menu">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
             </button>
-
             <label class="search">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
                 <input id="cari" type="search" placeholder="Cari lapangan">
             </label>
-
             <div class="top-right">
                 <div class="dropdown">
                     <button class="icon-btn ring trigger" aria-label="Notifikasi">
@@ -73,7 +68,6 @@
                     </button>
                     <div class="drop"><p class="empty">Belum ada notifikasi</p></div>
                 </div>
-
                 <div class="dropdown">
                     <button class="user-btn trigger">
                         <span class="avatar">{{ strtoupper(substr($user->username ?? 'U', 0, 1)) }}</span>
@@ -91,116 +85,163 @@
         <main class="content">
             <section class="content-body">
                 
-                <!-- Header Banner Card -->
                 <div class="header-card">
                     <h1>Ringkasan Pembayaran</h1>
                     <p>Silahkan upload file/foto transaksi bayar anda pada tempat file yang telah disediakan</p>
                 </div>
 
-                <!-- Grid 2-Kolom -->
-                <div class="payment-grid">
-                    
-                    <div class="left-column">
-                        <div class="items-table-card">
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>NAMA</th>
-                                        <th>JUMLAH</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach($items as $item)
+                <!-- FORM UTAMA PEMBAYARAN -->
+                <form action="{{ route('pembayaran.store') }}" method="POST" enctype="multipart/form-data" class="payment-grid-form">
+                    @csrf
+                    <div class="payment-grid">
+                        
+                        <!-- Kolom Kiri -->
+                        <div class="left-column">
+                            <div class="items-table-card">
+                                <table>
+                                    <thead>
                                         <tr>
-                                            <td>{{ $item['nama'] }}</td>
-                                            <td>{{ $item['harga'] }}</td>
+                                            <th>NAMA</th>
+                                            <th>JUMLAH</th>
                                         </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div>
+                                    </thead>
+                                    <tbody>
+                                        @foreach($items as $item)
+                                            <tr>
+                                                <td>{{ $item['nama'] }}</td>
+                                                <td>{{ $item['harga'] }}</td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
 
-                        <div class="upload-section">
-                            <h3 class="section-title">Bukti Pembayaran</h3>
-                            <div class="upload-row">
-                                <div class="qr-trigger">
-                                    <svg viewBox="0 0 24 24" width="32" height="32" stroke="currentColor" stroke-width="2" fill="none"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
-                                    <a href="#">Klik untuk bayar</a>
-                                </div>
-
-                                <form action="{{ route('pembayaran.store') }}" method="POST" enctype="multipart/form-data" class="dropzone-box">
-                                    @csrf
-                                    <div class="upload-icon-circle">
-                                        <svg viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" stroke-width="2" fill="none"><path d="M17 21H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="12 11 12 17"></polyline><polyline points="9 14 12 11 15 14"></polyline></svg>
+                            <div class="upload-section">
+                                <h3 class="section-title">Bukti Pembayaran</h3>
+                                <div class="upload-row">
+                                    <!-- Tombol Panggil QR Code -->
+                                    <div class="qr-trigger" onclick="openQrModal()" style="cursor: pointer;">
+                                        <svg viewBox="0 0 24 24" width="32" height="32" stroke="currentColor" stroke-width="2" fill="none"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                                        <span style="font-size: 13px; font-weight: 600; color: #f78333;">Klik (QRIS)</span>
                                     </div>
-                                    <p class="dropzone-text">Tarik & Lepas bukti bayar di sini, atau</p>
-                                    <label for="file_upload" class="btn-select-file">Pilih File</label>
-                                    <input type="file" id="file_upload" name="bukti_bayar" style="display:none;" onchange="this.form.submit()">
-                                    <span class="file-hint">Format JPG, PNG, atau PDF (Maks. 5MB)</span>
-                                </form>
+
+                                    <!-- Box Upload File -->
+                                    <div class="dropzone-box" id="dropzoneBox">
+                                        <div class="upload-icon-circle">
+                                            <svg viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" stroke-width="2" fill="none"><path d="M17 21H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="12 11 12 17"></polyline><polyline points="9 14 12 11 15 14"></polyline></svg>
+                                        </div>
+                                        <p class="dropzone-text" id="fileLabelText">Tarik & Lepas bukti bayar di sini, atau</p>
+                                        <label for="file_upload" class="btn-select-file">Pilih File</label>
+                                        <!-- Event onchange untuk mendeteksi file dan mengaktifkan tombol bayar -->
+                                        <input type="file" id="file_upload" name="bukti_bayar" style="display:none;" onchange="handleFileSelect(this)">
+                                        <span class="file-hint">Format JPG, PNG, atau PDF (Maks. 5MB)</span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    <div class="right-column">
-                        <div class="summary-card">
-                            <h2>Ringkasan</h2>
-                            <p class="summary-desc">Mohon tinjau detail barang pesanan di bawah ini sebelum melakukan pembayaran.</p>
-                            
-                            <div class="summary-details">
-                                <div class="summary-row">
-                                    <span>Tanggal Dibuat</span>
-                                    <strong>{{ $summary['tanggal'] }}</strong>
+                        <!-- Kolom Kanan (Ringkasan & Tombol Bayar) -->
+                        <div class="right-column">
+                            <div class="summary-card">
+                                <h2>Ringkasan</h2>
+                                <p class="summary-desc">Mohon tinjau detail barang pesanan di bawah ini sebelum melakukan pembayaran.</p>
+                                
+                                <div class="summary-details">
+                                    <div class="summary-row"><span>Tanggal Dibuat</span><strong>{{ $summary['tanggal'] }}</strong></div>
+                                    <div class="summary-row"><span>Petugas</span><strong>{{ $summary['petugas'] }}</strong></div>
+                                    <div class="summary-row"><span>Subtotal</span><strong>{{ $summary['subtotal'] }}</strong></div>
+                                    <div class="summary-row"><span>Potongan Harga</span><strong>{{ $summary['potongan'] }}</strong></div>
+                                    <div class="summary-row"><span>PPN</span><strong>{{ $summary['ppn'] }}</strong></div>
+                                    <div class="summary-row"><span>Nilai Transaksi</span><strong>{{ $summary['nilai_transaksi'] }}</strong></div>
                                 </div>
-                                <div class="summary-row">
-                                    <span>Petugas</span>
-                                    <strong>{{ $summary['petugas'] }}</strong>
-                                </div>
-                                <div class="summary-row">
-                                    <span>Subtotal</span>
-                                    <strong>{{ $summary['subtotal'] }}</strong>
-                                </div>
-                                <div class="summary-row">
-                                    <span>Dikurangi Potongan Harga</span>
-                                    <strong>{{ $summary['potongan'] }}</strong>
-                                </div>
-                                <div class="summary-row">
-                                    <span>PPN</span>
-                                    <strong>{{ $summary['ppn'] }}</strong>
-                                </div>
-                                <div class="summary-row">
-                                    <span>Nilai Transaksi</span>
-                                    <strong>{{ $summary['nilai_transaksi'] }}</strong>
-                                </div>
-                            </div>
 
-                            <div class="summary-total-row">
-                                <span>Total :</span>
-                                <strong>{{ $summary['total'] }}</strong>
-                            </div>
+                                <div class="summary-total-row">
+                                    <span>Total :</span>
+                                    <strong>{{ $summary['total'] }}</strong>
+                                </div>
 
-                            <div class="pay-action-wrapper">
-                                <button class="btn-pay">Bayar</button>
+                                <div class="pay-action-wrapper">
+                                    <!-- Tombol Bayar (Default Disabled & Abu-abu) -->
+                                    <button type="submit" id="btnPay" class="btn-pay disabled" disabled>Bayar</button>
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                </div>
+                    </div>
+                </form>
 
             </section>
         </main>
-
-        {{-- ===== FOOTER ===== --}}
-        <footer class="foot">
-            <div class="foot-brand">GOR<br>Kamandanoe</div>
-            <div><h4>Tentang Kami</h4><a href="#">gorkamandanoe.com</a><a href="#">gorkamandanoe.com</a><a href="#">gorkamandanoe.com</a></div>
-            <div><h4>Partner</h4><a href="#">gorkamandanoe.com</a><a href="#">gorkamandanoe.com</a><a href="#">gorkamandanoe.com</a></div>
-            <div><h4>Media Sosial</h4><a href="#">gorkamandanoe.com</a><a href="#">gorkamandanoe.com</a><a href="#">gorkamandanoe.com</a></div>
-        </footer>
-
     </div>
 </div>
 
+<!-- MODAL POPUP QRIS -->
+<div id="qrModal" class="modal-overlay" style="display:none;">
+    <div class="modal-content">
+        <h3>Scan QRIS Pembayaran</h3>
+        <p>Silahkan scan QR di bawah ini menggunakan m-Banking atau E-Wallet Anda.</p>
+        <!-- Contoh gambar QRIS -->
+        <div style="margin: 20px 0;">
+           <img src="{{ asset('img/QR.jpeg') }}" alt="QRIS GOR Kamandanoe" style="width: 220px; height: 220px; border: 2px solid #ddd; border-radius: 10px; object-fit: contain;">
+        </div>
+        <button type="button" onclick="closeQrModal()" class="btn-select-file" style="background:#333;">Tutup</button>
+    </div>
+</div>
+
+<style>
+/* CSS Tambahan untuk Modal & State Tombol Disabled */
+.btn-pay.disabled {
+    background-color: #cccccc !important;
+    color: #666666 !important;
+    cursor: not-allowed !important;
+    opacity: 0.7;
+}
+.modal-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.5); display: flex; justify-content: center; align-items: center; z-index: 9999;
+}
+.modal-content {
+    background: #fff; padding: 30px; border-radius: 16px; text-align: center; max-width: 400px; width: 100%;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+}
+.payment-grid-form { width: 100%; }
+</style>
+
+<script>
+    lucide.createIcons();
+
+    // Fungsi Popup QR
+    function openQrModal() {
+        document.getElementById('qrModal').style.display = 'flex';
+    }
+    function closeQrModal() {
+        document.getElementById('qrModal').style.display = 'none';
+    }
+
+    // Fungsi Deteksi File Upload & Mengaktifkan Tombol Bayar
+    function handleFileSelect(input) {
+        const btnPay = document.getElementById('btnPay');
+        const fileLabelText = document.getElementById('fileLabelText');
+        
+        if (input.files && input.files[0]) {
+            const fileName = input.files[0].name;
+            fileLabelText.textContent = "File dipilih: " + fileName;
+            fileLabelText.style.color = "#0a8a18";
+            fileLabelText.style.fontWeight = "600";
+
+            // Ubah tombol jadi aktif & warna orange
+            btnPay.classList.remove('disabled');
+            btnPay.removeAttribute('disabled');
+        } else {
+            fileLabelText.textContent = "Tarik & Lepas bukti bayar di sini, atau";
+            fileLabelText.style.color = "#666";
+
+            // Matikan kembali tombol jika file batal dipilih
+            btnPay.classList.add('disabled');
+            btnPay.setAttribute('disabled', 'true');
+        }
+    }
+</script>
 <script src="{{ asset('js/dashboard.js') }}"></script>
 </body>
 </html>

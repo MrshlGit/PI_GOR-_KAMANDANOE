@@ -2,6 +2,7 @@
 @section('title', 'Dashboard')
 
 @section('content')
+
 @php
     $slides = [
         ['judul' => 'Turnamen Antar Desa', 'teks' => 'Ayo ikuti ajang kejuaraan daerah Jogja', 'img' => 'turnamen1.jpg'],
@@ -11,9 +12,9 @@
         ['judul' => 'Turnamen Antar Desa', 'teks' => 'Ayo ikuti ajang kejuaraan daerah Jogja', 'img' => 'turnamen2.jpg'],
     ];
     $lapangan = [
-        ['nama' => 'Lapangan Kayu',   'img' => 'kayu.jpg',   'harga' => 30000,
+        ['nama' => 'Lapangan Kayu',   'img' => 'lapangankayu.jpg',   'harga' => 30000,
          'desc' => 'Lapangan dengan berbahan dasar kayu, berwarnakan coklat dengan garis tepi putih.'],
-        ['nama' => 'Lapangan Karpet', 'img' => 'karpet.jpg', 'harga' => 40000,
+        ['nama' => 'Lapangan Karpet', 'img' => 'lapangankarpet.jpg', 'harga' => 40000,
          'desc' => 'Lapangan dengan berbahan dasar karpet, berwarnakan coklat dengan garis tepi putih.'],
     ];
 @endphp

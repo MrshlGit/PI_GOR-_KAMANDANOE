@@ -23,7 +23,7 @@
             </div>
         @endif
 
-        <form method="POST" action="{{ route('booking.store') }}">
+        <form method="POST" action="{{ route('booking.pilih .store') }}">
             @csrf
 
             <fieldset class="court-picker">

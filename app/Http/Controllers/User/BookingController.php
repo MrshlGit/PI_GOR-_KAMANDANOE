@@ -14,8 +14,23 @@ class BookingController extends Controller
     {
         $lapangans = Lapangan::whereRaw("LOWER(COALESCE(status_lapangan, 'aktif')) != ?", ['nonaktif'])->get();
 
-        return view('booking_view', compact('lapangans'));
+        return view('lapangan_view', compact('lapangans'));
     }
+
+    // public function create1()
+    // {
+    //     return view('booking_view');
+    // }
+
+    // public function create2()
+    // {
+    //     return view('alat_view');
+    // }
+
+    // public function create3()
+    // {
+    //     return view('makanan_view');
+    // }
 
     public function store(Request $request)
     {

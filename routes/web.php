@@ -10,7 +10,12 @@ use App\Http\Controllers\User\LoginController;
 use App\Http\Controllers\User\RegisterController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\daftartagihanController;
+<<<<<<< HEAD
 use App\Http\Controllers\PilihBookingController;
+=======
+use App\Http\Controllers\User\ringkasantagihanController;
+// use App\Http\Controllers\User\RingkasanTagihanController;
+>>>>>>> 16c02cc2e8f2deb00c7208d79eabcefdddc67645
 
 Route::view('/', 'home_view')->name('home');
 
@@ -48,6 +53,7 @@ Route::middleware('auth')->group(function () {
     // ===== BAGIAN DAFTAR TAGIHAN / TRANSAKSI =====
     Route::get('/transaksi', [daftartagihanController::class, 'index'])
         ->name('tagihan.index');
+<<<<<<< HEAD
 });
 
 Route::get('/bookingLapangan', [pilihBookingController::class, 'create1'])
@@ -74,3 +80,10 @@ Route::get('/booking-lapangan', [BookingController::class, 'create'])
 
 Route::post('/booking-lapangan', [BookingController::class, 'store'])
     ->name('booking.store');
+=======
+
+// Ringkasan Pembayaran / Tagihan
+    Route::get('/pembayaran', [RingkasanTagihanController::class, 'index'])->name('pembayaran.index');
+    Route::post('/pembayaran', [RingkasanTagihanController::class, 'store'])->name('pembayaran.store');
+});
+>>>>>>> 16c02cc2e8f2deb00c7208d79eabcefdddc67645

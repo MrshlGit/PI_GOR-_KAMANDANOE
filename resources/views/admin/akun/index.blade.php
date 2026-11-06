@@ -23,7 +23,7 @@
             <table class="tbl akun">
                 <thead>
                     <tr>
-                        <th>#</th>
+                        <th>no</th>
                         <th>USERNAME</th>
                         <th>ROLE</th>
                         <th class="kanan">AKSI</th>

@@ -111,6 +111,7 @@ body.lock{overflow:hidden}
 .avatar.a2{background:var(--o)}
 .avatar.a3{background:var(--kuning)}
 .avatar.a4{background:#fff}
+.tbl.akun .avatar{background:#fff}
 .badge{display:inline-block;padding:2px 12px;border:2px solid var(--ink);border-radius:99px;font-size:.68rem;font-weight:700;background:var(--kuning)}
 .badge.admin{background:var(--kuning)}
 

@@ -1,17 +1,11 @@
-<!DOCTYPE html>
-<html>
+@extends('layouts.dashboard')
 
-<head>
-    <title>Pilih</title>
-    <link rel="stylesheet" href="{{ asset('css/boking.css') }}">
-</head>
+@section('title', 'Pilih Pemesanan')
 
-<body>
-
+@section('content')
     <div class="form-container">
-
         <h2>Pilih Jenis</h2>
-      
+
         <form method="POST" action="{{ route('booking.pilih.store') }}">
             @csrf
 
@@ -27,9 +21,5 @@
                 Booking Makanan
             </button>
         </form>
-       
     </div>
-
-</body>
-
-</html>
+@endsection

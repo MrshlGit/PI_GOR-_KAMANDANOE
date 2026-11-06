@@ -37,7 +37,7 @@
                             @checked(old('id_lapangan') === $lapangan->id_lapangan)
                             required
                         >
-                        <img src="{{ asset('img/images.jpg') }}" alt="" loading="lazy">
+                        <!-- <img src="{{ asset('img/images.jpg') }}" alt="" loading="lazy"> -->
                         <span>
                             <strong>{{ $lapangan->nama_lapangan }}</strong>
                             <small>{{ $lapangan->tipe_lantai }} · Rp {{ number_format((float) $lapangan->harga_per_jam, 0, ',', '.') }}/jam</small>

@@ -9,7 +9,7 @@ use App\Http\Controllers\User\DashboardController;
 use App\Http\Controllers\User\LoginController;
 use App\Http\Controllers\User\RegisterController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\daftartagihanController;
+use App\Http\Controllers\User\DaftarTagihanController; // <-- Tambahkan \User di sini
 use App\Http\Controllers\PilihBookingController;
 use App\Http\Controllers\User\RingkasanTagihanController;
 // use App\Http\Controllers\User\RingkasanTagihanController;
@@ -49,10 +49,10 @@ Route::middleware('auth')->group(function () {
     // Route::post('/booking', [BookingController::class, 'store'])
     //     ->name('booking.store');
 
-    // ===== BAGIAN DAFTAR TAGIHAN / TRANSAKSI =====
-    Route::get('/transaksi', [daftartagihanController::class, 'index'])
+   // ===== BAGIAN DAFTAR TAGIHAN / TRANSAKSI =====
+    Route::get('/transaksi', [DaftarTagihanController::class, 'index'])
         ->name('tagihan.index');
-});
+    });
 
 Route::get('/bookingLapangan', [pilihBookingController::class, 'create1'])
         ->name('lapangan_view');

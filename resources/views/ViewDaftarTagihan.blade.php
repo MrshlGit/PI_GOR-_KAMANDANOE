@@ -27,11 +27,8 @@
 <body>
 
 <div class="app">
-
-    {{-- ===== SIDEBAR ===== --}}
     <aside class="sidebar" id="sidebar">
         <a href="/dashboard" class="brand">GOR <span>Kamandanoe</span></a>
-
         <nav class="menu">
             @foreach ($menu as $m)
                 <a href="{{ $m['url'] }}"
@@ -42,7 +39,6 @@
                 </a>
             @endforeach
         </nav>
-
         <form method="POST" action="/logout" class="logout">
             @csrf
             <button type="submit">
@@ -53,57 +49,34 @@
     </aside>
 
     <div class="main">
-
-        {{-- ===== TOPBAR ===== --}}
         <header class="topbar">
             <button class="burger" id="burger" aria-label="Menu">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
             </button>
-
             <label class="search">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
                 <input id="cari" type="search" placeholder="Cari lapangan">
             </label>
-
             <div class="top-right">
-                <div class="dropdown">
-                    <button class="icon-btn ring trigger" aria-label="Notifikasi">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9a6 6 0 0 1 12 0c0 6 2 7 2 7H4s2-1 2-7"/><path d="M10 20a2 2 0 0 0 4 0"/></svg>
-                        <i></i>
-                    </button>
-                    <div class="drop"><p class="empty">Belum ada notifikasi</p></div>
-                </div>
-
                 <div class="dropdown">
                     <button class="user-btn trigger">
                         <span class="avatar">{{ strtoupper(substr($user->username ?? 'U', 0, 1)) }}</span>
                         <div><b>{{ $user->username ?? 'Isnan' }}</b><small>{{ ucfirst($user->role ?? 'User') }}</small></div>
                     </button>
-                    <div class="drop">
-                        <a href="#">Profil Saya (segera)</a>
-                        <form method="POST" action="/logout">@csrf<button type="submit">Logout</button></form>
-                    </div>
                 </div>
             </div>
         </header>
 
-        {{-- ===== CONTENT AREA (Daftar Tagihan) ===== --}}
         <main class="content">
-            <section class="content-body" style="padding: 10px 0;">
-                
-                <!-- Header Banner Card -->
+            <section class="content-body">
                 <div class="header-card">
                     <h1>Daftar Tagihan</h1>
                     <p>Sebelum melakukan pembayaran mohon dicek semua barang yang telah dipesan sesuai dengan deskripsi pembayaran.!!</p>
                 </div>
 
-                <!-- Grid Layout: Customer Info & Order Table -->
                 <div class="data-grid">
-                    
-                    <!-- Customer Card -->
                     <div class="customer-card">
                         <div class="card-title-bar">
-                            <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
                             <span>Customer</span>
                         </div>
                         <div class="card-body">
@@ -122,7 +95,6 @@
                         </div>
                     </div>
 
-                    <!-- Order Table Card -->
                     <div class="table-card">
                         <table>
                             <thead>
@@ -135,7 +107,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach($tagihans as $item)
+                                @forelse($tagihans as $item)
                                     <tr>
                                         <td>{{ $item['nama'] }}</td>
                                         <td>{{ $item['jenis'] }}</td>
@@ -143,39 +115,23 @@
                                         <td>{{ $item['durasi'] }}</td>
                                         <td>{{ $item['harga'] }}</td>
                                     </tr>
-                                @endforeach
+                                @empty
+                                    <tr>
+                                        <td colspan="5" style="padding: 20px; color: #666;">Belum ada tagihan atau pemesanan aktif.</td>
+                                    </tr>
+                                @endforelse
                             </tbody>
                         </table>
                     </div>
-
                 </div>
 
-                <!-- Action Buttons -->
                 <div class="action-footer">
-                    <!-- Tombol Konfirmasi dengan link rute pembayaran -->
-                    <a href="{{ route('pembayaran.index') }}" class="btn btn-confirm" style="text-decoration: none; display: inline-flex; align-items: center; gap: 8px;">
-                        Konfirmasi
-                        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
-                    </a>
-                    
-                    <!-- Tombol Batal kembali ke Dashboard -->
-                    <a href="{{ route('dashboard') }}" class="btn btn-cancel" style="text-decoration: none; display: inline-flex; align-items: center; gap: 8px;">
-                        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
-                        Batal
+                    <a href="{{ route('pembayaran.index') }}" class="btn btn-confirm" style="text-decoration: none;">
+                        Konfirmasi Pembayaran
                     </a>
                 </div>
-                
             </section>
         </main>
-
-        {{-- ===== FOOTER ===== --}}
-        <footer class="foot">
-            <div class="foot-brand">GOR<br>Kamandanoe</div>
-            <div><h4>Tentang Kami</h4><a href="#">gorkamandanoe.com</a><a href="#">gorkamandanoe.com</a><a href="#">gorkamandanoe.com</a></div>
-            <div><h4>Partner</h4><a href="#">gorkamandanoe.com</a><a href="#">gorkamandanoe.com</a><a href="#">gorkamandanoe.com</a></div>
-            <div><h4>Media Sosial</h4><a href="#">gorkamandanoe.com</a><a href="#">gorkamandanoe.com</a><a href="#">gorkamandanoe.com</a></div>
-        </footer>
-
     </div>
 </div>
 

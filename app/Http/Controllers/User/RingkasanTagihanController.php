@@ -4,46 +4,69 @@ namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class RingkasanTagihanController extends Controller
 {
     public function index()
     {
-        $items = [
-            ['nama' => 'Turnamen PB Juara', 'harga' => '200.000'],
-            ['nama' => 'Lap 1 (Karpet)',     'harga' => '120.000'],
-            ['nama' => 'Mie Goreng',        'harga' => '10.000'],
-            ['nama' => 'Raket',             'harga' => '45.000'],
-        ];
+        $user = auth()->user();
+        
+        // Ambil data booking terakhir milik user yang sedang login
+        $booking = DB::table('booking')->where('id_user', $user->id)->latest('id_booking')->first();
+
+        $totalHarga = $booking ? $booking->total_bayar : 0;
+
+        $items = $booking ? [
+            ['nama' => 'Pemesanan Lapangan (Tgl: ' . $booking->tgl_main . ')', 'harga' => 'Rp ' . number_format($totalHarga, 0, ',', '.')]
+        ] : [];
 
         $summary = [
-            'tanggal'        => '19 Agus 2026',
-            'petugas'        => 'P1',
-            'subtotal'       => 'Rp. 375.000',
-            'potongan'       => 'Rp. 0',
-            'ppn'            => 'Rp. 4.000',
-            'nilai_transaksi'=> 'Rp. 379.000',
-            'total'          => 'Rp. 379.000'
+            'tanggal'         => date('d M Y'),
+            'petugas'         => 'System GOR',
+            'subtotal'        => 'Rp ' . number_format($totalHarga, 0, ',', '.'),
+            'potongan'        => 'Rp 0',
+            'ppn'             => 'Rp 0',
+            'nilai_transaksi' => 'Rp ' . number_format($totalHarga, 0, ',', '.'),
+            'total'           => 'Rp ' . number_format($totalHarga, 0, ',', '.')
         ];
 
-        return view('ViewRingkasanTagihan', compact('items', 'summary'));
+        return view('ViewRingkasanTagihan', compact('items', 'summary', 'user', 'booking'));
     }
 
     public function store(Request $request)
     {
-        // Validasi file yang diunggah
         $request->validate([
-            'bukti_bayar' => 'required|image|mimes:jpeg,png,jpg,pdf|max:5000',
+            'bukti_bayar' => 'required|image|mimes:jpeg,png,jpg|max:5120',
         ]);
 
-        if ($request->hasFile('bukti_bayar')) {
-            // Menyimpan file bukti pembayaran secara permanen ke folder storage/app/public/bukti_pembayaran
-            $filePath = $request->file('bukti_bayar')->store('bukti_pembayaran', 'public');
+        $user = auth()->user();
+        $booking = DB::table('booking')->where('id_user', $user->id)->latest('id_booking')->first();
 
-            // (Opsional) Di sini Anda bisa menyimpan $filePath ke database bersama data tagihan pengguna
-
-            return redirect()->route('dashboard')->with('success', 'Pembayaran berhasil dikonfirmasi dan bukti telah diunggah!');
+        if (!$booking) {
+            return redirect()->back()->with('error', 'Tidak ada data pemesanan aktif.');
         }
-        return redirect()->back()->with('success', 'Bukti pembayaran berhasil diunggah!');
+
+        if ($request->hasFile('bukti_bayar')) {
+            $file = $request->file('bukti_bayar');
+            $namaFile = time() . '_' . $file->getClientOriginalName();
+            $file->move(public_path('uploads/bukti_pembayaran'), $namaFile);
+
+            // Simpan ke tabel pembayaran di database
+            DB::table('pembayaran')->insert([
+                'tgl_bayar'              => now(),
+                'id_detail_item_booking' => $booking->id_booking, 
+                'metode_bayar'           => 'QRIS / Transfer Bank',
+                'status_pembayaran'      => 'Pending', // Menunggu verifikasi admin
+                'bukti_transfer'         => $namaFile,
+                'created_at'             => now(),
+                'updated_at'             => now(),
+            ]);
+
+            return redirect()->route('pembayaran.index')
+                ->with('success', 'Bukti pembayaran berhasil dikirim! Menunggu verifikasi dari Admin.');
+        }
+
+        return redirect()->back()->with('error', 'Gagal mengunggah bukti pembayaran.');
     }
 }

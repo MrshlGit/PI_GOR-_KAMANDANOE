@@ -113,7 +113,7 @@
                                         <td>{{ $item['jenis'] }}</td>
                                         <td>{{ $item['jumlah'] }}</td>
                                         <td>{{ $item['durasi'] }}</td>
-                                        <td>{{ $item['harga'] }}</td>
+                                        <td>Rp {{ number_format($item['harga'], 0, ',', '.') }}</td>
                                     </tr>
                                 @empty
                                     <tr>
@@ -121,6 +121,14 @@
                                     </tr>
                                 @endforelse
                             </tbody>
+                            @if(count($tagihans) > 0)
+                                <tfoot>
+                                    <tr style="font-weight: bold; background: #f9f9f9;">
+                                        <td colspan="4" style="text-align: right; padding: 12px;">Total Kumulatif:</td>
+                                        <td style="padding: 12px;">Rp {{ number_format($totalKumulatif, 0, ',', '.') }}</td>
+                                    </tr>
+                                </tfoot>
+                            @endif
                         </table>
                     </div>
                 </div>

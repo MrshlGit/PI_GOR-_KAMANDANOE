@@ -12,13 +12,20 @@ class RingkasanTagihanController extends Controller
     {
         $user = auth()->user();
         
-        // Ambil data booking terakhir milik user yang sedang login
+        // Ambil data booking terakhir milik user
         $booking = DB::table('booking')->where('id_user', $user->id)->latest('id_booking')->first();
 
-        $totalHarga = $booking ? $booking->total_bayar : 0;
+        // Ambil harga dari berbagai kemungkinan nama kolom di database agar tidak 0
+        $totalHarga = 0;
+        if ($booking) {
+            $totalHarga = $booking->total_bayar ?? $booking->total ?? $booking->harga ?? $booking->biaya ?? 0;
+        }
 
         $items = $booking ? [
-            ['nama' => 'Pemesanan Lapangan (Tgl: ' . $booking->tgl_main . ')', 'harga' => 'Rp ' . number_format($totalHarga, 0, ',', '.')]
+            [
+                'nama'  => 'Pemesanan Lapangan (ID: ' . ($booking->id_lapangan ?? '1') . ') - Tgl: ' . ($booking->tgl_main ?? date('Y-m-d')), 
+                'harga' => 'Rp ' . number_format($totalHarga, 0, ',', '.')
+            ]
         ] : [];
 
         $summary = [
@@ -52,15 +59,14 @@ class RingkasanTagihanController extends Controller
             $namaFile = time() . '_' . $file->getClientOriginalName();
             $file->move(public_path('uploads/bukti_pembayaran'), $namaFile);
 
-            // Simpan ke tabel pembayaran di database
             DB::table('pembayaran')->insert([
-                'tgl_bayar'              => now(),
+                'tgl_bayar'            => now(),
                 'id_detail_item_booking' => $booking->id_booking, 
-                'metode_bayar'           => 'QRIS / Transfer Bank',
-                'status_pembayaran'      => 'Pending', // Menunggu verifikasi admin
-                'bukti_transfer'         => $namaFile,
-                'created_at'             => now(),
-                'updated_at'             => now(),
+                'metode_bayar'         => 'QRIS / Transfer Bank',
+                'status_pembayaran'    => 'Pending',
+                'bukti_transfer'       => $namaFile,
+                'created_at'           => now(),
+                'updated_at'           => now(),
             ]);
 
             return redirect()->route('pembayaran.index')

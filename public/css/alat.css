@@ -1,0 +1,180 @@
+.alat-page {
+    width: 100%;
+}
+
+.alat-page__title {
+    margin: 0 0 18px;
+    color: #111;
+    font-size: 2rem;
+    font-weight: 800;
+    line-height: 1.1;
+    text-transform: uppercase;
+}
+
+.alat-page__title span {
+    color: #ff7026;
+}
+
+.alat-page__layout {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(230px, .9fr);
+    align-items: start;
+    gap: 20px;
+}
+
+.alat-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.alat-card,
+.alat-summary {
+    background: #fff;
+    box-shadow: 0 5px 18px rgba(0, 0, 0, .12);
+}
+
+.alat-card {
+    min-width: 0;
+    min-height: 164px;
+    display: grid;
+    grid-template-columns: minmax(110px, 1fr) minmax(112px, .9fr);
+    align-items: center;
+    gap: 14px;
+    padding: 12px;
+}
+
+.alat-card__photo {
+    width: 100%;
+    aspect-ratio: 1 / .88;
+    border-radius: 10px;
+    background: #f3f4f6;
+}
+
+.alat-card__details {
+    display: grid;
+    justify-items: center;
+    gap: 5px;
+    text-align: center;
+}
+
+.alat-card__details h2 {
+    margin: 0 0 6px;
+    font-size: .9rem;
+    font-weight: 500;
+    text-transform: uppercase;
+}
+
+.alat-card__details p {
+    margin: 0;
+    color: #444;
+    font-size: .78rem;
+}
+
+.alat-card__quantity input {
+    width: 72px;
+    height: 30px;
+    margin-top: 5px;
+    padding: 3px 6px;
+    border: 1px solid #e8e8e8;
+    border-radius: 4px;
+    text-align: center;
+    font: inherit;
+}
+
+.alat-card__order,
+.alat-summary__confirm {
+    border: 0;
+    background: #31bf2e;
+    color: #fff;
+    font: 700 .75rem 'Inter', sans-serif;
+    cursor: pointer;
+}
+
+.alat-card__order {
+    justify-self: end;
+    padding: 8px 12px;
+}
+
+.alat-card__order:hover,
+.alat-summary__confirm:hover {
+    background: #27a924;
+}
+
+.alat-summary {
+    padding: 18px;
+}
+
+.alat-summary h2 {
+    margin: 0 0 18px;
+    text-align: center;
+    font-size: 1.2rem;
+    text-transform: uppercase;
+}
+
+.alat-summary__items {
+    display: grid;
+    gap: 16px;
+    padding: 0 4px;
+}
+
+.alat-summary__line {
+    height: 13px;
+    border-bottom: 2px solid #263d75;
+    border-radius: 50%;
+    transform: skewY(-2deg);
+}
+
+.alat-summary__line:nth-child(even) {
+    width: 90%;
+    justify-self: center;
+    transform: skewY(2deg);
+}
+
+.alat-summary__total {
+    margin: 26px 0 14px;
+    color: #444;
+    font-size: .82rem;
+}
+
+.alat-summary__confirm {
+    display: block;
+    margin: 0 auto;
+    padding: 9px 16px;
+}
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+@media (max-width: 1000px) {
+    .alat-page__layout {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .alat-summary {
+        max-width: none;
+    }
+}
+
+@media (max-width: 640px) {
+    .alat-page__title {
+        font-size: 1.6rem;
+    }
+
+    .alat-list {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .alat-card {
+        grid-template-columns: minmax(110px, .9fr) minmax(120px, 1fr);
+    }
+}

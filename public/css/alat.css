@@ -1,10 +1,18 @@
+.content:has(> .alat-page){
+     max-width: none;
+}
+
 .alat-page {
     width: 100%;
 }
 
+.alat-page__header {
+    margin-bottom: 18px;
+}
+
 .alat-page__title {
-    margin: 0 0 18px;
-    color: #111;
+    margin: 0 0 6px;
+    color: #172033;
     font-size: 2rem;
     font-weight: 800;
     line-height: 1.1;
@@ -12,12 +20,43 @@
 }
 
 .alat-page__title span {
-    color: #ff7026;
+    color: var(--o, #f98a2e);
+}
+
+.alat-page__header p {
+    max-width: 620px;
+    margin: 0;
+    color: #687386;
+    font-size: .88rem;
+    line-height: 1.6;
+}
+
+.alat-categories {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.alat-categories__item {
+    padding: 8px 13px;
+    border: 1px solid #e0e5eb;
+    border-radius: 999px;
+    background: transparent;
+    color: #354052;
+    font: 500 .78rem 'Inter', sans-serif;
+    cursor: pointer;
+}
+
+.alat-categories__item:hover,
+.alat-categories__item.is-active {
+    border-color: var(--o, #f98a2e);
+    color: var(--o, #f98a2e);
 }
 
 .alat-page__layout {
     display: grid;
-    grid-template-columns: minmax(0, 2fr) minmax(230px, .9fr);
+    grid-template-columns: minmax(0, 2fr) minmax(250px, .9fr);
     align-items: start;
     gap: 20px;
 }
@@ -30,117 +69,166 @@
 
 .alat-card,
 .alat-summary {
+    min-width: 0;
+    border: 1px solid #e2e7ed;
+    border-radius: 13px;
     background: #fff;
-    box-shadow: 0 5px 18px rgba(0, 0, 0, .12);
+    box-shadow: 0 2px 5px rgba(23, 32, 51, .05);
 }
 
 .alat-card {
-    min-width: 0;
-    min-height: 164px;
-    display: grid;
-    grid-template-columns: minmax(110px, 1fr) minmax(112px, .9fr);
-    align-items: center;
-    gap: 14px;
-    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 13px;
 }
 
 .alat-card__photo {
+    display: grid;
     width: 100%;
-    aspect-ratio: 1 / .88;
-    border-radius: 10px;
-    background: #f3f4f6;
+    aspect-ratio: 1.75 / 1;
+    place-items: center;
+    border-radius: 9px;
+    background: #f3f5f8;
+    color: #91a0b5;
+}
+
+.alat-card__photo svg {
+    width: 76px;
+    height: 76px;
 }
 
 .alat-card__details {
-    display: grid;
-    justify-items: center;
-    gap: 5px;
-    text-align: center;
+    display: flex;
+    min-height: 144px;
+    flex: 1;
+    flex-direction: column;
+    align-items: flex-start;
 }
 
 .alat-card__details h2 {
-    margin: 0 0 6px;
-    font-size: .9rem;
-    font-weight: 500;
-    text-transform: uppercase;
+    margin: 0 0 5px;
+    color: #172033;
+    font-size: .91rem;
+    font-weight: 700;
+    line-height: 1.4;
 }
 
-.alat-card__details p {
+.alat-card__details > p {
     margin: 0;
-    color: #444;
-    font-size: .78rem;
+    color: #738096;
+    font-size: .73rem;
+    line-height: 1.5;
+}
+
+.alat-card__details .alat-card__price {
+    margin-top: 9px;
+    color: #172033;
+    font-size: .95rem;
+    font-weight: 800;
+}
+
+.alat-card__price span {
+    color: #738096;
+    font-size: .68rem;
+    font-weight: 400;
+}
+
+.alat-card__actions {
+    display: flex;
+    width: 100%;
+    gap: 9px;
+    margin-top: auto;
+    padding-top: 13px;
+    border-top: 1px solid #edf0f3;
 }
 
 .alat-card__quantity input {
-    width: 72px;
-    height: 30px;
-    margin-top: 5px;
-    padding: 3px 6px;
-    border: 1px solid #e8e8e8;
-    border-radius: 4px;
+    width: 54px;
+    height: 36px;
+    padding: 5px;
+    border: 1px solid #e0e5eb;
+    border-radius: 7px;
+    color: #172033;
+    font: 500 .82rem 'Inter', sans-serif;
     text-align: center;
-    font: inherit;
 }
 
 .alat-card__order,
 .alat-summary__confirm {
     border: 0;
-    background: #31bf2e;
+    border-radius: 8px;
+    background: var(--o, #f98a2e);
     color: #fff;
-    font: 700 .75rem 'Inter', sans-serif;
+    font: 700 .8rem 'Inter', sans-serif;
     cursor: pointer;
 }
 
 .alat-card__order {
-    justify-self: end;
-    padding: 8px 12px;
+    min-height: 36px;
+    flex: 1;
 }
 
 .alat-card__order:hover,
 .alat-summary__confirm:hover {
-    background: #27a924;
+    background: #e87920;
 }
 
 .alat-summary {
+    position: sticky;
+    top: 20px;
     padding: 18px;
 }
 
 .alat-summary h2 {
-    margin: 0 0 18px;
-    text-align: center;
-    font-size: 1.2rem;
+    margin: 0;
+    padding-bottom: 14px;
+    border-bottom: 1px solid #edf0f3;
+    color: #172033;
+    font-size: 1.05rem;
     text-transform: uppercase;
 }
 
 .alat-summary__items {
-    display: grid;
-    gap: 16px;
-    padding: 0 4px;
+    min-height: 94px;
+    padding: 18px 0;
+    border-bottom: 1px solid #edf0f3;
 }
 
-.alat-summary__line {
-    height: 13px;
-    border-bottom: 2px solid #263d75;
-    border-radius: 50%;
-    transform: skewY(-2deg);
-}
-
-.alat-summary__line:nth-child(even) {
-    width: 90%;
-    justify-self: center;
-    transform: skewY(2deg);
+.alat-summary__items p {
+    margin: 0;
+    color: #738096;
+    font-size: .78rem;
 }
 
 .alat-summary__total {
-    margin: 26px 0 14px;
-    color: #444;
-    font-size: .82rem;
+    display: grid;
+    gap: 10px;
+    margin: 15px 0;
+    color: #465166;
+    font-size: .78rem;
+}
+
+.alat-summary__total div {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.alat-summary__total dt,
+.alat-summary__total dd {
+    margin: 0;
+}
+
+.alat-summary__total div:last-child {
+    color: #172033;
+    font-size: .92rem;
+    font-weight: 800;
 }
 
 .alat-summary__confirm {
-    display: block;
-    margin: 0 auto;
-    padding: 9px 16px;
+    width: 100%;
+    min-height: 42px;
 }
 
 .sr-only {
@@ -161,7 +249,7 @@
     }
 
     .alat-summary {
-        max-width: none;
+        position: static;
     }
 }
 
@@ -175,6 +263,18 @@
     }
 
     .alat-card {
-        grid-template-columns: minmax(110px, .9fr) minmax(120px, 1fr);
+        display: grid;
+        grid-template-columns: minmax(105px, .8fr) minmax(0, 1.2fr);
+        align-items: stretch;
+    }
+
+    .alat-card__photo {
+        align-self: start;
+        aspect-ratio: 1 / 1;
+    }
+
+    .alat-card__photo svg {
+        width: 64px;
+        height: 64px;
     }
 }

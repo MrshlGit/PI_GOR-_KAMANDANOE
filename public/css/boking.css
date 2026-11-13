@@ -5,6 +5,10 @@
     font-family:Arial, sans-serif;
 }
 
+.content:has(> .booking-layout) {
+    max-width: none;
+}
+
 body{
     /* background-image:url('../img/bobo.jpg'); */
     background-size:cover;
@@ -23,16 +27,65 @@ body{
     background:rgba(255,255,255,0.95);
     padding:30px;
     border-radius:15px;
-    box-shadow:0 8px 20px rgba(0,0,0,0.3);
+    border: 1px solid #bdc0c3;
+    /* box-shadow:0 8px 20px rgba(0,0,0,0.3); */
+   
 }
 
 .form-container h2{
-    text-align:center;
-    margin-bottom:20px;
+    text-align:left;
+    margin-bottom:5px;
+    color: black;
 }
+
+.form-container p{
+    text-align:left;
+    margin-bottom:20px;
+    font-size: 0.8rem;
+    color: grey;
+}
+
+.form{
+    padding-top: 20px;
+    display: flex;
+    flex-direction: row;
+    gap: 50px;
+    border-top: 1px solid #bdc0c3;
+}
+
+.kiri{
+    flex: 3;
+    min-width: 0;
+}
+
+.kanan{
+    flex: 2;
+    min-width: 0;
+}
+
+.waktu{
+    display:flex;
+    flex-direction:row;
+    gap:20px;
+}
+
+.harga{
+    width:100%;
+    padding:5px;
+    margin-bottom:15px;
+    border:1px solid #ccc;
+    border-radius:8px;
+}
+
+.harga p{
+    font-size: 0.8rem;
+}
+
+
 
 .court-picker{
     display:grid;
+    grid-template-columns:repeat(2, minmax(0, 1fr));
     gap:10px;
     margin:0 0 15px;
     padding:0;
@@ -40,6 +93,7 @@ body{
 }
 
 .court-picker legend{
+    grid-column:1 / -1;
     margin-bottom:8px;
     font-weight:bold;
 }
@@ -106,7 +160,7 @@ body{
 
 .booking-layout{
     display:grid;
-    grid-template-columns:minmax(300px, 420px) minmax(0, 1fr);
+    grid-template-columns:minmax(300px, 100%) minmax(0, 1fr);
     align-items:start;
     gap:20px;
 }

@@ -8,62 +8,6 @@
 
 @section('content')
     <div class="booking-layout">
-        <div class="form-container">
-
-            <h2>Booking Lapangan</h2>
-            @if (session('success'))
-                <p class="success">{{ session('success') }}</p>
-            @endif
-
-            @if ($errors->any())
-                <div class="error">
-                    @foreach ($errors->all() as $error)
-                        <p>{{ $error }}</p>
-                    @endforeach
-                </div>
-            @endif
-
-            <form method="POST" action="{{ route('booking.store') }}" id="booking-form">
-                @csrf
-
-                <fieldset class="court-picker">
-                    <legend>Pilih Lapangan</legend>
-                    @foreach ($lapangans as $lapangan)
-                        <label class="court-option">
-                            <input
-                                type="radio"
-                                name="id_lapangan"
-                                value="{{ $lapangan->id_lapangan }}"
-                                @checked((string) old('id_lapangan') === (string) $lapangan->id_lapangan)
-                                required
-                            >
-                            <img src="{{ asset('img/lapangankarpet.jpg') }}" alt="" loading="lazy">
-                            <span>
-                                <strong>{{ $lapangan->nama_lapangan }}</strong>
-                                <small>{{ $lapangan->tipe_lantai }} · Rp {{ number_format((float) $lapangan->harga_per_jam, 0, ',', '.') }}/jam</small>
-                            </span>
-                        </label>
-                    @endforeach
-                </fieldset>
-
-                <input type="date" name="tanggal" class="input" value="{{ old('tanggal') }}" required>
-
-                <select name="jam" class="input" required>
-                    <option value="">Pilih jam</option>
-                    @foreach (range(8, 21) as $hour)
-                        @php($time = sprintf('%02d:00', $hour))
-                        <option value="{{ $time }}" @selected(old('jam') === $time)>{{ $time }}</option>
-                    @endforeach
-                </select>
-
-                <input type="number" name="durasi" min="1" max="16" class="input" placeholder="Durasi / Jam" value="{{ old('durasi') }}" required>
-
-                <button type="submit" class="button" @disabled($lapangans->isEmpty())>
-                    Booking Sekarang
-                </button>
-            </form>
-        </div>
-
         <section class="schedule-panel" aria-labelledby="schedule-title">
             <header class="schedule-header">
                 <div>
@@ -112,5 +56,131 @@
                 </table>
             </div>
         </section>
+
+
+
+        <br>
+        <div class="form-container">
+
+            <h2>Booking Lapangan</h2>
+            <p>Pilih lapangan & waktu sesuai kebutuhan Anda.</p>
+            @if (session('success'))
+                <p class="success">{{ session('success') }}</p>
+            @endif
+
+            @if ($errors->any())
+                <div class="error">
+                    @foreach ($errors->all() as $error)
+                        <p>{{ $error }}</p>
+                    @endforeach
+                </div>
+            @endif
+
+            <form method="POST" action="{{ route('booking.store') }}" id="booking-form">
+                @csrf
+                <div class="form">
+                    <div class="kiri">
+                        <fieldset class="court-picker">
+                            <legend>Pilih Lapangan</legend>
+                            @foreach ($lapangans as $lapangan)
+                                <label class="court-option">
+                                    <input
+                                        type="radio"
+                                        name="id_lapangan"
+                                        value="{{ $lapangan->id_lapangan }}"
+                                        @checked((string) old('id_lapangan') === (string) $lapangan->id_lapangan)
+                                        required
+                                    >
+                                    <img src="{{ asset('img/lapangankarpet.jpg') }}" alt="" loading="lazy">
+                                    <span>
+                                        <strong>{{ $lapangan->nama_lapangan }}</strong>
+                                        <small>{{ $lapangan->tipe_lantai }} · Rp {{ number_format((float) $lapangan->harga_per_jam, 0, ',', '.') }}/jam</small>
+                                    </span>
+                                </label>
+                            @endforeach
+                        </fieldset>
+                    </div>
+
+                    <div class="kanan">
+                        <input
+                            type="date"
+                            name="tanggal"
+                            id="booking-date"
+                            class="input"
+                            placeholder="Pilih tanggal"
+                            value="{{ old('tanggal') }}"
+                            min="{{ now()->toDateString() }}"
+                            required
+                        >
+                        <div class="waktu">
+                            <select name="jam" id="booking-time" class="input" required>
+                                <option value="">Pilih jam</option>
+                                @foreach (range(8, 21) as $hour)
+                                    @php($time = sprintf('%02d:00', $hour))
+                                    <option value="{{ $time }}" @selected(old('jam') === $time)>{{ $time }}</option>
+                                @endforeach
+                            </select>
+                        
+                            <input type="number" name="durasi" min="1" max="16" class="input" placeholder="Durasi / Jam" value="{{ old('durasi') }}" required>
+                        </div>
+
+                        <div class="harga">
+                            <p>Total : </p>
+                        </div>
+
+                        <button type="submit" class="button" @disabled($lapangans->isEmpty())>
+                            Booking Sekarang
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        
     </div>
+
+    <script>
+        (() => {
+            const dateInput = document.getElementById('booking-date');
+            const timeInput = document.getElementById('booking-time');
+            const timezone = @json(config('app.timezone'));
+
+            const getCurrentDateTime = () => {
+                const parts = new Intl.DateTimeFormat('en-CA', {
+                    timeZone: timezone,
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    hourCycle: 'h23',
+                }).formatToParts(new Date());
+                const values = Object.fromEntries(parts.map(({ type, value }) => [type, value]));
+
+                return {
+                    date: `${values.year}-${values.month}-${values.day}`,
+                    time: `${values.hour}:${values.minute}`,
+                };
+            };
+
+            const updateAvailableTimes = () => {
+                const current = getCurrentDateTime();
+
+                Array.from(timeInput.options).forEach((option) => {
+                    option.disabled = Boolean(
+                        option.value
+                        && dateInput.value === current.date
+                        && option.value <= current.time
+                    );
+                });
+
+                if (timeInput.selectedOptions[0]?.disabled) {
+                    timeInput.value = '';
+                }
+            };
+
+            dateInput.addEventListener('change', updateAvailableTimes);
+            updateAvailableTimes();
+        })();
+    </script>
 @endsection

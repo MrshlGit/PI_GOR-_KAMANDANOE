@@ -39,10 +39,10 @@ class pilihBookingController extends Controller
                 return redirect()->route('booking.create');
 
             } else if($data['tujuan'] === 'alat'){
-                return redirect()->route('alat_view');
+                return redirect()->route('alat.create');
 
             } else if($data['tujuan'] === 'makanan'){
-                return redirect()->route('makanan_view');
+                return redirect()->route('makanan.create');
             }
         }
     }

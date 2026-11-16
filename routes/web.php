@@ -12,6 +12,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\User\DaftarTagihanController; // <-- Tambahkan \User di sini
 use App\Http\Controllers\PilihBookingController;
 use App\Http\Controllers\User\RingkasanTagihanController;
+use App\Http\Controllers\User\AlatController;
+use App\Http\Controllers\User\MakananController;
 // use App\Http\Controllers\User\RingkasanTagihanController;
 
 Route::view('/', 'home_view')->name('home');
@@ -78,6 +80,13 @@ Route::get('/booking-lapangan', [BookingController::class, 'create'])
 
 Route::post('/booking-lapangan', [BookingController::class, 'store'])
     ->name('booking.store');
+
+Route::get('/booking-alat', [AlatController::class, 'ambil'])
+    ->name('alat.create');
+
+Route::get('/booking-makanan', [MakananController::class, 'ambil'])
+    ->name('makanan.create');
+
 
 // Ringkasan Pembayaran / Tagihan
     Route::get('/pembayaran', [RingkasanTagihanController::class, 'index'])->name('pembayaran.index');

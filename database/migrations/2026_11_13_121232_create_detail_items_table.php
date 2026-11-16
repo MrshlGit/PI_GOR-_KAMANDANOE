@@ -14,18 +14,19 @@ return new class extends Migration
         Schema::create('detail_items', function (Blueprint $table) {
             $table->id('id_detail_item');
 
+            
             $table->foreignId('id_pesanan')
-                ->constrained('pesanan', 'id_pesanan')
+                ->constrained('pesanans', 'id_pesanan')
                 ->cascadeOnDelete();
 
             $table->foreignId('id_alat')
                 ->nullable()
-                ->constrained('alat', 'id_alat')
+                ->constrained('alats', 'id_alat')
                 ->restrictOnDelete();
 
             $table->foreignId('id_makanan')
                 ->nullable()
-                ->constrained('makanan', 'id_makanan')
+                ->constrained('makanans', 'id_makanan')
                 ->restrictOnDelete();
 
             $table->string('nama_item', 150);

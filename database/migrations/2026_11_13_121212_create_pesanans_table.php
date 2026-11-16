@@ -14,10 +14,11 @@ return new class extends Migration
         Schema::create('pesanans', function (Blueprint $table) {
             $table->id("id_pesanan");
 
-            $table->foreignId('id')
-            ->nullable()
-            ->constrained('user', 'id')
-            ->restrictOnDelete();
+            $table->integer('id_user')->nullable();
+            $table->foreign('id_user')
+                ->references('id')
+                ->on('user')
+                ->restrictOnDelete();
 
             $table->string("status");
             $table->string("status_pembayaran");

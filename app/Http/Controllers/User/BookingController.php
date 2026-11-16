@@ -5,6 +5,7 @@ namespace App\Http\Controllers\User;
 use App\Http\Controllers\Controller;
 use App\Models\Booking;
 use App\Models\Lapangan;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 
@@ -36,12 +37,23 @@ class BookingController extends Controller
     {
         $data = $request->validate([
             'id_lapangan' => ['required', 'string', 'exists:lapangan,id_lapangan'],
-            'tanggal' => ['required', 'date'],
+            'tanggal' => ['required', 'date', 'after_or_equal:today'],
             'jam' => ['required', 'date_format:H:i'],
             'durasi' => ['required', 'integer', 'min:1', 'max:16'],
         ]);
 
-        $lapangan = Lapangan::findOrFail($data['id_lapangan']);
+        $mulaiBaru = Carbon::createFromFormat( #memberi tahu cara membaca format yang dibuat sendiri, mirip seperti perse
+            'Y-m-d H:i',
+            $data['tanggal'].' '.$data['jam']
+        );
+
+        if ($mulaiBaru->lessThanOrEqualTo(now())) {
+            throw ValidationException::withMessages([
+                'jam' => 'Jam mulai booking harus setelah waktu sekarang.',
+            ]);
+        }
+
+        $lapangan = Lapangan::findOrFail($data['id_lapangan']); #mencari primary key yang cocok
 
         if (strtolower((string) $lapangan->status_lapangan) === 'nonaktif') {
             throw ValidationException::withMessages([
@@ -55,23 +67,52 @@ class BookingController extends Controller
             ]);
         }
 
-        $mulai = \Carbon\Carbon::createFromFormat('Y-m-d H:i', $data['tanggal'].' '.$data['jam']);
-        $selesai = $mulai->copy()->addHours((int) $data['durasi']);
-        $bentrok = Booking::where('id_lapangan', $lapangan->getKey())
-            ->whereDate('tgl_main', $data['tanggal'])
-            ->whereRaw('LOWER(status_booking) NOT IN (?, ?, ?)', ['batal', 'dibatalkan', 'cancelled'])
-            ->get(['jam_mulai', 'durasi'])
-            ->contains(function (Booking $booking) use ($mulai, $selesai, $data): bool {
-                $mulaiBooking = \Carbon\Carbon::parse($data['tanggal'].' '.$booking->jam_mulai);
-                $selesaiBooking = $mulaiBooking->copy()->addHours(max(1, (int) $booking->durasi));
+        // $mulai = \Carbon\Carbon::createFromFormat('Y-m-d H:i', $data['tanggal'].' '.$data['jam']);
 
-                return $mulai->lt($selesaiBooking) && $selesai->gt($mulaiBooking);
-            });
+        // $selesai = $mulai->copy()->addHours((int) $data['durasi']);
 
-        if ($bentrok) {
-            throw ValidationException::withMessages([
-                'jam' => 'Jadwal lapangan sudah terisi pada rentang waktu tersebut.',
-            ]);
+        // $bentrok = Booking::where('id_lapangan', $lapangan->getKey())
+        //     ->whereDate('tgl_main', $data['tanggal'])
+        //     ->whereRaw('LOWER(status_booking) NOT IN (?, ?, ?)', ['batal', 'dibatalkan', 'cancelled'])
+        //     ->get(['jam_mulai', 'durasi'])
+        //     ->contains(function (Booking $booking) use ($mulai, $selesai, $data): bool {
+        //         $mulaiBooking = \Carbon\Carbon::parse($data['tanggal'].' '.$booking->jam_mulai);
+        //         $selesaiBooking = $mulaiBooking->copy()->addHours(max(1, (int) $booking->durasi));
+
+        //         return $mulai->lt($selesaiBooking) && $selesai->gt($mulaiBooking);
+        //     });
+
+        // if ($bentrok) {
+        //     throw ValidationException::withMessages([
+        //         'jam' => 'Jadwal lapangan sudah terisi pada rentang waktu tersebut.',
+        //     ]);
+        // }
+
+        $selesaiBaru = $mulaiBaru->copy()->addHours((int) $data['durasi']);
+
+        // Booking lama untuk lapangan dan tanggal yang sama
+        $bookingLama = Booking::where('id_lapangan', $lapangan->getKey()) #ambil primary key untuk nanti diakses variabel didalamnya
+            ->whereDate('tgl_main', $data['tanggal'])  #bandingkan dan ambil tanggal yang sama
+            ->whereRaw('LOWER(status_booking) NOT IN (?, ?, ?)', [
+                'batal', 'dibatalkan', 'cancelled', #memilih baris booking yang tidak berstatus batal dan sejenisnya
+            ])
+            ->get(['jam_mulai', 'durasi']); # hanya ambil kolom jam_mulai dan durasi saja
+
+        $bentrok = false;
+
+        foreach ($bookingLama as $booking) {
+            $mulaiLama = Carbon::parse(
+                $data['tanggal'].' '.$booking->jam_mulai
+            );
+            $selesaiLama = $mulaiLama->copy()
+                ->addHours(max(1, (int) $booking->durasi));
+
+            // Ada tumpang-tindih jika waktu baru mulai sebelum waktu lama selesai,
+            // dan waktu baru selesai setelah waktu lama mulai.
+            if ($mulaiBaru < $selesaiLama && $selesaiBaru > $mulaiLama) {
+                $bentrok = true;
+                break;
+            }
         }
 
         $totalBayar = round((float) $lapangan->harga_per_jam * (int) $data['durasi'], 2);

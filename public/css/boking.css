@@ -5,6 +5,10 @@
     font-family:Arial, sans-serif;
 }
 
+.content:has(> .booking-layout) {
+    max-width: none;
+}
+
 body{
     /* background-image:url('../img/bobo.jpg'); */
     background-size:cover;
@@ -12,9 +16,9 @@ body{
     background-repeat:no-repeat;
     background-attachment:fixed;
 
-    display:flex;
+    /* display:flex;
     justify-content:center;
-    align-items:center;
+    align-items:center; */
     min-height:100vh;
 }
 
@@ -23,16 +27,65 @@ body{
     background:rgba(255,255,255,0.95);
     padding:30px;
     border-radius:15px;
-    box-shadow:0 8px 20px rgba(0,0,0,0.3);
+    border: 1px solid #bdc0c3;
+    /* box-shadow:0 8px 20px rgba(0,0,0,0.3); */
+   
 }
 
 .form-container h2{
-    text-align:center;
-    margin-bottom:20px;
+    text-align:left;
+    margin-bottom:5px;
+    color: black;
 }
+
+.form-container p{
+    text-align:left;
+    margin-bottom:20px;
+    font-size: 0.8rem;
+    color: grey;
+}
+
+.form{
+    padding-top: 20px;
+    display: flex;
+    flex-direction: row;
+    gap: 50px;
+    border-top: 1px solid #bdc0c3;
+}
+
+.kiri{
+    flex: 3;
+    min-width: 0;
+}
+
+.kanan{
+    flex: 2;
+    min-width: 0;
+}
+
+.waktu{
+    display:flex;
+    flex-direction:row;
+    gap:20px;
+}
+
+.harga{
+    width:100%;
+    padding:5px;
+    margin-bottom:15px;
+    border:1px solid #ccc;
+    border-radius:8px;
+}
+
+.harga p{
+    font-size: 0.8rem;
+}
+
+
 
 .court-picker{
     display:grid;
+    grid-template-columns:repeat(2, minmax(0, 1fr));
     gap:10px;
     margin:0 0 15px;
     padding:0;
@@ -40,6 +93,7 @@ body{
 }
 
 .court-picker legend{
+    grid-column:1 / -1;
     margin-bottom:8px;
     font-weight:bold;
 }
@@ -102,4 +156,196 @@ body{
 
 .button:hover{
     background:#e65c00;
+}
+
+.booking-layout{
+    display:grid;
+    grid-template-columns:minmax(300px, 100%) minmax(0, 1fr);
+    align-items:start;
+    gap:20px;
+}
+
+.booking-layout .form-container{
+    width:100%;
+}
+
+.schedule-panel{
+    min-width:0;
+    overflow:hidden;
+    background:#fff;
+    border:1px solid #c8c8c8;
+    border-radius:12px;
+    box-shadow:0 4px 18px rgba(0,0,0,.08);
+}
+
+.schedule-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:16px;
+    padding:16px 18px;
+}
+
+.schedule-header h2{
+    margin:0 0 6px;
+    font-size:1.05rem;
+}
+
+.schedule-header p{
+    margin:0;
+    color:#555;
+    font-size:.75rem;
+}
+
+.schedule-booking-button{
+    flex:none;
+    min-width:150px;
+    padding:11px 18px;
+    border:0;
+    border-radius:10px;
+    background:#ff852f;
+    color:#fff;
+    font-weight:700;
+    text-transform:uppercase;
+    cursor:pointer;
+}
+
+.schedule-booking-button:hover{
+    background:#ed7421;
+}
+
+.schedule-booking-button span{
+    margin-left:5px;
+}
+
+.schedule-legend{
+    display:flex;
+    flex-wrap:wrap;
+    align-items:center;
+    gap:10px 18px;
+    padding:10px 18px;
+    border-top:1px solid #c8c8c8;
+    border-bottom:1px solid #c8c8c8;
+    font-size:.7rem;
+}
+
+.schedule-legend strong{
+    margin-right:4px;
+}
+
+.schedule-legend span{
+    display:inline-flex;
+    align-items:center;
+    gap:5px;
+    white-space:nowrap;
+}
+
+.legend-color{
+    width:14px;
+    height:14px;
+    display:inline-block;
+    border:1px solid;
+    border-radius:4px;
+}
+
+.legend-color--unpaid{
+    border-color:#ff4b4b;
+    background:#ffe0e0;
+}
+
+.legend-color--deposit{
+    border-color:#f0b900;
+    background:#fff4c2;
+}
+
+.legend-color--paid{
+    border-color:#22b94b;
+    background:#c9f8d7;
+}
+
+.legend-color--member{
+    border-color:#7936b5;
+    background:#ead2ff;
+}
+
+.schedule-table-wrap{
+    max-height:620px;
+    overflow:auto;
+}
+
+.schedule-table{
+    width:100%;
+    min-width:580px;
+    border-collapse:collapse;
+    table-layout:fixed;
+    font-size:.7rem;
+}
+
+.schedule-table th,
+.schedule-table td{
+    height:58px;
+    padding:8px;
+    border-right:1px solid #999;
+    border-bottom:1px solid #999;
+    text-align:center;
+    font-weight:400;
+}
+
+.schedule-table thead th{
+    position:sticky;
+    top:0;
+    z-index:1;
+    height:38px;
+    background:#fff;
+    font-weight:600;
+    text-transform:uppercase;
+}
+
+.schedule-table th:first-child{
+    width:92px;
+}
+
+.schedule-table tbody th{
+    position:sticky;
+    left:0;
+    background:#fff;
+}
+
+.schedule-table td:last-child,
+.schedule-table th:last-child{
+    border-right:0;
+}
+
+@media(max-width:1100px){
+    .booking-layout{
+        grid-template-columns:minmax(280px, 360px) minmax(0, 1fr);
+        gap:14px;
+    }
+
+    .schedule-header{
+        align-items:flex-start;
+        flex-direction:column;
+    }
+}
+
+@media(max-width:760px){
+    .booking-layout{
+        grid-template-columns:minmax(0, 1fr);
+    }
+
+    .schedule-header{
+        align-items:center;
+        flex-direction:row;
+    }
+}
+
+@media(max-width:480px){
+    .schedule-header{
+        align-items:stretch;
+        flex-direction:column;
+    }
+
+    .schedule-booking-button{
+        width:100%;
+    }
 }

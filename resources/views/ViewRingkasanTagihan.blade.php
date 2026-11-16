@@ -1,5 +1,4 @@
 @php
-    $user = auth()->user();
     $menu = [
         ['label' => 'Dashboard',         'url' => '/dashboard', 'is' => 'dashboard*', 'ready' => true,
          'icon' => '<path d="m3 11 9-8 9 8"/><path d="M5 10v10h14V10"/>'],
@@ -85,9 +84,15 @@
         <main class="content">
             <section class="content-body">
                 
+                @if(session('success'))
+                    <div style="background: #d1fae5; color: #065f46; padding: 12px 20px; border-radius: 10px; margin-bottom: 20px; font-weight: 600;">
+                        {{ session('success') }}
+                    </div>
+                @endif
+
                 <div class="header-card">
                     <h1>Ringkasan Pembayaran</h1>
-                    <p>Silahkan upload file/foto transaksi bayar anda pada tempat file yang telah disediakan</p>
+                    <p>Silahkan upload file/foto transaksi bayar Anda pada tempat file yang telah disediakan</p>
                 </div>
 
                 <!-- FORM UTAMA PEMBAYARAN -->
@@ -95,14 +100,14 @@
                     @csrf
                     <div class="payment-grid">
                         
-                        <!-- Kolom Kiri -->
+                        <!-- Kolom Kiri: Tabel Item & Upload -->
                         <div class="left-column">
                             <div class="items-table-card">
                                 <table>
                                     <thead>
                                         <tr>
                                             <th>NAMA</th>
-                                            <th>JUMLAH</th>
+                                            <th>JUMLAH/HARGA</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -119,7 +124,7 @@
                             <div class="upload-section">
                                 <h3 class="section-title">Bukti Pembayaran</h3>
                                 <div class="upload-row">
-                                    <!-- Tombol Panggil QR Code -->
+                                    <!-- Tombol QRIS -->
                                     <div class="qr-trigger" onclick="openQrModal()" style="cursor: pointer;">
                                         <svg viewBox="0 0 24 24" width="32" height="32" stroke="currentColor" stroke-width="2" fill="none"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
                                         <span style="font-size: 13px; font-weight: 600; color: #f78333;">Klik (QRIS)</span>
@@ -132,15 +137,14 @@
                                         </div>
                                         <p class="dropzone-text" id="fileLabelText">Tarik & Lepas bukti bayar di sini, atau</p>
                                         <label for="file_upload" class="btn-select-file">Pilih File</label>
-                                        <!-- Event onchange untuk mendeteksi file dan mengaktifkan tombol bayar -->
-                                        <input type="file" id="file_upload" name="bukti_bayar" style="display:none;" onchange="handleFileSelect(this)">
+                                        <input type="file" id="file_upload" name="bukti_bayar" style="display:none;" onchange="handleFileSelect(this)" required>
                                         <span class="file-hint">Format JPG, PNG, atau PDF (Maks. 5MB)</span>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Kolom Kanan (Ringkasan & Tombol Bayar) -->
+                        <!-- Kolom Kanan: Ringkasan & Tombol Bayar -->
                         <div class="right-column">
                             <div class="summary-card">
                                 <h2>Ringkasan</h2>
@@ -161,7 +165,7 @@
                                 </div>
 
                                 <div class="pay-action-wrapper">
-                                    <!-- Tombol Bayar (Default Disabled & Abu-abu) -->
+                                    <!-- Tombol Bayar (Default Disabled) -->
                                     <button type="submit" id="btnPay" class="btn-pay disabled" disabled>Bayar</button>
                                 </div>
                             </div>
@@ -180,21 +184,29 @@
     <div class="modal-content">
         <h3>Scan QRIS Pembayaran</h3>
         <p>Silahkan scan QR di bawah ini menggunakan m-Banking atau E-Wallet Anda.</p>
-        <!-- Contoh gambar QRIS -->
         <div style="margin: 20px 0;">
            <img src="{{ asset('img/QR.jpeg') }}" alt="QRIS GOR Kamandanoe" style="width: 220px; height: 220px; border: 2px solid #ddd; border-radius: 10px; object-fit: contain;">
         </div>
-        <button type="button" onclick="closeQrModal()" class="btn-select-file" style="background:#333;">Tutup</button>
+        <button type="button" onclick="closeQrModal()" class="btn-select-file" style="background:#333; color:#fff;">Tutup</button>
     </div>
 </div>
 
 <style>
-/* CSS Tambahan untuk Modal & State Tombol Disabled */
 .btn-pay.disabled {
     background-color: #cccccc !important;
     color: #666666 !important;
     cursor: not-allowed !important;
     opacity: 0.7;
+}
+.btn-pay {
+    background-color: #f78333;
+    color: white;
+    border: none;
+    padding: 12px;
+    width: 100%;
+    border-radius: 8px;
+    font-weight: 700;
+    cursor: pointer;
 }
 .modal-overlay {
     position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -210,7 +222,6 @@
 <script>
     lucide.createIcons();
 
-    // Fungsi Popup QR
     function openQrModal() {
         document.getElementById('qrModal').style.display = 'flex';
     }
@@ -218,7 +229,7 @@
         document.getElementById('qrModal').style.display = 'none';
     }
 
-    // Fungsi Deteksi File Upload & Mengaktifkan Tombol Bayar
+    // Fungsi otomatis aktifkan tombol Bayar setelah file dipilih
     function handleFileSelect(input) {
         const btnPay = document.getElementById('btnPay');
         const fileLabelText = document.getElementById('fileLabelText');
@@ -229,14 +240,12 @@
             fileLabelText.style.color = "#0a8a18";
             fileLabelText.style.fontWeight = "600";
 
-            // Ubah tombol jadi aktif & warna orange
             btnPay.classList.remove('disabled');
             btnPay.removeAttribute('disabled');
         } else {
             fileLabelText.textContent = "Tarik & Lepas bukti bayar di sini, atau";
             fileLabelText.style.color = "#666";
 
-            // Matikan kembali tombol jika file batal dipilih
             btnPay.classList.add('disabled');
             btnPay.setAttribute('disabled', 'true');
         }

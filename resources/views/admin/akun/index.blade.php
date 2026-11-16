@@ -23,21 +23,27 @@
             <table class="tbl akun">
                 <thead>
                     <tr>
-                        <th>no</th>
                         <th>USERNAME</th>
                         <th>ROLE</th>
+                        <th>PASSWORD</th>
+                        <th>EMAIL</th>
+                        <th>TERDAFTAR</th>
+                        <th>TERAKHIR ONLINE</th>
                         <th class="kanan">AKSI</th>
                     </tr>
                 </thead>
                 <tbody id="tbody">
                     @forelse ($users as $u)
                         <tr>
-                            <td>{{ $loop->iteration }}</td>
                             <td>
                                 <span class="avatar a{{ $u->id % 5 }}">{{ $u->inisial }}</span>
                                 {{ $u->username ?? '-' }}
                             </td>
                             <td><span class="badge {{ $u->role }}">{{ ucfirst((string) $u->role) }}</span></td>
+                            <td><span class="akun-password" aria-label="Password disamarkan">••••••••</span></td>
+                            <td>{{ $u->email ?: '—' }}</td>
+                            <td>{{ $u->created_at?->locale('id')->translatedFormat('d M Y') ?? '—' }}</td>
+                            <td>{{ $u->last_online_at?->locale('id')->diffForHumans() ?? 'Belum pernah' }}</td>
                             <td class="aksi">
                                 <button type="button" class="btn"
                                         data-modal="m-edit"
@@ -54,7 +60,7 @@
                             </td>
                         </tr>
                     @empty
-                        <tr><td colspan="4">Belum ada pengguna.</td></tr>
+                        <tr><td colspan="7">Belum ada pengguna.</td></tr>
                     @endforelse
                 </tbody>
             </table>
@@ -72,7 +78,20 @@
                     @error('username', 'tambah') <span class="err">{{ $message }}</span> @enderror
                 </label>
                 <label class="fld">Password
-                    <input type="password" name="password" placeholder="Masukkan password" required>
+                    <span class="password-field">
+                        <input type="password" name="password" placeholder="Masukkan password" required>
+                        <button type="button" class="password-toggle" data-toggle-password
+                                aria-label="Tampilkan password" aria-pressed="false">
+                            <svg class="ic" viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"/>
+                                <circle cx="12" cy="12" r="3"/>
+                            </svg>
+                            <svg class="ic" viewBox="0 0 24 24" aria-hidden="true" hidden>
+                                <path d="m3 3 18 18M10.6 10.6a2 2 0 0 0 2.8 2.8"/>
+                                <path d="M9.9 5.2A10.7 10.7 0 0 1 12 5c6.4 0 10 7 10 7a15.7 15.7 0 0 1-3.1 3.8M6.2 6.2C3.5 8.1 2 12 2 12s3.6 7 10 7c1 0 2-.2 2.9-.5"/>
+                            </svg>
+                        </button>
+                    </span>
                     @error('password', 'tambah') <span class="err">{{ $message }}</span> @enderror
                 </label>
                 <label class="fld">Role
@@ -103,7 +122,20 @@
                     @error('username', 'edit') <span class="err">{{ $message }}</span> @enderror
                 </label>
                 <label class="fld">Password Baru (opsional)
-                    <input type="password" name="password" placeholder="Kosongkan jika tidak diubah">
+                    <span class="password-field">
+                        <input type="password" name="password" placeholder="Kosongkan jika tidak diubah">
+                        <button type="button" class="password-toggle" data-toggle-password
+                                aria-label="Tampilkan password baru" aria-pressed="false">
+                            <svg class="ic" viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"/>
+                                <circle cx="12" cy="12" r="3"/>
+                            </svg>
+                            <svg class="ic" viewBox="0 0 24 24" aria-hidden="true" hidden>
+                                <path d="m3 3 18 18M10.6 10.6a2 2 0 0 0 2.8 2.8"/>
+                                <path d="M9.9 5.2A10.7 10.7 0 0 1 12 5c6.4 0 10 7 10 7a15.7 15.7 0 0 1-3.1 3.8M6.2 6.2C3.5 8.1 2 12 2 12s3.6 7 10 7c1 0 2-.2 2.9-.5"/>
+                            </svg>
+                        </button>
+                    </span>
                     @error('password', 'edit') <span class="err">{{ $message }}</span> @enderror
                 </label>
                 <label class="fld">Role

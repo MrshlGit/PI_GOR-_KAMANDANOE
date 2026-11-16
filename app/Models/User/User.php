@@ -38,7 +38,16 @@ class User extends Authenticatable
     {
         return [
             'password' => 'hashed',
+            'created_at' => 'datetime',
+            'last_online_at' => 'datetime',
         ];
+    }
+
+    protected static function booted(): void
+    {
+        static::creating(function (User $user): void {
+            $user->created_at ??= now();
+        });
     }
 
     protected function inisial(): Attribute

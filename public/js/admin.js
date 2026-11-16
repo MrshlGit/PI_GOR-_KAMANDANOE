@@ -32,13 +32,44 @@ const tutupModal = modal => {
   if (!$('.modal.open')) document.body.classList.remove('lock');
 };
 
+const resetPasswordToggles = modal => {
+  $$('[data-toggle-password]', modal).forEach(button => {
+    const input = button.closest('.password-field')?.querySelector('input');
+    const [eye, eyeOff] = $$('svg', button);
+    if (input) input.type = 'password';
+    if (eye) eye.hidden = false;
+    if (eyeOff) eyeOff.hidden = true;
+    button.setAttribute('aria-pressed', 'false');
+    button.setAttribute('aria-label', 'Tampilkan password');
+  });
+};
+
 document.addEventListener('click', e => {
+  const tombolPassword = e.target.closest('[data-toggle-password]');
+  if (tombolPassword) {
+    const input = tombolPassword.closest('.password-field')?.querySelector('input');
+    if (!input) return;
+
+    const terlihat = input.type === 'password';
+    const [eye, eyeOff] = $$('svg', tombolPassword);
+    input.type = terlihat ? 'text' : 'password';
+    if (eye) eye.hidden = terlihat;
+    if (eyeOff) eyeOff.hidden = !terlihat;
+    tombolPassword.setAttribute('aria-pressed', String(terlihat));
+    tombolPassword.setAttribute(
+      'aria-label',
+      `${terlihat ? 'Sembunyikan' : 'Tampilkan'} ${input.name === 'password' ? 'password' : 'teks'}`
+    );
+    return;
+  }
+
   const pemicu = e.target.closest('[data-modal]');
   if (pemicu) {
     const modal = $('#' + pemicu.dataset.modal);
     if (pemicu.dataset.status) modal.dataset.status = pemicu.dataset.status;
     const form = $('form', modal);
     form?.reset();
+    resetPasswordToggles(modal);
     if (form) form.action = pemicu.dataset.action || '';
     $$('[data-isi]', modal).forEach(el => {
       const nilai = pemicu.dataset[el.dataset.isi];
@@ -105,4 +136,58 @@ if (grafik) {
     }
     area.classList.remove('muat');
   }));
+}
+
+const kalender = $('#admin-calendar');
+if (kalender) {
+  const labelBulan = $('[data-calendar-month]', kalender);
+  const areaTanggal = $('[data-calendar-days]', kalender);
+  const tanggal = new Date();
+  tanggal.setDate(1);
+
+  const renderKalender = () => {
+    const tahun = tanggal.getFullYear();
+    const bulan = tanggal.getMonth();
+    const jumlahHari = new Date(tahun, bulan + 1, 0).getDate();
+    const hariIni = new Date();
+    const fragmen = document.createDocumentFragment();
+
+    labelBulan.textContent = tanggal.toLocaleDateString('id-ID', {
+      month: 'long',
+      year: 'numeric'
+    });
+    areaTanggal.setAttribute('aria-label', `Tanggal bulan ${labelBulan.textContent}`);
+
+    for (let i = 0; i < tanggal.getDay(); i++) {
+      const kosong = document.createElement('span');
+      kosong.className = 'calendar-empty';
+      kosong.setAttribute('aria-hidden', 'true');
+      fragmen.appendChild(kosong);
+    }
+
+    for (let hari = 1; hari <= jumlahHari; hari++) {
+      const sel = document.createElement('span');
+      const hariAktif = hari === hariIni.getDate()
+        && bulan === hariIni.getMonth()
+        && tahun === hariIni.getFullYear();
+
+      sel.className = `calendar-day${hariAktif ? ' hari-ini' : ''}`;
+      sel.textContent = hari;
+      if (hariAktif) sel.setAttribute('aria-current', 'date');
+      fragmen.appendChild(sel);
+    }
+
+    areaTanggal.replaceChildren(fragmen);
+  };
+
+  $('[data-calendar-prev]', kalender).addEventListener('click', () => {
+    tanggal.setMonth(tanggal.getMonth() - 1);
+    renderKalender();
+  });
+  $('[data-calendar-next]', kalender).addEventListener('click', () => {
+    tanggal.setMonth(tanggal.getMonth() + 1);
+    renderKalender();
+  });
+
+  renderKalender();
 }

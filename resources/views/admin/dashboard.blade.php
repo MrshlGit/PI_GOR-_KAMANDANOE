@@ -21,17 +21,49 @@
         </label>
     </div>
 
-    <section class="stats">
-        @foreach ($kartu as [$label, $nilai, $ikon, $hitung])
-            <div class="box stat">
-                <div class="h">{{ $label }} <span class="ico"><svg class="ic"><use href="#i-{{ $ikon }}"/></svg></span></div>
-                <strong @if ($hitung) data-count="{{ $nilai }}" @endif>{{ $nilai }}</strong>
-            </div>
-        @endforeach
-    </section>
+    <div class="dashboard-grid">
+        <section class="stats dashboard-stats">
+            @foreach ($kartu as [$label, $nilai, $ikon, $hitung])
+                <div class="box stat">
+                    <div class="h">{{ $label }} <span class="ico"><svg class="ic"><use href="#i-{{ $ikon }}"/></svg></span></div>
+                    <strong @if ($hitung) data-count="{{ $nilai }}" @endif>{{ $nilai }}</strong>
+                </div>
+            @endforeach
+        </section>
 
-    <section class="duo">
-        <div class="box">
+        <section class="box dashboard-chart" id="grafik" data-url="{{ route('admin.grafik') }}" data-awal="{{ json_encode($grafik) }}">
+            <div class="box-h">
+                <div>
+                    <h2>Grafik Jumlah Booking</h2>
+                    <small class="muted" id="grafik-ket"></small>
+                </div>
+                <div class="tabs" role="tablist">
+                    @foreach ($periode as $kode => $nama)
+                        <button type="button" data-periode="{{ $kode }}" @class(['on' => $kode === 'hari'])>{{ $nama }}</button>
+                    @endforeach
+                </div>
+            </div>
+
+            <div class="chart" id="grafik-area"></div>
+        </section>
+
+        <section class="box dashboard-calendar" id="admin-calendar" aria-labelledby="calendar-title">
+            <div class="box-h">
+                <h2 id="calendar-title">Kalender</h2>
+            </div>
+            <div class="calendar-month">
+                <button type="button" data-calendar-prev aria-label="Bulan sebelumnya">‹</button>
+                <strong data-calendar-month aria-live="polite"></strong>
+                <button type="button" data-calendar-next aria-label="Bulan berikutnya">›</button>
+            </div>
+            <div class="calendar-weekdays" aria-hidden="true">
+                <span>Min</span><span>Sen</span><span>Sel</span><span>Rab</span>
+                <span>Kam</span><span>Jum</span><span>Sab</span>
+            </div>
+            <div class="calendar-days" data-calendar-days role="group"></div>
+        </section>
+
+        <section class="box dashboard-bookings">
             <div class="box-h">
                 <h2>Riwayat Pemesanan Terbaru</h2>
                 <a href="#">Lihat Semua</a>
@@ -71,9 +103,9 @@
                     </tbody>
                 </table>
             </div>
-        </div>
+        </section>
 
-        <div class="box">
+        <section class="box dashboard-courts">
             <div class="box-h">
                 <h2>Status Lapangan</h2>
             </div>
@@ -88,22 +120,6 @@
                     <li>Belum ada data lapangan.</li>
                 @endforelse
             </ul>
-        </div>
-    </section>
-
-    <section class="box" id="grafik" data-url="{{ route('admin.grafik') }}" data-awal="{{ json_encode($grafik) }}">
-        <div class="box-h">
-            <div>
-                <h2>Grafik Jumlah Booking</h2>
-                <small class="muted" id="grafik-ket"></small>
-            </div>
-            <div class="tabs" role="tablist">
-                @foreach ($periode as $kode => $nama)
-                    <button type="button" data-periode="{{ $kode }}" @class(['on' => $kode === 'hari'])>{{ $nama }}</button>
-                @endforeach
-            </div>
-        </div>
-
-        <div class="chart" id="grafik-area"></div>
-    </section>
+        </section>
+    </div>
 @endsection

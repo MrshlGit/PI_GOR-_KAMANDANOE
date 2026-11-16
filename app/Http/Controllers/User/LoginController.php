@@ -27,7 +27,7 @@ class LoginController extends Controller
             'password' => ['required', 'string'],
         ]);
 
-        if (!Auth::attempt($credentials)) {
+        if (! Auth::attempt($credentials)) {
             return back()
                 ->withErrors(['username' => 'Username atau password salah.'])
                 ->onlyInput('username');
@@ -35,7 +35,10 @@ class LoginController extends Controller
 
         $request->session()->regenerate();
 
-        return $this->redirectByRole(Auth::user());
+        $user = Auth::user();
+        $user->forceFill(['last_online_at' => now()])->save();
+
+        return $this->redirectByRole($user);
     }
 
     public function logout(Request $request): RedirectResponse

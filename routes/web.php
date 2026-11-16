@@ -15,6 +15,7 @@ use App\Http\Controllers\User\RingkasanTagihanController;
 use App\Http\Controllers\User\AlatController;
 use App\Http\Controllers\User\MakananController;
 // use App\Http\Controllers\User\RingkasanTagihanController;
+use App\Http\Controllers\User\LayananInformasiController;
 
 Route::view('/', 'home_view')->name('home');
 
@@ -91,3 +92,6 @@ Route::get('/booking-makanan', [MakananController::class, 'ambil'])
 // Ringkasan Pembayaran / Tagihan
     Route::get('/pembayaran', [RingkasanTagihanController::class, 'index'])->name('pembayaran.index');
     Route::post('/pembayaran', [RingkasanTagihanController::class, 'store'])->name('pembayaran.store');
+
+Route::get('/layanan', [LayananInformasiController::class, 'index'])->name('layanan.index');
+Route::post('/layanan/saran', [LayananInformasiController::class, 'kirimSaran'])->name('layanan.saran');

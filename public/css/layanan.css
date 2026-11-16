@@ -1,0 +1,383 @@
+/* Halaman Layanan Informasi (user) - mengikuti variabel dari dashboard.css */
+.li {
+    --c-o: var(--o, #f98a2e);
+    --c-od: var(--o-d, #e97a1d);
+    --c-ol: var(--o-l, #fff1e5);
+    --c-line: var(--line, #eadfd5);
+    --c-mut: var(--muted, #666);
+    display: grid;
+    gap: 36px;
+    max-width: 1100px;
+    margin-inline: auto;
+}
+.li h1,
+.li h2,
+.li h3,
+.li p {
+    margin: 0;
+}
+
+/* ---- jadwal ---- */
+.li-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 18px;
+}
+.li-head h1 {
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin-bottom: 6px;
+}
+.li-head p {
+    font-size: 0.85rem;
+    color: var(--c-mut);
+    line-height: 1.6;
+}
+.li-date label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border: 1px solid var(--c-line);
+    border-radius: 12px;
+    background: #fff;
+    font-size: 0.82rem;
+}
+.li-date svg {
+    width: 18px;
+    height: 18px;
+    flex: none;
+    color: var(--c-od);
+}
+.li-date input {
+    border: 0;
+    outline: 0;
+    background: transparent;
+    font: inherit;
+    color: inherit;
+}
+.li-card {
+    background: #fff;
+    border: 1px solid var(--c-line);
+    border-radius: 16px;
+    padding: 20px;
+}
+.li-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 14px;
+}
+.li-bar h2 {
+    font-size: 1.05rem;
+    font-weight: 700;
+}
+.li-bar p {
+    font-size: 0.78rem;
+    color: var(--c-mut);
+    margin-top: 2px;
+}
+.li-btn {
+    padding: 10px 20px;
+    border-radius: 10px;
+    background: var(--c-o);
+    color: #fff;
+    font-weight: 700;
+    font-size: 0.8rem;
+    text-decoration: none;
+    transition: 0.2s;
+}
+.li-btn:hover {
+    background: var(--c-od);
+}
+.li-legend {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 18px;
+    margin: 0 0 14px;
+    padding: 10px 12px;
+    border: 1px solid var(--c-line);
+    border-radius: 12px;
+    font-size: 0.75rem;
+}
+.li-legend li {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}
+.dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 4px;
+    border: 1px solid var(--c-line);
+}
+.li-scroll {
+    overflow-x: auto;
+    border: 1px solid var(--c-line);
+    border-radius: 12px;
+}
+.li-table {
+    width: 100%;
+    min-width: 640px;
+    border-collapse: collapse;
+    font-size: 0.75rem;
+}
+.li-table th,
+.li-table td {
+    border-right: 1px solid var(--c-line);
+    border-bottom: 1px solid var(--c-line);
+    padding: 0 8px;
+    height: 40px;
+    text-align: center;
+}
+.li-table tr > *:last-child {
+    border-right: 0;
+}
+.li-table tbody tr:last-child > * {
+    border-bottom: 0;
+}
+.li-table thead th {
+    background: var(--c-ol);
+    color: var(--c-od);
+    font-size: 0.72rem;
+    letter-spacing: 0.04em;
+    height: auto;
+    padding: 10px 8px;
+}
+.li-table thead th small {
+    display: block;
+    margin-top: 2px;
+    font-weight: 500;
+    color: var(--c-mut);
+    letter-spacing: 0;
+}
+.li-table tbody th {
+    width: 130px;
+    text-align: left;
+    font-weight: 600;
+    color: var(--c-mut);
+    background: #fff;
+    white-space: nowrap;
+}
+.li-table td {
+    font-size: 0.68rem;
+    font-weight: 600;
+}
+
+/* warna status (pastel agar nyaman di mata) */
+.s-kosong {
+    background: #fff;
+}
+.s-saya {
+    background: #dcf1e0;
+    color: #226a35;
+}
+.s-menunggu {
+    background: #fbf0c8;
+    color: #7a5c10;
+}
+.s-terisi {
+    background: #f9dcd6;
+    color: #a12c1f;
+}
+.s-maintenance {
+    background: #e8def8;
+    color: #5a3a9a;
+}
+.dot.s-saya {
+    border-color: #8ccf98;
+}
+.dot.s-menunggu {
+    border-color: #e2c76a;
+}
+.dot.s-terisi {
+    border-color: #e8a095;
+}
+.dot.s-maintenance {
+    border-color: #b9a2e2;
+}
+
+/* ---- peraturan ---- */
+.li-rules {
+    display: grid;
+    grid-template-columns: minmax(200px, 260px) 1fr;
+    gap: 28px;
+    align-items: start;
+}
+.li-rules > h2 {
+    font-size: 1.4rem;
+    font-weight: 700;
+    line-height: 1.25;
+}
+.li-rule-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+}
+.li-rule {
+    display: flex;
+    gap: 12px;
+    padding: 16px;
+    background: #fff;
+    border: 1px solid var(--c-line);
+    border-radius: 14px;
+    transition: 0.2s;
+}
+.li-rule:hover {
+    border-color: var(--c-o);
+    transform: translateY(-3px);
+}
+.li-ico {
+    display: grid;
+    place-items: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    background: var(--c-ol);
+    color: var(--c-od);
+    flex: none;
+}
+.li-ico svg {
+    width: 20px;
+    height: 20px;
+}
+.li-rule h3 {
+    font-size: 0.88rem;
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+.li-rule p {
+    font-size: 0.74rem;
+    color: var(--c-mut);
+    line-height: 1.5;
+}
+
+/* ---- banner ---- */
+.li-banner {
+    display: grid;
+    place-items: center;
+    height: 120px;
+    border-radius: 16px;
+    background:
+        linear-gradient(rgba(25, 22, 20, 0.62), rgba(25, 22, 20, 0.62)),
+        var(--img) center/cover,
+        #2b2622;
+    color: #fff;
+}
+.li-banner span {
+    font-weight: 700;
+    letter-spacing: 0.5em;
+    font-size: clamp(0.9rem, 2.4vw, 1.4rem);
+    text-align: center;
+    padding-left: 0.5em;
+}
+
+/* ---- saran & kritik ---- */
+.li-saran-head {
+    text-align: right;
+    margin-bottom: 16px;
+}
+.li-saran-head h2 {
+    font-size: 1.3rem;
+    font-weight: 700;
+}
+.li-saran-head p {
+    font-size: 0.8rem;
+    color: var(--c-mut);
+    margin-top: 4px;
+}
+.li-form {
+    width: min(520px, 100%);
+    margin: 0 auto;
+    display: grid;
+    gap: 14px;
+    padding: 22px;
+    background: #fff;
+    border: 1px solid var(--c-line);
+    border-radius: 16px;
+}
+.li-form h3 {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--c-od);
+}
+.li-form label {
+    display: grid;
+    gap: 6px;
+    font-size: 0.78rem;
+    font-weight: 600;
+}
+.li-form input,
+.li-form textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--c-line);
+    border-radius: 10px;
+    font: inherit;
+    font-weight: 400;
+    font-size: 0.85rem;
+    resize: vertical;
+}
+.li-form input:focus,
+.li-form textarea:focus {
+    outline: 0;
+    border-color: var(--c-o);
+    box-shadow: 0 0 0 3px var(--c-ol);
+}
+.li-form button {
+    padding: 11px;
+    border: 0;
+    border-radius: 10px;
+    background: var(--c-o);
+    color: #fff;
+    font: inherit;
+    font-weight: 700;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: 0.2s;
+}
+.li-form button:hover {
+    background: var(--c-od);
+}
+.li-ok {
+    padding: 10px 12px;
+    border-radius: 10px;
+    background: #e4f1e6;
+    color: #2f6b3d;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+.li-err {
+    padding: 10px 12px;
+    border-radius: 10px;
+    background: #f7e4e1;
+    color: #a8372e;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+@media (max-width: 900px) {
+    .li-rules {
+        grid-template-columns: 1fr;
+    }
+    .li-rule-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .li-saran-head {
+        text-align: left;
+    }
+}
+@media (max-width: 560px) {
+    .li-rule-grid {
+        grid-template-columns: 1fr;
+    }
+    .li-banner span {
+        letter-spacing: 0.25em;
+    }
+}

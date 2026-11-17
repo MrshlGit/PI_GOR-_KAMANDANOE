@@ -50,7 +50,7 @@
                     <h2>{{ $labelTanggal }}</h2>
                     <p>Jam operasional {{ sprintf('%02d.00', array_key_first($jadwal)) }} - {{ sprintf('%02d.00', array_key_last($jadwal) + 1) }}</p>
                 </div>
-                <a href="{{ route('booking.create') }}" class="li-btn">BOOKING &rarr;</a>
+                <a href="{{ route('pilihBook_view') }}" class="li-btn">BOOKING &rarr;</a>
             </div>
 
             <ul class="li-legend">

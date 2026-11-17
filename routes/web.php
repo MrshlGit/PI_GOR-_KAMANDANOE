@@ -46,6 +46,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
+    Route::get('/layanan', [LayananInformasiController::class, 'index'])->name('layanan.index');
+    Route::post('/layanan/saran', [LayananInformasiController::class, 'kirimSaran'])->name('layanan.saran');
     // Route::get('/booking', [BookingController::class, 'create'])
     //     ->name('booking.create');
 
@@ -93,5 +95,3 @@ Route::get('/booking-makanan', [MakananController::class, 'ambil'])
     Route::get('/pembayaran', [RingkasanTagihanController::class, 'index'])->name('pembayaran.index');
     Route::post('/pembayaran', [RingkasanTagihanController::class, 'store'])->name('pembayaran.store');
 
-Route::get('/layanan', [LayananInformasiController::class, 'index'])->name('layanan.index');
-Route::post('/layanan/saran', [LayananInformasiController::class, 'kirimSaran'])->name('layanan.saran');

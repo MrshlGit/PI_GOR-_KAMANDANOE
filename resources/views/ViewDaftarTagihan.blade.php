@@ -5,7 +5,7 @@
          'icon' => '<path d="m3 11 9-8 9 8"/><path d="M5 10v10h14V10"/>'],
         ['label' => 'Info Turnamen',     'url' => '#',          'is' => 'turnamen*',  'ready' => false,
          'icon' => '<path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0V4z"/><path d="M17 5h3v2a3 3 0 0 1-3 3M7 5H4v2a3 3 0 0 0 3 3"/>'],
-        ['label' => 'Layanan Informasi',  'url' => '#',          'is' => 'layanan*',   'ready' => false,
+        ['label' => 'Layanan Informasi',  'url' => '#',          'is' => 'layanan*',   'ready' => true,
          'icon' => '<circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/>'],
         ['label' => 'Pemesanan',         'url' => route('booking.create'),   'is' => 'booking*',   'ready' => true,
          'icon' => '<circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/><path d="M3 4h2l2.4 11h10.2L20 7H6"/>'],

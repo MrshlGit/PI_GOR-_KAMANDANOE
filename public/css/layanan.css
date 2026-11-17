@@ -206,9 +206,8 @@
 /* ---- peraturan ---- */
 .li-rules {
     display: grid;
-    grid-template-columns: minmax(200px, 260px) 1fr;
-    gap: 28px;
-    align-items: start;
+    grid-template-columns: 1fr;
+    gap: 18px;
 }
 .li-rules > h2 {
     font-size: 1.4rem;
@@ -280,12 +279,13 @@
 
 /* ---- saran & kritik ---- */
 .li-saran-head {
-    text-align: right;
-    margin-bottom: 16px;
+    text-align: left;
+    margin-bottom: 18px;
 }
 .li-saran-head h2 {
-    font-size: 1.3rem;
+    font-size: 1.4rem;
     font-weight: 700;
+    line-height: 1.25;
 }
 .li-saran-head p {
     font-size: 0.8rem;
@@ -293,7 +293,7 @@
     margin-top: 4px;
 }
 .li-form {
-    width: min(520px, 100%);
+    width: min(560px, 100%);
     margin: 0 auto;
     display: grid;
     gap: 14px;
@@ -363,14 +363,8 @@
 }
 
 @media (max-width: 900px) {
-    .li-rules {
-        grid-template-columns: 1fr;
-    }
     .li-rule-grid {
         grid-template-columns: repeat(2, 1fr);
-    }
-    .li-saran-head {
-        text-align: left;
     }
 }
 @media (max-width: 560px) {

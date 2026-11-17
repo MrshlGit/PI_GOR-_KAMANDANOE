@@ -27,7 +27,7 @@
 </svg>
 
 @php
-    $manajemenPemesananAktif = false;
+    $manajemenPemesananAktif = true;
     $menu = [
         ['Dashboard',            'grid',   'admin.dashboard',  'admin.dashboard', true],
         ['Manajemen Akun',       'user',   'admin.akun.index', 'admin.akun.*', true],

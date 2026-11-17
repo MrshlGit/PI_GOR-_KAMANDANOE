@@ -25,7 +25,6 @@
                     <tr>
                         <th>USERNAME</th>
                         <th>ROLE</th>
-                        <th>PASSWORD</th>
                         <th>EMAIL</th>
                         <th>TERDAFTAR</th>
                         <th>TERAKHIR ONLINE</th>
@@ -40,7 +39,6 @@
                                 {{ $u->username ?? '-' }}
                             </td>
                             <td><span class="badge {{ $u->role }}">{{ ucfirst((string) $u->role) }}</span></td>
-                            <td><span class="akun-password" aria-label="Password disamarkan">••••••••</span></td>
                             <td>{{ $u->email ?: '—' }}</td>
                             <td>{{ $u->created_at?->locale('id')->translatedFormat('d M Y') ?? '—' }}</td>
                             <td>{{ $u->last_online_at?->locale('id')->diffForHumans() ?? 'Belum pernah' }}</td>
@@ -60,7 +58,7 @@
                             </td>
                         </tr>
                     @empty
-                        <tr><td colspan="7">Belum ada pengguna.</td></tr>
+                        <tr><td colspan="6">Belum ada pengguna.</td></tr>
                     @endforelse
                 </tbody>
             </table>

@@ -69,7 +69,8 @@ class AdminLapanganTest extends TestCase
         $this->actingAs($admin)
             ->get(route('admin.lapangan.index'))
             ->assertOk()
-            ->assertSee('class="menu-disabled" aria-disabled="true"', false)
+            ->assertSee('href="'.route('admin.pemesanan.index').'"', false)
+            ->assertDontSee('class="menu-disabled" aria-disabled="true"', false)
             ->assertSee('Manajemen Pemesanan')
             ->assertSee('Sedang dibooking oleh')
             ->assertSee('Apakah kamu menyetujuinya?')
@@ -193,20 +194,42 @@ class AdminLapanganTest extends TestCase
             'status_lapangan' => 'Aktif',
         ]);
 
-        $this->actingAs($user)
-            ->post(route('booking.store'), [
-                'id_lapangan' => '3',
-                'tanggal' => today()->toDateString(),
-                'jam' => '09:00',
-                'durasi' => 3,
-            ])
-            ->assertRedirect(route('booking.create'));
+        $tanggal = now()->addDays(2)->toDateString();
+        foreach (['08:00', '09:00', '10:00', '11:00'] as $jam) {
+            $this->actingAs($user)
+                ->post(route('booking.store'), [
+                    'id_lapangan' => '3',
+                    'tanggal' => $tanggal,
+                    'jam' => $jam,
+                    'durasi' => 1,
+                ])
+                ->assertRedirect(route('booking.create'))
+                ->assertSessionHas('booking_notification_open', true);
+        }
+
+        $response = $this->get(route('booking.create'))
+            ->assertOk()
+            ->assertSee('Lapangan berhasil dipesan')
+            ->assertSee(route('tagihan.index'), false)
+            ->assertSee('Lihat tagihan')
+            ->assertSee('dropdown notification-dropdown open', false)
+            ->assertSeeInOrder([
+                'Lapangan C · '.$tanggal.' · 11:00',
+                'Lapangan C · '.$tanggal.' · 10:00',
+                'Lapangan C · '.$tanggal.' · 09:00',
+            ]);
+
+        $this->assertSame(3, substr_count($response->getContent(), 'class="notification-item"'));
+        $response->assertDontSee('Lapangan C · '.$tanggal.' · 08:00');
 
         $this->assertDatabaseHas('booking', [
             'id_user' => $user->id,
             'id_lapangan' => '3',
-            'durasi' => 3,
-            'total_bayar' => 150000,
+            'durasi' => 1,
+            'total_bayar' => 50000,
         ]);
+
+        $this->get(route('tagihan.index'))->assertOk();
+        $this->assertCount(3, session('booking_notifications'));
     }
 }

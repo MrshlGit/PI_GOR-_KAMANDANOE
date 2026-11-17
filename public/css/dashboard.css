@@ -298,6 +298,46 @@ a {
   margin: 0
 }
 
+.notification-dropdown .drop {
+  width: 300px;
+  max-width: calc(100vw - 32px);
+  max-height: 360px;
+  overflow-y: auto
+}
+
+.drop .notification-item {
+  padding: 10px 12px;
+  color: var(--ink);
+  text-decoration: none
+}
+
+.drop .notification-item:not(:last-child) {
+  border-bottom: 1px solid var(--line)
+}
+
+.notification-item strong,
+.notification-item span,
+.notification-item small {
+  display: block
+}
+
+.notification-item strong {
+  font-size: .85rem;
+  margin-bottom: 5px
+}
+
+.notification-item span {
+  color: var(--muted);
+  font-size: .78rem;
+  line-height: 1.4
+}
+
+.notification-item small {
+  color: var(--o-d);
+  font-size: .75rem;
+  margin-top: 8px
+}
+
 .user-btn {
   display: flex;
   align-items: center;

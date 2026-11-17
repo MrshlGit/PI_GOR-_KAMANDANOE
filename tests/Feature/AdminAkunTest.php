@@ -10,7 +10,7 @@ class AdminAkunTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_account_list_masks_passwords_and_keeps_actions_after_last_online(): void
+    public function test_account_list_omits_password_column_and_keeps_actions_after_last_online(): void
     {
         $admin = User::create([
             'username' => 'admin-user',
@@ -31,13 +31,13 @@ class AdminAkunTest extends TestCase
             ->assertSeeInOrder([
                 '<th>USERNAME</th>',
                 '<th>ROLE</th>',
-                '<th>PASSWORD</th>',
                 '<th>EMAIL</th>',
                 '<th>TERDAFTAR</th>',
                 '<th>TERAKHIR ONLINE</th>',
                 '<th class="kanan">AKSI</th>',
             ], false)
-            ->assertSee('••••••••')
+            ->assertDontSee('<th>PASSWORD</th>', false)
+            ->assertDontSee('••••••••')
             ->assertSee('member@example.com')
             ->assertSee('Belum pernah')
             ->assertSee('data-toggle-password', false)

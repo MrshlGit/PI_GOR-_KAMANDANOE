@@ -411,7 +411,7 @@ body.lock {
     white-space: nowrap;
 }
 .tbl.akun {
-    min-width: 1050px;
+    min-width: 900px;
 }
 .akun-password {
     color: var(--muted, #666);

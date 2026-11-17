@@ -127,6 +127,18 @@ class BookingController extends Controller
             'total_bayar' => $totalBayar,
         ]);
 
+        $bookingNotification = [
+            'title' => 'Lapangan berhasil dipesan',
+            'message' => $lapangan->nama_lapangan.' · '.$data['tanggal'].' · '.$data['jam'],
+        ];
+        $bookingNotifications = array_slice(array_merge(
+            [$bookingNotification],
+            $request->session()->get('booking_notifications', [])
+        ), 0, 3);
+
+        $request->session()->put('booking_notifications', $bookingNotifications);
+        $request->session()->flash('booking_notification_open', true);
+
         return redirect()->route('booking.create')
             ->with('success', 'Booking berhasil disimpan.');
     }

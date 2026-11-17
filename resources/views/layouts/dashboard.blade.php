@@ -11,6 +11,8 @@
 <body>
 @php
     $user = auth()->user();
+    $bookingNotifications = session('booking_notifications', []);
+    $bookingNotificationsOpen = session('booking_notification_open', false);
     $menu = [
         ['label' => 'Dashboard',          'url' => '/dashboard', 'is' => 'dashboard*', 'ready' => true,
          'icon' => '<path d="m3 11 9-8 9 8"/><path d="M5 10v10h14V10"/>'],
@@ -65,12 +67,24 @@
             </label>
 
             <div class="top-right">
-                <div class="dropdown">
+                <div @class(['dropdown notification-dropdown', 'open' => $bookingNotificationsOpen])>
                     <button class="icon-btn ring trigger" aria-label="Notifikasi">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9a6 6 0 0 1 12 0c0 6 2 7 2 7H4s2-1 2-7"/><path d="M10 20a2 2 0 0 0 4 0"/></svg>
-                        <i></i>
+                        @if (count($bookingNotifications) > 0)
+                            <i></i>
+                        @endif
                     </button>
-                    <div class="drop"><p class="empty">Belum ada notifikasi</p></div>
+                    <div class="drop">
+                        @forelse ($bookingNotifications as $notification)
+                            <a class="notification-item" href="{{ route('tagihan.index') }}">
+                                <strong>{{ $notification['title'] }}</strong>
+                                <span>{{ $notification['message'] }}</span>
+                                <small>Lihat tagihan</small>
+                            </a>
+                        @empty
+                            <p class="empty">Belum ada notifikasi</p>
+                        @endforelse
+                    </div>
                 </div>
 
                 <div class="dropdown">

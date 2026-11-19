@@ -11,20 +11,32 @@
         <section class="schedule-panel" aria-labelledby="schedule-title">
             <header class="schedule-header">
                 <div>
-                    <h2 id="schedule-title">{{ now()->locale('id')->translatedFormat('l, d F Y') }}</h2>
+                    <h2 id="schedule-title">{{ $labelTanggal }}</h2>
                     <p>Ringkasan jadwal lapangan per jam.</p>
+                    <form method="GET" action="{{ route('booking.create') }}" class="schedule-date">
+                        <label for="schedule-date">Pilih tanggal</label>
+                        <input
+                            type="date"
+                            name="tanggal"
+                            id="schedule-date"
+                            value="{{ $tanggal->toDateString() }}"
+                            required
+                        >
+                        <button type="submit">Lihat</button>
+                    </form>
                 </div>
-                <button class="schedule-booking-button" type="submit" form="booking-form">
+                <label class="schedule-booking-button" for="booking-confirm-toggle">
                     Booking <span aria-hidden="true">→</span>
-                </button>
+                </label>
             </header>
 
-            <div class="schedule-legend" aria-label="Keterangan status pembayaran">
-                <strong>Status Bayar</strong>
-                <span><i class="legend-color legend-color--unpaid"></i>Belum Bayar</span>
-                <span><i class="legend-color legend-color--deposit"></i>DP 50%</span>
-                <span><i class="legend-color legend-color--paid"></i>Lunas</span>
-                <span><i class="legend-color legend-color--member"></i>Member Bulanan</span>
+            <div class="schedule-legend" aria-label="Keterangan status jadwal">
+                <strong>Status Jadwal</strong>
+                <span><i class="legend-color legend-color--available"></i>Tersedia</span>
+                <span><i class="legend-color legend-color--waiting"></i>Menunggu</span>
+                <span><i class="legend-color legend-color--occupied"></i>Terisi</span>
+                <span><i class="legend-color legend-color--mine"></i>Booking saya</span>
+                <span><i class="legend-color legend-color--maintenance"></i>Maintenance</span>
             </div>
 
             <div class="schedule-table-wrap">
@@ -40,16 +52,19 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (range(8, 21) as $hour)
+                        @foreach ($jadwal as $hour => $baris)
                             <tr>
                                 <th scope="row">
                                     {{ sprintf('%02d:00 - %02d:00', $hour, $hour + 1) }}
                                 </th>
-                                @forelse ($lapangans as $lapangan)
-                                    <td aria-label="Jadwal {{ $lapangan->nama_lapangan }} pukul {{ sprintf('%02d:00', $hour) }} belum ditampilkan"></td>
-                                @empty
-                                    <td>-</td>
-                                @endforelse
+                                @foreach ($lapangans as $lapangan)
+                                    @php
+                                        $status = $baris[$lapangan->id_lapangan];
+                                    @endphp
+                                    <td class="schedule-cell schedule-cell--{{ $status }}">
+                                        {{ $labelStatus[$status] }}
+                                    </td>
+                                @endforeach
                             </tr>
                         @endforeach
                     </tbody>
@@ -61,12 +76,25 @@
 
         <br>
         <div class="form-container">
+            @php
+                $hasilBooking = session('booking_result');
+                if (! $hasilBooking && $errors->any()) {
+                    $hasilBooking = [
+                        'type' => 'error',
+                        'title' => 'Booking belum berhasil',
+                        'message' => $errors->first(),
+                    ];
+                }
+            @endphp
+            <input
+                type="checkbox"
+                id="booking-confirm-toggle"
+                class="booking-confirm-toggle"
+                aria-label="Buka konfirmasi booking"
+            >
 
             <h2>Booking Lapangan</h2>
             <p>Pilih lapangan & waktu sesuai kebutuhan Anda.</p>
-            @if (session('success'))
-                <p class="success">{{ session('success') }}</p>
-            @endif
 
             @if ($errors->any())
                 <div class="error">
@@ -82,7 +110,7 @@
                     <div class="kiri">
                         <fieldset class="court-picker">
                             <legend>Pilih Lapangan</legend>
-                            @foreach ($lapangans as $lapangan)
+                            @foreach ($lapanganBooking as $lapangan)
                                 <label class="court-option">
                                     <input
                                         type="radio"
@@ -124,20 +152,40 @@
                             <input type="number" name="durasi" min="1" max="16" class="input" placeholder="Durasi / Jam" value="{{ old('durasi') }}" required>
                         </div>
 
-                        <div class="harga">
-                            <p>Total : </p>
-                        </div>
-
-                        <button type="submit" class="button" @disabled($lapangans->isEmpty())>
+                        <label for="booking-confirm-toggle" class="button" @if ($lapanganBooking->isEmpty()) aria-disabled="true" @endif>
                             Booking Sekarang
-                        </button>
+                        </label>
                     </div>
                 </div>
             </form>
-        </div>
 
-        
-    </div>
+            <div class="booking-confirm-modal" role="dialog" aria-modal="true" aria-labelledby="booking-confirm-title">
+                <div class="booking-confirm-modal__panel">
+                    <h2 id="booking-confirm-title">Konfirmasi Booking</h2>
+                    <p>Pastikan lapangan, tanggal, jam, dan durasi yang Anda pilih sudah benar sebelum melanjutkan.</p>
+                    <div class="booking-confirm-modal__actions">
+                        <label for="booking-confirm-toggle" class="booking-confirm-modal__cancel">Periksa Kembali</label>
+                        <button type="submit" form="booking-form" class="booking-confirm-modal__submit" @disabled($lapanganBooking->isEmpty())>
+                            Lanjutkan Booking
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            @if ($hasilBooking)
+                <div class="booking-result-modal booking-result-modal--{{ $hasilBooking['type'] }}" role="dialog" aria-modal="true" aria-labelledby="booking-result-title">
+                    <div class="booking-result-modal__panel">
+                        <span class="booking-result-modal__icon" aria-hidden="true">
+                            {{ $hasilBooking['type'] === 'success' ? '✓' : '!' }}
+                        </span>
+                        <h2 id="booking-result-title">{{ $hasilBooking['title'] }}</h2>
+                        <p>{{ $hasilBooking['message'] }}</p>
+                        <a href="{{ route('booking.create', ['tanggal' => $tanggal->toDateString()]) }}" class="booking-result-modal__close">Kembali ke jadwal</a>
+                    </div>
+                </div>
+            @endif
+            </div>
+        </div>
 
     <script>
         (() => {

@@ -3,9 +3,10 @@
 .content-body {
   display: flex;
   flex-direction: column;
-  gap: 25px;
+  gap: 24px;
   width: 100%;
   padding: 0;
+  box-sizing: border-box;
 }
 
 /* Banner Card Header */
@@ -16,35 +17,47 @@
   background: #ffffff;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
   width: 100%;
+  box-sizing: border-box;
 }
 
 .header-card h1 {
   font-size: 28px;
   font-weight: 800;
   color: #000;
-  margin-bottom: 6px;
+  margin: 0 0 6px 0;
 }
 
 .header-card p {
   font-size: 15px;
   color: #555;
   line-height: 1.4;
+  margin: 0;
 }
 
-/* Layout Grid 2-Kolom (Diubah menjadi stretch agar tinggi kedua kolom sama) */
+.payment-grid-form {
+  width: 100%;
+}
+
+/* Layout Grid 2-Kolom */
 .payment-grid {
   display: grid;
-  grid-template-columns: 1fr 380px;
-  gap: 25px;
-  align-items: stretch; 
+  grid-template-columns: minmax(0, 1.35fr) minmax(320px, 0.9fr);
+  gap: 24px;
+  align-items: stretch;
   width: 100%;
 }
 
 .left-column {
   display: flex;
   flex-direction: column;
-  gap: 25px;
-  height: 100%;
+  justify-content: space-between;
+  gap: 24px;
+  min-width: 0;
+}
+
+.right-column {
+  display: flex;
+  min-width: 0;
 }
 
 /* Table Barang */
@@ -54,6 +67,8 @@
   overflow-x: auto;
   background: #ffffff;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .items-table-card table {
@@ -61,35 +76,44 @@
   border-collapse: collapse;
 }
 
-.items-table-card th, 
+.items-table-card th,
 .items-table-card td {
-  padding: 14px 18px;
+  padding: 13px 20px;
   text-align: left;
-  font-size: 13px;
-  white-space: nowrap; /* Mencegah teks terpotong ke baris bawah */
+  font-size: 13.5px;
+  white-space: nowrap;
+  box-sizing: border-box;
 }
 
-/* Kolom pertama (Nama) dibuat fleksibel */
 .items-table-card td:first-child,
 .items-table-card th:first-child {
   white-space: normal;
+  padding-left: 36px;
 }
 
 .items-table-card th:last-child,
 .items-table-card td:last-child {
-  text-align: right;
+  text-align: left;
 }
 
 .items-table-card th {
   font-weight: 700;
-  color: #000;
-  border-bottom: 1.5px solid #ddd;
-  background-color: #fff;
+  color: #ffffff;
+  background-color: #f78333;
+  border-bottom: none;
+}
+
+.items-table-card th:first-child {
+  border-top-left-radius: 14px;
+}
+
+.items-table-card th:last-child {
+  border-top-right-radius: 14px;
 }
 
 .items-table-card td {
-  border-bottom: 1px solid #eee;
-  color: #333;
+  border-bottom: 1px solid #ececec;
+  color: #222;
 }
 
 .items-table-card tr:last-child td {
@@ -97,26 +121,30 @@
 }
 
 /* Upload Section & QR */
+/* .upload-section {
+  background: transparent;
+  padding: 4px 0;
+  width: 100%;
+  box-sizing: border-box;
+} */
+
+/* Satu kotak kartu pembungkus QRIS & Bukti Pembayaran */
 .upload-section {
   border: 1.5px solid #f78333;
   border-radius: 16px;
-  padding: 20px;
+  padding: 20px 24px;
   background: #ffffff;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-}
-
-.section-title {
-  font-size: 16px;
-  font-weight: 700;
-  margin-bottom: 15px;
-  color: #000;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .upload-row {
   display: grid;
-  grid-template-columns: 180px 1fr;
+  grid-template-columns: 160px minmax(0, 1fr);
   gap: 20px;
-  align-items: center;
+  align-items: end;
+  width: 100%;
 }
 
 .qr-trigger {
@@ -124,63 +152,86 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  border: 1.5px dashed #f78333;
-  border-radius: 12px;
-  padding: 20px;
-  gap: 10px;
-  background: #fff8f3;
+  min-height: 120px;
+  padding: 14px 10px;
+  gap: 8px;
+  background: transparent;
+  box-sizing: border-box;
 }
 
-.qr-trigger a {
-  font-size: 13px;
-  font-weight: 600;
-  color: #f78333;
-  text-decoration: none;
+.qr-trigger svg {
+  color: #111;
+  display: block;
+}
+
+.upload-dropzone-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.section-title {
+  font-size: 15px;
+  font-weight: 700;
+  margin: 0 0 10px 0;
+  color: #111;
+  text-align: center;
 }
 
 .dropzone-box {
+  width: 100%;
+  min-height: 136px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  border: 1.5px dashed #ccc;
-  border-radius: 12px;
-  padding: 20px;
-  background: #fafafa;
+  border: 1.5px dashed #f7b282;
+  border-radius: 14px;
+  padding: 16px 20px;
+  background: #fff8f3;
   text-align: center;
+  box-sizing: border-box;
 }
 
 .upload-icon-circle {
   color: #f78333;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .dropzone-text {
-  font-size: 13px;
-  color: #666;
-  margin-bottom: 8px;
+  font-size: 12.5px;
+  color: #444;
+  margin: 0 0 6px 0;
 }
 
 .btn-select-file {
-  background-color: #f78333;
-  color: #fff;
-  padding: 6px 16px;
-  border-radius: 8px;
-  font-size: 13px;
+  background-color: transparent;
+  color: #f78333;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 12.5px;
   font-weight: 600;
-  text-decoration: none;
+  text-decoration: underline;
   cursor: pointer;
-  margin-bottom: 6px;
+  margin-bottom: 4px;
   display: inline-block;
+  border: none;
 }
 
 .file-hint {
-  font-size: 11px;
-  color: #999;
+  font-size: 10.5px;
+  color: #777;
+  margin: 0;
 }
 
-/* Right Column Summary Card (Diatur agar memenuhi tinggi penuh & meratakan isi) */
+/* Right Column Summary Card */
 .summary-card {
+  width: 100%;
+  height: 100%;
   border: 1.5px solid #f78333;
   border-radius: 16px;
   padding: 24px;
@@ -189,77 +240,123 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  height: 100%;
-  box-sizing: border-box;
   gap: 16px;
+  box-sizing: border-box;
 }
 
 .summary-card h2 {
   font-size: 22px;
   font-weight: 800;
   color: #000;
+  margin: 0 0 6px 0;
 }
 
 .summary-desc {
   font-size: 13px;
-  color: #666;
-  line-height: 1.4;
+  color: #555;
+  line-height: 1.45;
+  margin: 0;
 }
 
 .summary-details {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  border-top: 1px solid #eee;
-  border-bottom: 1px solid #eee;
+  border-top: 1px solid #e5e5e5;
+  border-bottom: 1px solid #e5e5e5;
   padding: 16px 0;
 }
 
 .summary-row {
   display: flex;
   justify-content: space-between;
-  font-size: 13px;
-  color: #444;
+  align-items: center;
+  gap: 12px;
+  font-size: 13.5px;
+  color: #222;
 }
 
 .summary-row strong {
   color: #000;
+  font-weight: 500;
 }
 
 .summary-total-row {
   display: flex;
   justify-content: space-between;
-  font-size: 18px;
-  font-weight: 800;
+  align-items: center;
+  gap: 12px;
+  font-size: 15px;
+  font-weight: 700;
   color: #000;
+  padding-top: 4px;
 }
 
 .pay-action-wrapper {
-  margin-top: 10px;
+  margin-top: auto;
+  display: flex;
+  justify-content: flex-end;
 }
 
 .btn-pay {
-  width: 100%;
-  background-color: #f78333;
-  color: #ffffff;
-  border: none;
-  padding: 12px;
-  border-radius: 10px;
-  font-size: 16px;
-  font-weight: 700;
+  width: auto;
+  min-width: 96px;
+  background-color: #a8dba8;
+  color: #111111;
+  border: 1px solid #555555;
+  padding: 8px 20px;
+  border-radius: 8px;
+  font-size: 13.5px;
+  font-weight: 600;
   cursor: pointer;
-  transition: opacity 0.2s;
+  transition: opacity 0.2s, background-color 0.2s;
 }
 
-.btn-pay:hover {
-  opacity: 0.9;
+.btn-pay:hover:not(:disabled) {
+  background-color: #93cf93;
+}
+
+.btn-pay.disabled,
+.btn-pay:disabled {
+  background-color: #dcdcdc;
+  color: #666666;
+  border-color: #bbbbbb;
+  cursor: not-allowed;
+  opacity: 0.8;
+}
+
+/* Modal QRIS */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.modal-content {
+  background: #fff;
+  padding: 30px;
+  border-radius: 16px;
+  text-align: center;
+  max-width: 400px;
+  width: 90%;
+  box-sizing: border-box;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
 }
 
 @media (max-width: 900px) {
   .payment-grid {
     grid-template-columns: 1fr;
   }
+
   .upload-row {
     grid-template-columns: 1fr;
+    align-items: stretch;
   }
 }

@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\AkunController;
 use App\Http\Controllers\Admin\LapanganController;
+use App\Http\Controllers\Admin\LaporanKeuanganController;
 use App\Http\Controllers\Admin\PemesananController;
 use App\Http\Controllers\User\BookingController;
 use App\Http\Controllers\User\DashboardController;
@@ -40,6 +41,10 @@ Route::middleware(['auth', 'admin'])
         Route::post('/pemesanan', [PemesananController::class, 'store'])->name('pemesanan.store');
         Route::patch('/pemesanan/{booking}/status', [PemesananController::class, 'updateStatus'])
             ->name('pemesanan.status');
+        Route::get('/laporan-keuangan', [LaporanKeuanganController::class, 'index'])
+            ->name('laporan-keuangan.index');
+        Route::get('/laporan-keuangan/bukti/{pembayaran}', [LaporanKeuanganController::class, 'buktiPembayaran'])
+            ->name('laporan-keuangan.bukti');
     });
 
 Route::middleware('auth')->group(function () {

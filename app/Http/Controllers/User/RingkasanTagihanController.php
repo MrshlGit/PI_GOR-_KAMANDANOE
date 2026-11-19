@@ -5,6 +5,8 @@ namespace App\Http\Controllers\User;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Str;
 
 class RingkasanTagihanController extends Controller
 {
@@ -56,18 +58,31 @@ class RingkasanTagihanController extends Controller
 
         if ($request->hasFile('bukti_bayar')) {
             $file = $request->file('bukti_bayar');
-            $namaFile = time() . '_' . $file->getClientOriginalName();
-            $file->move(public_path('uploads/bukti_pembayaran'), $namaFile);
+            $directory = public_path('uploads/bukti_pembayaran');
+            File::ensureDirectoryExists($directory);
+            $namaFile = $file->hashName();
+            $file->move($directory, $namaFile);
 
-            DB::table('pembayaran')->insert([
-                'tgl_bayar'            => now(),
-                'id_detail_item_booking' => $booking->id_booking, 
-                'metode_bayar'         => 'QRIS / Transfer Bank',
-                'status_pembayaran'    => 'Pending',
-                'bukti_transfer'       => $namaFile,
-                'created_at'           => now(),
-                'updated_at'           => now(),
-            ]);
+            DB::transaction(function () use ($booking, $namaFile): void {
+                $idDetail = (string) Str::uuid();
+
+                DB::table('detail_item_booking')->insert([
+                    'id_detail' => $idDetail,
+                    'id_booking' => $booking->id_booking,
+                    'subtotal' => $booking->total_bayar,
+                    'id_produk' => null,
+                    'kuantitas' => max(1, (int) $booking->durasi),
+                ]);
+
+                DB::table('pembayaran')->insert([
+                    'id_pembayaran' => (string) Str::uuid(),
+                    'tgl_bayar' => now()->toDateString(),
+                    'id_detail_item_booking' => $idDetail,
+                    'metode_bayar' => 'QRIS / Transfer Bank',
+                    'status_pembayaran' => 'Pending',
+                    'bukti_transfer' => $namaFile,
+                ]);
+            });
 
             return redirect()->route('pembayaran.index')
                 ->with('success', 'Bukti pembayaran berhasil dikirim! Menunggu verifikasi dari Admin.');

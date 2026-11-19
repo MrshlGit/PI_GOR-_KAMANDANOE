@@ -1,0 +1,203 @@
+.finance-stats .stat strong {
+    font-size: clamp(1.25rem, 2vw, 1.8rem);
+}
+.finance-stats .finance-unavailable {
+    font-size: 1.25rem;
+}
+.finance-chart {
+    margin-bottom: 18px;
+}
+.finance-period-form {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--muted);
+    font-size: 0.78rem;
+}
+.finance-period-form select {
+    min-height: 36px;
+    padding: 6px 10px;
+    color: var(--ink);
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 9px;
+}
+.finance-chart-content {
+    min-width: 0;
+}
+.finance-chart-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 18px;
+    margin-bottom: 14px;
+    color: var(--muted);
+    font-size: 0.75rem;
+}
+.finance-chart-legend-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+}
+.finance-chart-swatch {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+}
+.finance-chart-scroll {
+    overflow-x: auto;
+}
+.finance-chart-inner {
+    min-width: 620px;
+}
+.finance-chart-axis,
+.finance-period-group {
+    display: grid;
+    grid-template-columns: 105px minmax(0, 1fr);
+    gap: 12px;
+}
+.finance-chart-axis {
+    align-items: end;
+    margin-bottom: 6px;
+    color: var(--muted);
+    font-size: 0.68rem;
+}
+.finance-chart-ticks {
+    display: grid;
+    color: var(--muted);
+    text-align: right;
+}
+.finance-period-group {
+    padding: 9px 0;
+    border-top: 1px solid var(--line);
+}
+.finance-period-label {
+    padding-top: 2px;
+    color: var(--ink);
+    font-size: 0.78rem;
+    font-weight: 600;
+}
+.finance-period-bars {
+    display: grid;
+    gap: 5px;
+}
+.finance-bar-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 100px;
+    align-items: center;
+    gap: 10px;
+    min-height: 14px;
+}
+.finance-bar-track {
+    height: 12px;
+    overflow: hidden;
+    border-radius: 99px;
+    background-color: #faf8f6;
+    background-image: linear-gradient(to right, var(--line) 1px, transparent 1px);
+    background-size: calc(100% / var(--tick-count, 4)) 100%;
+}
+.finance-bar {
+    height: 100%;
+    border-radius: inherit;
+}
+.finance-bar-value {
+    color: var(--muted);
+    font-size: 0.7rem;
+    text-align: right;
+    white-space: nowrap;
+}
+.finance-chart-empty {
+    padding: 32px 12px;
+    color: var(--muted);
+    text-align: center;
+}
+.finance-insights {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 18px;
+    margin-bottom: 18px;
+}
+.finance-insights > .box {
+    min-width: 0;
+}
+.finance-donut-layout {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 26px;
+    min-height: 210px;
+}
+.finance-donut {
+    position: relative;
+    width: 168px;
+    height: 168px;
+    flex: none;
+    border-radius: 50%;
+    background: var(--line);
+}
+.finance-donut::after {
+    position: absolute;
+    inset: 28%;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: #fff;
+    color: var(--muted);
+    content: var(--finance-total, "100%");
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+.finance-donut-legend {
+    display: grid;
+    gap: 12px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+.finance-donut-legend li {
+    display: grid;
+    grid-template-columns: 10px minmax(0, 1fr);
+    align-items: start;
+    gap: 8px;
+    font-size: 0.78rem;
+}
+.finance-donut-legend .finance-chart-swatch {
+    margin-top: 4px;
+}
+.finance-donut-legend small {
+    display: block;
+    margin-top: 3px;
+    color: var(--muted);
+}
+.finance-bookings {
+    min-width: 0;
+}
+.finance-bookings-table {
+    min-width: 980px;
+}
+.finance-bookings-table td small {
+    max-width: 180px;
+    overflow-wrap: anywhere;
+}
+.finance-pagination {
+    margin-top: 14px;
+}
+
+@media (max-width: 900px) {
+    .finance-insights {
+        grid-template-columns: 1fr;
+    }
+}
+@media (max-width: 600px) {
+    .finance-period-form {
+        width: 100%;
+        flex-wrap: wrap;
+    }
+    .finance-donut-layout {
+        flex-direction: column;
+        gap: 18px;
+        padding: 10px 0;
+    }
+    .finance-donut-legend {
+        width: 100%;
+    }
+}

@@ -34,7 +34,7 @@
         ['Manajemen Turnamen',   'trophy', null,               null, true],
         ['Manajemen Lapangan',   'pin',    'admin.lapangan.index', 'admin.lapangan.*', true],
         ['Manajemen Pemesanan',  'cal',    'admin.pemesanan.index', 'admin.pemesanan.*', $manajemenPemesananAktif],
-        ['Laporan Keuangan',     'cash',   null,               null, true],
+        ['Laporan Keuangan',     'cash',   'admin.laporan-keuangan.index', 'admin.laporan-keuangan.*', true],
     ];
 @endphp
 

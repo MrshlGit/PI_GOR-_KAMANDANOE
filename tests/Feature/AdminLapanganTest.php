@@ -178,6 +178,153 @@ class AdminLapanganTest extends TestCase
         ]);
     }
 
+    // public function test_user_cannot_book_a_time_that_overlaps_an_existing_booking(): void
+    // {
+    //     $user = User::create([
+    //         'username' => 'Pemain',
+    //         'password' => 'password',
+    //         'role' => 'user',
+    //     ]);
+    //     $existingUser = User::create([
+    //         'username' => 'Pemain Lain',
+    //         'password' => 'password',
+    //         'role' => 'user',
+    //     ]);
+
+    //     Lapangan::create([
+    //         'id_lapangan' => '3',
+    //         'nama_lapangan' => 'Lapangan C',
+    //         'tipe_lantai' => 'Vinyl',
+    //         'harga_per_jam' => 50000,
+    //         'kapasitas' => 4,
+    //         'status_lapangan' => 'Aktif',
+    //     ]);
+    //     Booking::create([
+    //         'id_booking' => 'BOOKING-EXISTING',
+    //         'id_user' => $existingUser->id,
+    //         'id_lapangan' => '3',
+    //         'tgl_main' => today()->addDays(2)->toDateString(),
+    //         'jam_mulai' => '10:00:00',
+    //         'durasi' => 2,
+    //         'status_booking' => 'dikonfirmasi',
+    //         'total_bayar' => 100000,
+    //     ]);
+
+    //     $this->actingAs($user)
+    //         ->from(route('booking.create'))
+    //         ->post(route('booking.store'), [
+    //             'id_lapangan' => '3',
+    //             'tanggal' => today()->addDays(2)->toDateString(),
+    //             'jam' => '11:00',
+    //             'durasi' => 1,
+    //         ])
+    //         ->assertRedirect(route('booking.create', ['tanggal' => today()->addDays(2)->toDateString()]))
+    //         ->assertSessionHas('booking_result', fn (array $result) => $result['type'] === 'full');
+
+    //     $this->assertDatabaseCount('booking', 1);
+    // }
+
+    // public function test_successful_booking_shows_pending_admin_confirmation_result(): void
+    // {
+    //     $user = User::create([
+    //         'username' => 'Pemain',
+    //         'password' => 'password',
+    //         'role' => 'user',
+    //     ]);
+    //     Lapangan::create([
+    //         'id_lapangan' => '4',
+    //         'nama_lapangan' => 'Lapangan D',
+    //         'tipe_lantai' => 'Vinyl',
+    //         'harga_per_jam' => 50000,
+    //         'kapasitas' => 4,
+    //         'status_lapangan' => 'Aktif',
+    //     ]);
+    //     $tanggal = today()->addDays(2)->toDateString();
+
+    //     $this->actingAs($user)
+    //         ->post(route('booking.store'), [
+    //             'id_lapangan' => '4',
+    //             'tanggal' => $tanggal,
+    //             'jam' => '10:00',
+    //             'durasi' => 1,
+    //         ])
+    //         ->assertRedirect(route('booking.create', ['tanggal' => $tanggal]))
+    //         ->assertSessionHas('booking_result', fn (array $result) => $result['type'] === 'success');
+
+    //     $this->assertDatabaseHas('booking', [
+    //         'id_user' => $user->id,
+    //         'id_lapangan' => '4',
+    //         'status_booking' => 'menunggu',
+    //         'total_bayar' => 50000,
+    //     ]);
+    // }
+
+    // public function test_booking_page_shows_schedule_for_selected_date(): void
+    // {
+    //     $user = User::create([
+    //         'username' => 'Pemain',
+    //         'password' => 'password',
+    //         'role' => 'user',
+    //     ]);
+    //     $otherUser = User::create([
+    //         'username' => 'Pemain Lain',
+    //         'password' => 'password',
+    //         'role' => 'user',
+    //     ]);
+
+    //     foreach (['1', '2'] as $idLapangan) {
+    //         Lapangan::create([
+    //             'id_lapangan' => $idLapangan,
+    //             'nama_lapangan' => 'Lapangan '.$idLapangan,
+    //             'tipe_lantai' => 'Vinyl',
+    //             'harga_per_jam' => 50000,
+    //             'kapasitas' => 4,
+    //             'status_lapangan' => 'Aktif',
+    //         ]);
+    //     }
+
+    //     $tanggal = today()->addDays(2)->toDateString();
+    //     Booking::create([
+    //         'id_booking' => 'BOOKING-SAYA',
+    //         'id_user' => $user->id,
+    //         'id_lapangan' => '1',
+    //         'tgl_main' => $tanggal,
+    //         'jam_mulai' => '09:00:00',
+    //         'durasi' => 2,
+    //         'status_booking' => 'menunggu',
+    //         'total_bayar' => 100000,
+    //     ]);
+    //     Booking::create([
+    //         'id_booking' => 'BOOKING-ORANG',
+    //         'id_user' => $otherUser->id,
+    //         'id_lapangan' => '2',
+    //         'tgl_main' => $tanggal,
+    //         'jam_mulai' => '11:00:00',
+    //         'durasi' => 1,
+    //         'status_booking' => 'menunggu',
+    //         'total_bayar' => 50000,
+    //     ]);
+    //     Booking::create([
+    //         'id_booking' => 'BOOKING-TANGGAL-LAIN',
+    //         'id_user' => $otherUser->id,
+    //         'id_lapangan' => '1',
+    //         'tgl_main' => today()->addDays(3)->toDateString(),
+    //         'jam_mulai' => '13:00:00',
+    //         'durasi' => 1,
+    //         'status_booking' => 'dikonfirmasi',
+    //         'total_bayar' => 50000,
+    //     ]);
+
+    //     $this->actingAs($user)
+    //         ->get(route('booking.create', ['tanggal' => $tanggal]))
+    //         ->assertOk()
+    //         ->assertSee('value="'.$tanggal.'"', false)
+    //         ->assertSee('class="schedule-cell schedule-cell--saya"', false)
+    //         ->assertSee('class="schedule-cell schedule-cell--menunggu"', false)
+    //         ->assertSee('class="schedule-cell schedule-cell--kosong"', false)
+    //         ->assertDontSee('class="schedule-cell schedule-cell--terisi"', false);
+    // }
+
     public function test_user_booking_saves_duration_for_the_schedule(): void
     {
         $user = User::create([
@@ -203,7 +350,7 @@ class AdminLapanganTest extends TestCase
                     'jam' => $jam,
                     'durasi' => 1,
                 ])
-                ->assertRedirect(route('booking.create'))
+                ->assertRedirect(route('booking.create', ['tanggal' => $tanggal]))
                 ->assertSessionHas('booking_notification_open', true);
         }
 

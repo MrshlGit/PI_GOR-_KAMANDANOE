@@ -14,31 +14,49 @@ class RingkasanTagihanController extends Controller
     {
         $user = auth()->user();
         
-        // Ambil data booking terakhir milik user
-        $booking = DB::table('booking')->where('id_user', $user->id)->latest('id_booking')->first();
+        // Ambil SEMUA data booking milik user yang berstatus 'menunggu'
+        $bookings = DB::table('booking')
+            ->where('id_user', $user->id)
+            ->where('status_booking', 'menunggu')
+            ->orderBy('tgl_main', 'desc')
+            ->orderBy('jam_mulai', 'desc')
+            ->get();
 
-        // Ambil harga dari berbagai kemungkinan nama kolom di database agar tidak 0
-        $totalHarga = 0;
-        if ($booking) {
-            $totalHarga = $booking->total_bayar ?? $booking->total ?? $booking->harga ?? $booking->biaya ?? 0;
+        $items = [];
+        $subtotal = 0;
+
+        foreach ($bookings as $item) {
+            $lapangan = DB::table('lapangan')->where('id_lapangan', $item->id_lapangan)->first();
+
+            $namaLapangan  = $lapangan->nama_lapangan ?? 'Lapangan';
+            $tipeLantai    = $lapangan->tipe_lantai ?? '-';
+            $hargaPerJam   = (float) ($lapangan->harga_per_jam ?? 0);
+            $durasiBooking = (int) ($item->durasi ?? 1);
+
+            // Ambil total_bayar dari database; jika nilainya 0 atau < 1000, hitung dari harga_per_jam * durasi
+            $hargaDb = (float) ($item->total_bayar ?? 0);
+            $hargaBooking = ($hargaDb >= 1000) ? $hargaDb : ($hargaPerJam * $durasiBooking);
+
+            $items[] = [
+                'nama'  => $namaLapangan . ' (' . $tipeLantai . ') - Tgl: ' . $item->tgl_main . ' (' . $durasiBooking . ' Jam)',
+                'harga' => 'Rp ' . number_format($hargaBooking, 0, ',', '.')
+            ];
+
+            $subtotal += $hargaBooking;
         }
-
-        $items = $booking ? [
-            [
-                'nama'  => 'Pemesanan Lapangan (ID: ' . ($booking->id_lapangan ?? '1') . ') - Tgl: ' . ($booking->tgl_main ?? date('Y-m-d')), 
-                'harga' => 'Rp ' . number_format($totalHarga, 0, ',', '.')
-            ]
-        ] : [];
 
         $summary = [
             'tanggal'         => date('d M Y'),
             'petugas'         => 'System GOR',
-            'subtotal'        => 'Rp ' . number_format($totalHarga, 0, ',', '.'),
+            'subtotal'        => 'Rp ' . number_format($subtotal, 0, ',', '.'),
             'potongan'        => 'Rp 0',
             'ppn'             => 'Rp 0',
-            'nilai_transaksi' => 'Rp ' . number_format($totalHarga, 0, ',', '.'),
-            'total'           => 'Rp ' . number_format($totalHarga, 0, ',', '.')
+            'nilai_transaksi' => 'Rp ' . number_format($subtotal, 0, ',', '.'),
+            'total'           => 'Rp ' . number_format($subtotal, 0, ',', '.')
         ];
+
+        // Ambil 1 booking terbaru sebagai referensi ID jika view membutuhkannya
+        $booking = $bookings->first();
 
         return view('ViewRingkasanTagihan', compact('items', 'summary', 'user', 'booking'));
     }
@@ -50,7 +68,13 @@ class RingkasanTagihanController extends Controller
         ]);
 
         $user = auth()->user();
-        $booking = DB::table('booking')->where('id_user', $user->id)->latest('id_booking')->first();
+        
+        // Ambil booking terbaru yang statusnya 'menunggu' untuk referensi bukti bayar
+        $booking = DB::table('booking')
+            ->where('id_user', $user->id)
+            ->where('status_booking', 'menunggu')
+            ->latest('id_booking')
+            ->first();
 
         if (!$booking) {
             return redirect()->back()->with('error', 'Tidak ada data pemesanan aktif.');

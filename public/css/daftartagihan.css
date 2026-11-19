@@ -1,12 +1,12 @@
-/* Penyesuaian khusus halaman Daftar Tagihan agar pas dengan Dashboard Layout */
+/* Penyesuaian khusus halaman Daftar Tagihan agar rata kiri & full-screen di Dashboard */
 
 .content-body {
   display: flex;
   flex-direction: column;
   gap: 25px;
-  max-width: 1300px;
-  margin: 0 auto;
   width: 100%;
+  margin: 0;
+  padding: 0;
 }
 
 /* Header Banner Card */
@@ -16,6 +16,7 @@
   padding: 22px 30px;
   background: #ffffff;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  width: 100%;
 }
 
 .header-card h1 {
@@ -34,9 +35,10 @@
 /* Data Grid Section (Customer & Table) */
 .data-grid {
   display: grid;
-  grid-template-columns: 350px 1fr;
-  gap: 25px;
+  grid-template-columns: 300px 1fr;
+  gap: 20px;
   align-items: start;
+  width: 100%;
 }
 
 /* Customer Info Card */
@@ -80,15 +82,15 @@
 }
 
 .form-row label {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 500;
   color: #333;
 }
 
 .form-row input {
-  width: 160px;
-  padding: 7px 10px;
-  font-size: 14px;
+  width: 145px;
+  padding: 6px 9px;
+  font-size: 13px;
   border-radius: 6px;
   border: 1.5px solid #ccc;
   outline: none;
@@ -107,7 +109,7 @@
 .table-card {
   border: 1.5px solid #f78333;
   border-radius: 16px;
-  overflow: hidden;
+  overflow-x: auto;
   background: #ffffff;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
@@ -119,9 +121,16 @@
 
 .table-card th, 
 .table-card td {
-  padding: 14px 16px;
+  padding: 12px 12px;
   text-align: center;
-  font-size: 14px;
+  font-size: 13px;
+  white-space: nowrap; /* Mencegah teks Rp 120.000 & Lapangan GOR patah ke baris kedua */
+}
+
+/* Kolom NAMA rata kiri dan fleksibel */
+.table-card td:first-child {
+  text-align: left;
+  white-space: normal;
 }
 
 .table-card th {
@@ -186,4 +195,10 @@
   background-color: #fee2e2;
   color: #991b1b;
   border-color: #fecaca;
+}
+
+@media (max-width: 900px) {
+  .data-grid {
+    grid-template-columns: 1fr;
+  }
 }

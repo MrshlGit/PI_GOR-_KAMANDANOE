@@ -1,4 +1,4 @@
-/* Styling Khusus Halaman Ringkasan Pembayaran */
+/* Styling Khusus Halaman Ringkasan Pembayaran & Daftar Tagihan */
 
 .content-body {
   display: flex;
@@ -31,12 +31,12 @@
   line-height: 1.4;
 }
 
-/* Layout Grid 2-Kolom */
+/* Layout Grid 2-Kolom (Diubah menjadi stretch agar tinggi kedua kolom sama) */
 .payment-grid {
   display: grid;
   grid-template-columns: 1fr 380px;
   gap: 25px;
-  align-items: start;
+  align-items: stretch; 
   width: 100%;
 }
 
@@ -44,13 +44,14 @@
   display: flex;
   flex-direction: column;
   gap: 25px;
+  height: 100%;
 }
 
 /* Table Barang */
 .items-table-card {
   border: 1.5px solid #f78333;
   border-radius: 16px;
-  overflow: hidden;
+  overflow-x: auto;
   background: #ffffff;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
@@ -62,9 +63,16 @@
 
 .items-table-card th, 
 .items-table-card td {
-  padding: 14px 20px;
+  padding: 14px 18px;
   text-align: left;
-  font-size: 14px;
+  font-size: 13px;
+  white-space: nowrap; /* Mencegah teks terpotong ke baris bawah */
+}
+
+/* Kolom pertama (Nama) dibuat fleksibel */
+.items-table-card td:first-child,
+.items-table-card th:first-child {
+  white-space: normal;
 }
 
 .items-table-card th:last-child,
@@ -163,6 +171,7 @@
   text-decoration: none;
   cursor: pointer;
   margin-bottom: 6px;
+  display: inline-block;
 }
 
 .file-hint {
@@ -170,7 +179,7 @@
   color: #999;
 }
 
-/* Right Column Summary Card */
+/* Right Column Summary Card (Diatur agar memenuhi tinggi penuh & meratakan isi) */
 .summary-card {
   border: 1.5px solid #f78333;
   border-radius: 16px;
@@ -179,6 +188,9 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+  box-sizing: border-box;
   gap: 16px;
 }
 
@@ -241,4 +253,13 @@
 
 .btn-pay:hover {
   opacity: 0.9;
+}
+
+@media (max-width: 900px) {
+  .payment-grid {
+    grid-template-columns: 1fr;
+  }
+  .upload-row {
+    grid-template-columns: 1fr;
+  }
 }

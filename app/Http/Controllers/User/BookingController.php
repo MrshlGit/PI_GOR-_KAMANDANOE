@@ -7,15 +7,79 @@ use App\Models\Booking;
 use App\Models\Lapangan;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
 class BookingController extends Controller
 {
-    public function create()
+    public function create(Request $request)
     {
-        $lapangans = Lapangan::whereRaw("LOWER(COALESCE(status_lapangan, 'aktif')) != ?", ['nonaktif'])->get();
+        $data = $request->validate([
+            'tanggal' => ['nullable', 'date'],
+        ]);
 
-        return view('lapangan_view', compact('lapangans'));
+        $tanggal = Carbon::parse($data['tanggal'] ?? today()->toDateString())->startOfDay();
+        $lapangans = Lapangan::orderBy('id_lapangan')->get();
+        $lapanganBooking = $lapangans->filter(
+            fn (Lapangan $lapangan) => strtolower((string) $lapangan->status_lapangan) !== 'nonaktif'
+        );
+        $jadwal = [];
+        $prioritas = [
+            'kosong' => 0,
+            'menunggu' => 1,
+            'terisi' => 2,
+            'saya' => 3,
+        ];
+
+        for ($jam = 8; $jam < 22; $jam++) {
+            foreach ($lapangans as $lapangan) {
+                $jadwal[$jam][$lapangan->id_lapangan] =
+                    strtolower((string) $lapangan->status_lapangan) === 'nonaktif'
+                    ? 'maintenance'
+                    : 'kosong';
+            }
+        }
+
+        $bookings = Booking::whereDate('tgl_main', $tanggal->toDateString())
+            ->whereRaw('LOWER(status_booking) NOT IN (?, ?, ?)', ['batal', 'dibatalkan', 'cancelled'])
+            ->get(['id_user', 'id_lapangan', 'jam_mulai', 'durasi', 'status_booking']);
+
+        $idUser = $request->user()?->getAuthIdentifier();
+
+        foreach ($bookings as $booking) {
+            $jamMulai = (int) substr((string) $booking->jam_mulai, 0, 2);
+            $status = $idUser !== null && $booking->id_user == $idUser
+                ? 'saya'
+                : (strtolower((string) $booking->status_booking) === 'menunggu' ? 'menunggu' : 'terisi');
+
+            for ($jam = $jamMulai; $jam < $jamMulai + max(1, (int) $booking->durasi); $jam++) {
+                if (! isset($jadwal[$jam][$booking->id_lapangan])) {
+                    continue;
+                }
+
+                $statusLama = $jadwal[$jam][$booking->id_lapangan];
+                if ($statusLama !== 'maintenance' && $prioritas[$status] > $prioritas[$statusLama]) {
+                    $jadwal[$jam][$booking->id_lapangan] = $status;
+                }
+            }
+        }
+
+        $labelStatus = [
+            'kosong' => 'Tersedia',
+            'menunggu' => 'Menunggu',
+            'terisi' => 'Terisi',
+            'saya' => 'Booking saya',
+            'maintenance' => 'Maintenance',
+        ];
+
+        return view('lapangan_view', [
+            'lapangans' => $lapangans,
+            'lapanganBooking' => $lapanganBooking,
+            'tanggal' => $tanggal,
+            'labelTanggal' => $tanggal->copy()->locale('id')->translatedFormat('l, j F Y'),
+            'jadwal' => $jadwal,
+            'labelStatus' => $labelStatus,
+        ]);
     }
 
     // public function create1()
@@ -53,83 +117,70 @@ class BookingController extends Controller
             ]);
         }
 
-        $lapangan = Lapangan::findOrFail($data['id_lapangan']); #mencari primary key yang cocok
+        $namaLapangan = DB::transaction(function () use ($data, $mulaiBaru, $request): string|false {
+            $lapangan = Lapangan::query()
+                ->whereKey($data['id_lapangan'])
+                ->lockForUpdate()
+                ->firstOrFail();
 
-        if (strtolower((string) $lapangan->status_lapangan) === 'nonaktif') {
-            throw ValidationException::withMessages([
-                'id_lapangan' => 'Lapangan ini sedang tidak tersedia untuk pemesanan.',
-            ]);
-        }
-
-        if ($lapangan->harga_per_jam === null) {
-            throw ValidationException::withMessages([
-                'id_lapangan' => 'Harga lapangan ini belum diatur.',
-            ]);
-        }
-
-        // $mulai = \Carbon\Carbon::createFromFormat('Y-m-d H:i', $data['tanggal'].' '.$data['jam']);
-
-        // $selesai = $mulai->copy()->addHours((int) $data['durasi']);
-
-        // $bentrok = Booking::where('id_lapangan', $lapangan->getKey())
-        //     ->whereDate('tgl_main', $data['tanggal'])
-        //     ->whereRaw('LOWER(status_booking) NOT IN (?, ?, ?)', ['batal', 'dibatalkan', 'cancelled'])
-        //     ->get(['jam_mulai', 'durasi'])
-        //     ->contains(function (Booking $booking) use ($mulai, $selesai, $data): bool {
-        //         $mulaiBooking = \Carbon\Carbon::parse($data['tanggal'].' '.$booking->jam_mulai);
-        //         $selesaiBooking = $mulaiBooking->copy()->addHours(max(1, (int) $booking->durasi));
-
-        //         return $mulai->lt($selesaiBooking) && $selesai->gt($mulaiBooking);
-        //     });
-
-        // if ($bentrok) {
-        //     throw ValidationException::withMessages([
-        //         'jam' => 'Jadwal lapangan sudah terisi pada rentang waktu tersebut.',
-        //     ]);
-        // }
-
-        $selesaiBaru = $mulaiBaru->copy()->addHours((int) $data['durasi']);
-
-        // Booking lama untuk lapangan dan tanggal yang sama
-        $bookingLama = Booking::where('id_lapangan', $lapangan->getKey()) #ambil primary key untuk nanti diakses variabel didalamnya
-            ->whereDate('tgl_main', $data['tanggal'])  #bandingkan dan ambil tanggal yang sama
-            ->whereRaw('LOWER(status_booking) NOT IN (?, ?, ?)', [
-                'batal', 'dibatalkan', 'cancelled', #memilih baris booking yang tidak berstatus batal dan sejenisnya
-            ])
-            ->get(['jam_mulai', 'durasi']); # hanya ambil kolom jam_mulai dan durasi saja
-
-        $bentrok = false;
-
-        foreach ($bookingLama as $booking) {
-            $mulaiLama = Carbon::parse(
-                $data['tanggal'].' '.$booking->jam_mulai
-            );
-            $selesaiLama = $mulaiLama->copy()
-                ->addHours(max(1, (int) $booking->durasi));
-
-            // Ada tumpang-tindih jika waktu baru mulai sebelum waktu lama selesai,
-            // dan waktu baru selesai setelah waktu lama mulai.
-            if ($mulaiBaru < $selesaiLama && $selesaiBaru > $mulaiLama) {
-                $bentrok = true;
-                break;
+            if (strtolower((string) $lapangan->status_lapangan) === 'nonaktif') {
+                throw ValidationException::withMessages([
+                    'id_lapangan' => 'Lapangan ini sedang tidak tersedia untuk pemesanan.',
+                ]);
             }
+
+            if ($lapangan->harga_per_jam === null) {
+                throw ValidationException::withMessages([
+                    'id_lapangan' => 'Harga lapangan ini belum diatur.',
+                ]);
+            }
+
+            $selesaiBaru = $mulaiBaru->copy()->addHours((int) $data['durasi']);
+            $bookingLama = Booking::where('id_lapangan', $lapangan->getKey())
+                ->whereDate('tgl_main', $data['tanggal'])
+                ->whereRaw('LOWER(status_booking) NOT IN (?, ?, ?)', [
+                    'batal', 'dibatalkan', 'cancelled',
+                ])
+                ->get(['jam_mulai', 'durasi']);
+
+            foreach ($bookingLama as $booking) {
+                $mulaiLama = Carbon::parse($data['tanggal'].' '.$booking->jam_mulai);
+                $selesaiLama = $mulaiLama->copy()
+                    ->addHours(max(1, (int) $booking->durasi));
+
+                if ($mulaiBaru < $selesaiLama && $selesaiBaru > $mulaiLama) {
+                    return false;
+                }
+            }
+
+            $totalBayar = round((float) $lapangan->harga_per_jam * (int) $data['durasi'], 2);
+
+            Booking::create([
+                'id_user' => $request->user()->getAuthIdentifier(),
+                'id_lapangan' => $lapangan->getKey(),
+                'tgl_main' => $data['tanggal'],
+                'jam_mulai' => $data['jam'].':00',
+                'durasi' => (int) $data['durasi'],
+                'status_booking' => 'menunggu',
+                'total_bayar' => $totalBayar,
+            ]);
+
+            return (string) $lapangan->nama_lapangan;
+        });
+
+        if ($namaLapangan === false) {
+            return redirect()->route('booking.create', ['tanggal' => $data['tanggal']])
+                ->withInput()
+                ->with('booking_result', [
+                    'type' => 'full',
+                    'title' => 'Jadwal sudah penuh',
+                    'message' => 'Lapangan sudah memiliki booking pada waktu yang dipilih. Silakan pilih jam atau tanggal lain.',
+                ]);
         }
-
-        $totalBayar = round((float) $lapangan->harga_per_jam * (int) $data['durasi'], 2);
-
-        Booking::create([
-            'id_user' => $request->user()->getAuthIdentifier(),
-            'id_lapangan' => $lapangan->getKey(),
-            'tgl_main' => $data['tanggal'],
-            'jam_mulai' => $data['jam'].':00',
-            'durasi' => (int) $data['durasi'],
-            'status_booking' => 'menunggu',
-            'total_bayar' => $totalBayar,
-        ]);
 
         $bookingNotification = [
             'title' => 'Lapangan berhasil dipesan',
-            'message' => $lapangan->nama_lapangan.' · '.$data['tanggal'].' · '.$data['jam'],
+            'message' => $namaLapangan.' · '.$data['tanggal'].' · '.$data['jam'],
         ];
         $bookingNotifications = array_slice(array_merge(
             [$bookingNotification],
@@ -139,7 +190,12 @@ class BookingController extends Controller
         $request->session()->put('booking_notifications', $bookingNotifications);
         $request->session()->flash('booking_notification_open', true);
 
-        return redirect()->route('booking.create')
-            ->with('success', 'Booking berhasil disimpan.');
+        return redirect()->route('booking.create', ['tanggal' => $data['tanggal']])
+            ->with('success', 'Booking berhasil disimpan.')
+            ->with('booking_result', [
+                'type' => 'success',
+                'title' => 'Booking berhasil!',
+                'message' => 'Booking Anda berhasil dikirim dan sedang menunggu konfirmasi admin.',
+            ]);
     }
 }

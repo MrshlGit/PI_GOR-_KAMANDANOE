@@ -1,0 +1,401 @@
+/* Halaman Info Turnamen (user) - mengikuti variabel dari dashboard.css */
+.tn {
+    --c-o: var(--o, #f98a2e);
+    --c-od: var(--o-d, #e97a1d);
+    --c-ol: var(--o-l, #fff1e5);
+    --c-line: var(--line, #eadfd5);
+    --c-mut: var(--muted, #666);
+    display: grid;
+    gap: 18px;
+    max-width: 1100px;
+    margin-inline: auto;
+}
+.tn h1,
+.tn h2,
+.tn h3,
+.tn p,
+.tn dl,
+.tn dd {
+    margin: 0;
+}
+
+/* header */
+.tn-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+.tn-head h1 {
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin-bottom: 6px;
+}
+.tn-head p {
+    font-size: 0.85rem;
+    color: var(--c-mut);
+    line-height: 1.6;
+    max-width: 62ch;
+}
+
+/* tombol */
+.tn-btn {
+    display: inline-block;
+    padding: 10px 18px;
+    border: 1px solid var(--c-o);
+    border-radius: 10px;
+    background: var(--c-o);
+    color: #fff;
+    font: inherit;
+    font-weight: 700;
+    font-size: 0.8rem;
+    text-decoration: none;
+    cursor: pointer;
+    transition: 0.2s;
+}
+.tn-btn:hover {
+    background: var(--c-od);
+    border-color: var(--c-od);
+}
+.tn-btn.ghost {
+    background: #fff;
+    color: var(--ink, #111);
+    border-color: var(--c-line);
+}
+.tn-btn.ghost:hover {
+    background: var(--c-ol);
+}
+.tn-btn.danger {
+    background: #fff;
+    color: #a8372e;
+    border-color: #ecc5c0;
+}
+.tn-btn.danger:hover {
+    background: #f7e4e1;
+}
+.tn-btn.sm {
+    padding: 7px 13px;
+    font-size: 0.74rem;
+}
+.tn-btn:disabled {
+    background: #f1ece6;
+    border-color: #f1ece6;
+    color: #9a9086;
+    cursor: not-allowed;
+}
+
+/* pesan */
+.tn-note {
+    padding: 10px 14px;
+    border-radius: 12px;
+    font-size: 0.82rem;
+    font-weight: 600;
+}
+.tn-note.ok {
+    background: #e4f1e6;
+    color: #2f6b3d;
+}
+.tn-note.bad {
+    background: #f7e4e1;
+    color: #a8372e;
+}
+.tn-hint {
+    font-size: 0.78rem;
+    color: var(--c-mut);
+}
+.tn-empty {
+    padding: 40px 16px;
+    text-align: center;
+    border: 1px dashed var(--c-line);
+    border-radius: 16px;
+    color: var(--c-mut);
+    font-size: 0.88rem;
+}
+
+/* tab + filter */
+.tn-tabs {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+.tn-tabs a {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    border: 1px solid var(--c-line);
+    border-radius: 99px;
+    background: #fff;
+    color: var(--ink, #111);
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: 0.2s;
+}
+.tn-tabs a:hover {
+    background: var(--c-ol);
+}
+.tn-tabs a.on {
+    background: var(--c-o);
+    border-color: var(--c-o);
+    color: #fff;
+}
+.tn-tabs b {
+    padding: 1px 8px;
+    border-radius: 99px;
+    background: var(--c-ol);
+    color: var(--c-od);
+    font-size: 0.7rem;
+}
+.tn-tabs a.on b {
+    background: rgba(255, 255, 255, 0.25);
+    color: #fff;
+}
+.tn-filter {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+.tn-filter input,
+.tn-filter select {
+    padding: 10px 12px;
+    border: 1px solid var(--c-line);
+    border-radius: 10px;
+    background: #fff;
+    font: inherit;
+    font-size: 0.82rem;
+}
+.tn-filter input {
+    flex: 1;
+    min-width: 200px;
+}
+.tn-filter input:focus,
+.tn-filter select:focus {
+    outline: 0;
+    border-color: var(--c-o);
+    box-shadow: 0 0 0 3px var(--c-ol);
+}
+
+/* kartu turnamen */
+.tn-card {
+    display: grid;
+    gap: 14px;
+    padding: 20px;
+    background: #fff;
+    border: 1px solid var(--c-line);
+    border-radius: 16px;
+    transition: 0.2s;
+}
+.tn-card:hover {
+    border-color: var(--c-o);
+}
+.tn-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+}
+.tn-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+.tn-chip {
+    padding: 3px 10px;
+    border-radius: 99px;
+    background: var(--c-ol);
+    color: var(--c-od);
+    font-size: 0.7rem;
+    font-weight: 700;
+}
+.tn-chip.ok {
+    background: #e4f1e6;
+    color: #2f6b3d;
+}
+.tn-chip.bad {
+    background: #f7e4e1;
+    color: #a8372e;
+}
+.tn-chip.wait {
+    background: #f6ecc9;
+    color: #7a5c10;
+}
+.tn-chip.mut {
+    background: #efeae4;
+    color: #6d645b;
+}
+.tn-chip.own {
+    background: #e8def8;
+    color: #5a3a9a;
+}
+.tn-count {
+    padding: 4px 12px;
+    border-radius: 10px;
+    background: var(--c-o);
+    color: #fff;
+    font-size: 0.75rem;
+    font-weight: 700;
+    white-space: nowrap;
+}
+.tn-card h2 {
+    font-size: 1.2rem;
+    font-weight: 700;
+}
+.tn-meta {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px 18px;
+}
+.tn-meta dt {
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--c-mut);
+    margin-bottom: 2px;
+}
+.tn-meta dd {
+    font-size: 0.84rem;
+    font-weight: 600;
+}
+.tn-kuota {
+    display: grid;
+    gap: 6px;
+    font-size: 0.76rem;
+    color: var(--c-mut);
+}
+.tn-bar {
+    height: 8px;
+    border-radius: 99px;
+    background: var(--c-ol);
+    overflow: hidden;
+}
+.tn-bar i {
+    display: block;
+    height: 100%;
+    border-radius: 99px;
+    background: var(--c-o);
+}
+.tn-desc summary {
+    cursor: pointer;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--c-od);
+}
+.tn-desc p {
+    margin-top: 8px;
+    font-size: 0.82rem;
+    line-height: 1.6;
+    color: var(--c-mut);
+    white-space: pre-line;
+}
+.tn-act {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    padding-top: 12px;
+    border-top: 1px solid var(--c-line);
+}
+.tn-act small {
+    color: var(--c-mut);
+    font-size: 0.76rem;
+}
+.tn-btns {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+.tn-btns form {
+    margin: 0;
+}
+
+/* pop-up */
+.tn-dlg {
+    width: min(460px, calc(100% - 32px));
+    padding: 0;
+    border: 0;
+    border-radius: 18px;
+    box-shadow: 0 30px 60px -24px rgba(0, 0, 0, 0.45);
+}
+.tn-dlg.wide {
+    width: min(640px, calc(100% - 32px));
+}
+.tn-dlg::backdrop {
+    background: rgba(25, 22, 20, 0.45);
+}
+.tn-dlg form {
+    display: grid;
+    gap: 14px;
+    padding: 24px;
+    max-height: 86vh;
+    overflow-y: auto;
+}
+.tn-dlg h3 {
+    font-size: 1.15rem;
+    font-weight: 700;
+}
+.tn-sub {
+    font-size: 0.8rem;
+    color: var(--c-mut);
+    margin-top: -8px;
+}
+.tn-dlg label {
+    display: grid;
+    gap: 6px;
+    font-size: 0.78rem;
+    font-weight: 600;
+}
+.tn-dlg input,
+.tn-dlg select,
+.tn-dlg textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--c-line);
+    border-radius: 10px;
+    font: inherit;
+    font-weight: 400;
+    font-size: 0.85rem;
+    background: #fff;
+}
+.tn-dlg textarea {
+    resize: vertical;
+}
+.tn-dlg input:focus,
+.tn-dlg select:focus,
+.tn-dlg textarea:focus {
+    outline: 0;
+    border-color: var(--c-o);
+    box-shadow: 0 0 0 3px var(--c-ol);
+}
+.tn-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+.tn-fe {
+    color: #a8372e;
+    font-weight: 600;
+    font-size: 0.72rem;
+}
+.tn-dact {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+@media (max-width: 700px) {
+    .tn-meta {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .tn-row {
+        grid-template-columns: 1fr;
+    }
+}
+@media (max-width: 460px) {
+    .tn-meta {
+        grid-template-columns: 1fr;
+    }
+}

@@ -17,13 +17,14 @@ use App\Http\Controllers\User\AlatController;
 use App\Http\Controllers\User\MakananController;
 // use App\Http\Controllers\User\RingkasanTagihanController;
 use App\Http\Controllers\User\LayananInformasiController;
+use App\Http\Controllers\User\TurnamenController;
 
 Route::view('/', 'home_view')->name('home');
 
 Route::get('/login', [LoginController::class, 'index'])->name('login');
 Route::post('/login', [LoginController::class, 'login'])->name('login.submit');
 
-Route::get('/register', fn () => view('register_view'))->name('register');
+Route::get('/register', fn() => view('register_view'))->name('register');
 Route::post('/register', [RegisterController::class, 'register'])->name('register.submit');
 
 Route::middleware(['auth', 'admin'])
@@ -45,6 +46,7 @@ Route::middleware(['auth', 'admin'])
             ->name('laporan-keuangan.index');
         Route::get('/laporan-keuangan/bukti/{pembayaran}', [LaporanKeuanganController::class, 'buktiPembayaran'])
             ->name('laporan-keuangan.bukti');
+
     });
 
 Route::middleware('auth')->group(function () {
@@ -59,27 +61,32 @@ Route::middleware('auth')->group(function () {
     // Route::post('/booking', [BookingController::class, 'store'])
     //     ->name('booking.store');
 
-   // ===== BAGIAN DAFTAR TAGIHAN / TRANSAKSI =====
+    // ===== BAGIAN DAFTAR TAGIHAN / TRANSAKSI =====
     Route::get('/transaksi', [DaftarTagihanController::class, 'index'])
         ->name('tagihan.index');
-    });
+    Route::get('/turnamen', [TurnamenController::class, 'index'])->name('turnamen.index');
+    Route::post('/turnamen', [TurnamenController::class, 'store'])->name('turnamen.store');
+    Route::post('/turnamen/{id}/daftar', [TurnamenController::class, 'daftar'])->name('turnamen.daftar');
+    Route::delete('/turnamen/{id}/daftar', [TurnamenController::class, 'batalDaftar'])->name('turnamen.batal');
+    Route::delete('/turnamen/{id}', [TurnamenController::class, 'destroy'])->name('turnamen.destroy');
+});
 
 Route::get('/bookingLapangan', [pilihBookingController::class, 'create1'])
-        ->name('lapangan_view');
+    ->name('lapangan_view');
 
 Route::get('/bookingAlat', [pilihBookingController::class, 'create2'])
-        ->name('alat_view');
+    ->name('alat_view');
 
 Route::get('/bookingMakanan', [pilihBookingController::class, 'create3'])
-        ->name('makanan_view');
+    ->name('makanan_view');
 
-        
+
 
 Route::post('/pilih-booking', [pilihBookingController::class, 'store'])
-        ->name('booking.pilih.store');
+    ->name('booking.pilih.store');
 
 Route::get('/pilih-booking', [pilihBookingController::class, 'create'])
-        ->name('pilihBook_view');
+    ->name('pilihBook_view');
 
 
 
@@ -97,6 +104,6 @@ Route::get('/booking-makanan', [MakananController::class, 'ambil'])
 
 
 // Ringkasan Pembayaran / Tagihan
-    Route::get('/pembayaran', [RingkasanTagihanController::class, 'index'])->name('pembayaran.index');
-    Route::post('/pembayaran', [RingkasanTagihanController::class, 'store'])->name('pembayaran.store');
+Route::get('/pembayaran', [RingkasanTagihanController::class, 'index'])->name('pembayaran.index');
+Route::post('/pembayaran', [RingkasanTagihanController::class, 'store'])->name('pembayaran.store');
 

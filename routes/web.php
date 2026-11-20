@@ -91,9 +91,13 @@ Route::post('/booking-lapangan', [BookingController::class, 'store'])
 
 Route::get('/booking-alat', [AlatController::class, 'ambil'])
     ->name('alat.create');
+Route::post('/booking-alat/konfirmasi', [AlatController::class, 'konfirmasi'])
+    ->name('alat.confirm');
 
 Route::get('/booking-makanan', [MakananController::class, 'ambil'])
     ->name('makanan.create');
+Route::post('/booking-makanan/konfirmasi', [MakananController::class, 'konfirmasi'])
+    ->name('makanan.confirm');
 
 
 // Ringkasan Pembayaran / Tagihan

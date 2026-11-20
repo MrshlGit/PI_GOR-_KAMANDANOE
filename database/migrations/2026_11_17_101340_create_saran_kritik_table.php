@@ -13,7 +13,7 @@ return new class extends Migration
     {
         if (! Schema::hasTable('saran_kritik')) {
             Schema::create('saran_kritik', function (Blueprint $table) {
-                $table->id();
+                $table->string('id', 20)->primary();
                 $table->unsignedBigInteger('id_user')->nullable();
                 $table->string('nama', 100)->nullable();
                 $table->text('isi');

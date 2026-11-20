@@ -336,12 +336,6 @@ body.lock {
     background: var(--o, #f98a2e);
 }
 
-.duo {
-    display: grid;
-    grid-template-columns: 2fr 1fr;
-    gap: 18px;
-    margin-bottom: 22px;
-}
 .box-h {
     display: flex;
     justify-content: space-between;
@@ -412,11 +406,6 @@ body.lock {
 }
 .tbl.akun {
     min-width: 900px;
-}
-.akun-password {
-    color: var(--muted, #666);
-    letter-spacing: 0.14em;
-    white-space: nowrap;
 }
 .tbl td.aksi {
     text-align: right;
@@ -1040,9 +1029,6 @@ body.lock {
     }
     .stats.tiga {
         grid-template-columns: repeat(3, 1fr);
-    }
-    .duo {
-        grid-template-columns: 1fr;
     }
     .dashboard-grid {
         grid-template-columns: repeat(6, minmax(0, 1fr));

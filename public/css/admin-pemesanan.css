@@ -12,8 +12,9 @@
 .booking-table{min-width:850px}
 .booking-table td.kanan,.booking-table th.kanan{text-align:right}
 .booking-table td:first-child{white-space:nowrap;font-size:.73rem}
-.booking-table .booking-actions{display:flex;justify-content:flex-end;gap:7px;white-space:nowrap}
-.booking-actions form{display:inline-flex}
+.booking-table .booking-actions{text-align:right;white-space:nowrap}
+.booking-actions form{display:inline-flex;vertical-align:middle}
+.booking-actions form+form{margin-left:7px}
 .booking-actions .btn{padding:5px 8px;font-size:.67rem}
 .confirm-btn{background:#fff;color:var(--ink)}
 .empty-bookings{padding:30px!important;text-align:center;color:#777}

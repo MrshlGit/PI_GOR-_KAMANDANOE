@@ -22,7 +22,7 @@
          'icon' => '<circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/>'],
         ['label' => 'Pemesanan',          'url' => route('pilihBook_view'),   'is' => 'booking*',   'ready' => true,
          'icon' => '<circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/><path d="M3 4h2l2.4 11h10.2L20 7H6"/>'],
-        ['label' => 'Transaksi',          'url' => '/transaksi', 'is' => 'transaksi*', 'ready' => false,
+        ['label' => 'Transaksi',          'url' => '/transaksi', 'is' => 'transaksi*', 'ready' => true,
          'icon' => '<path d="M6 3h12v18l-3-2-3 2-3-2-3 2V3z"/><path d="M9 8h6M9 12h6"/>'],
     ];
 @endphp
@@ -36,7 +36,7 @@
         <nav class="menu">
             @foreach ($menu as $m)
                 <a href="{{ $m['url'] }}"
-                   @class(['active' => request()->is($m['is']), 'soon' => !$m['ready']])
+                             @class(['active' => request()->is(...(array) $m['is']), 'soon' => !$m['ready']])
                    @if(!$m['ready']) title="Segera hadir" @endif>
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">{!! $m['icon'] !!}</svg>
                     {{ $m['label'] }}

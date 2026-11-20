@@ -27,39 +27,44 @@ if (chartElement) {
       </span>
     `).join('');
 
-    const periodRows = chart.periods.map(period => `
-      <div class="finance-period-group">
-        <span class="finance-period-label">${escapeText(period.label)}</span>
-        <div class="finance-period-bars">
+    const maximumValue = tickCount * tickStep;
+    const axisTicks = [...ticks].reverse().map(tick => `
+      <span>${formatRupiah(tick)}</span>
+    `).join('');
+    const gridLines = ticks.slice(1, -1).map(tick => `
+      <i class="finance-chart-grid-line" style="bottom:${tick / maximumValue * 100}%"></i>
+    `).join('');
+    const periodGroups = chart.periods.map(period => `
+      <div class="finance-chart-group" aria-label="${escapeText(period.label)}">
+        <div class="finance-chart-bars">
           ${chart.courts.map((court, index) => {
             const amount = period.values[index] || 0;
-            const width = amount > 0
-              ? Math.max(0.5, Math.min(100, amount / (tickCount * tickStep) * 100))
-              : 0;
+            const height = Math.min(100, amount / maximumValue * 100);
             return `
-              <div class="finance-bar-row" title="${escapeText(court.nama)}: ${formatRupiah(amount)}">
-                <div class="finance-bar-track" style="--tick-count:${tickCount}">
-                  <div class="finance-bar" style="width:${width}%;background:${court.warna}"></div>
-                </div>
-                <span class="finance-bar-value">${formatRupiah(amount)}</span>
-              </div>
+              <i
+                class="finance-column"
+                style="height:${height}%;background:${court.warna}"
+                title="${escapeText(court.nama)} · ${escapeText(period.label)}: ${formatRupiah(amount)}"
+                aria-label="${escapeText(court.nama)} · ${escapeText(period.label)}: ${formatRupiah(amount)}"
+              ></i>
             `;
           }).join('')}
         </div>
+        <span class="finance-period-label">${escapeText(period.label)}</span>
       </div>
     `).join('');
 
     chartElement.innerHTML = `
       <div class="finance-chart-legend">${legend}</div>
       <div class="finance-chart-scroll">
-        <div class="finance-chart-inner">
-          <div class="finance-chart-axis">
-            <span>Pendapatan</span>
-            <div class="finance-chart-ticks" style="grid-template-columns:repeat(${ticks.length},minmax(0,1fr))">
-              ${ticks.map(tick => `<span>${formatRupiah(tick)}</span>`).join('')}
-            </div>
+        <div class="finance-chart-columns" style="--period-count:${chart.periods.length};min-width:${Math.max(620, chart.periods.length * 78)}px">
+          <div class="finance-chart-y-axis" aria-label="Nilai booking dalam rupiah">
+            ${axisTicks}
           </div>
-          ${periodRows}
+          <div class="finance-chart-plot" style="--tick-count:${tickCount}">
+            <div class="finance-chart-grid" aria-hidden="true">${gridLines}</div>
+            ${periodGroups}
+          </div>
         </div>
       </div>
     `;

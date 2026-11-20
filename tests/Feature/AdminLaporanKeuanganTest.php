@@ -104,6 +104,16 @@ class AdminLaporanKeuanganTest extends TestCase
                 'status_booking' => 'menunggu',
                 'total_bayar' => 50000,
             ],
+            [
+                'id_booking' => 'BOOKING-CONFIRMED',
+                'id_user' => $unpaidCustomer->id,
+                'id_lapangan' => '1',
+                'tgl_main' => today()->toDateString(),
+                'jam_mulai' => '14:00:00',
+                'durasi' => 1,
+                'status_booking' => 'dikonfirmasi',
+                'total_bayar' => 80000,
+            ],
         ]);
 
         $makananId = DB::table('makanans')->insertGetId([
@@ -174,11 +184,14 @@ class AdminLaporanKeuanganTest extends TestCase
             'bukti_transfer' => $filename,
         ]);
 
-        $this->actingAs($admin)
-            ->get(route('admin.laporan-keuangan.index'))
+        $report = $this->actingAs($admin)
+            ->get(route('admin.laporan-keuangan.index'));
+
+        $report
             ->assertOk()
             ->assertSee('Jumlah Pendapatan')
             ->assertSee('Rp 130.000')
+            ->assertSee('Grafik Nilai Pemesanan Lapangan')
             ->assertSee('Total Transaksi')
             ->assertSee('Belum ada data')
             ->assertSee('Total Pelanggan')
@@ -189,6 +202,11 @@ class AdminLaporanKeuanganTest extends TestCase
             ->assertSee('href="'.route('admin.laporan-keuangan.index').'"', false)
             ->assertSee(route('admin.laporan-keuangan.bukti', 'PAYMENT-PAID'), false)
             ->assertDontSee('Rp 180.000');
+        $report->assertViewHas('grafik', function (array $grafik): bool {
+            $valuesToday = $grafik['periods'][count($grafik['periods']) - 1]['values'];
+
+            return $valuesToday === [180000.0];
+        });
 
         $this->actingAs($admin)
             ->get(route('admin.laporan-keuangan.index', ['periode' => 'bulan']))

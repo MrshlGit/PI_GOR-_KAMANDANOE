@@ -115,11 +115,12 @@ class LayananInformasiController extends Controller
             'isi.min' => 'Isi saran atau kritik terlalu pendek.',
         ]);
 
-        // Menyimpan saran dan kritik
+        $nama = trim((string) ($data['nama'] ?? ''));
+
         SaranKritik::create([
             'id_user' => $request->user()->getAuthIdentifier(),
-            'tgl_kirim' => now(),
-            'isi_pesan' => $data['isi'],
+            'nama' => $nama !== '' ? $nama : $request->user()->username,
+            'isi' => $data['isi'],
         ]);
 
         return redirect(route('layanan.index') . '#saran')

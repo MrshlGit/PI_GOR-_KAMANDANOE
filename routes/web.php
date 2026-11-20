@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\AkunController;
 use App\Http\Controllers\Admin\LapanganController;
 use App\Http\Controllers\Admin\LaporanKeuanganController;
 use App\Http\Controllers\Admin\PemesananController;
+use App\Http\Controllers\Admin\SaranKritikController;
 use App\Http\Controllers\User\BookingController;
 use App\Http\Controllers\User\DashboardController;
 use App\Http\Controllers\User\LoginController;
@@ -42,6 +43,8 @@ Route::middleware(['auth', 'admin'])
         Route::post('/pemesanan', [PemesananController::class, 'store'])->name('pemesanan.store');
         Route::patch('/pemesanan/{booking}/status', [PemesananController::class, 'updateStatus'])
             ->name('pemesanan.status');
+        Route::get('/saran-kritik', [SaranKritikController::class, 'index'])
+            ->name('saran-kritik.index');
         Route::get('/laporan-keuangan', [LaporanKeuanganController::class, 'index'])
             ->name('laporan-keuangan.index');
         Route::get('/laporan-keuangan/bukti/{pembayaran}', [LaporanKeuanganController::class, 'buktiPembayaran'])
@@ -98,9 +101,13 @@ Route::post('/booking-lapangan', [BookingController::class, 'store'])
 
 Route::get('/booking-alat', [AlatController::class, 'ambil'])
     ->name('alat.create');
+Route::post('/booking-alat/konfirmasi', [AlatController::class, 'konfirmasi'])
+    ->name('alat.confirm');
 
 Route::get('/booking-makanan', [MakananController::class, 'ambil'])
     ->name('makanan.create');
+Route::post('/booking-makanan/konfirmasi', [MakananController::class, 'konfirmasi'])
+    ->name('makanan.confirm');
 
 
 // Ringkasan Pembayaran / Tagihan

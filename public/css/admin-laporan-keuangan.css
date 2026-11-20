@@ -46,63 +46,75 @@
 .finance-chart-scroll {
     overflow-x: auto;
 }
-.finance-chart-inner {
+.finance-chart-columns {
+    display: grid;
+    grid-template-columns: 82px minmax(0, 1fr);
+    gap: 10px;
     min-width: 620px;
 }
-.finance-chart-axis,
-.finance-period-group {
-    display: grid;
-    grid-template-columns: 105px minmax(0, 1fr);
-    gap: 12px;
-}
-.finance-chart-axis {
-    align-items: end;
-    margin-bottom: 6px;
+.finance-chart-y-axis {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 260px;
+    padding-bottom: 26px;
     color: var(--muted);
     font-size: 0.68rem;
 }
-.finance-chart-ticks {
-    display: grid;
-    color: var(--muted);
+.finance-chart-y-axis span {
     text-align: right;
+    line-height: 1;
+    white-space: nowrap;
 }
-.finance-period-group {
-    padding: 9px 0;
+.finance-chart-plot {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(var(--period-count), minmax(0, 1fr));
+    gap: 8px;
+    height: 260px;
+}
+.finance-chart-grid {
+    position: absolute;
+    inset: 0 0 26px;
+    pointer-events: none;
+}
+.finance-chart-grid-line {
+    position: absolute;
+    right: 0;
+    left: 0;
     border-top: 1px solid var(--line);
 }
+.finance-chart-group {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-rows: minmax(0, 1fr) 26px;
+    min-width: 0;
+}
+.finance-chart-bars {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 4px;
+    min-height: 0;
+    border-bottom: 1px solid var(--line);
+}
+.finance-column {
+    display: block;
+    flex: 1 1 0;
+    width: 100%;
+    min-width: 3px;
+    max-width: 32px;
+    border-radius: 4px 4px 0 0;
+}
 .finance-period-label {
-    padding-top: 2px;
-    color: var(--ink);
-    font-size: 0.78rem;
-    font-weight: 600;
-}
-.finance-period-bars {
-    display: grid;
-    gap: 5px;
-}
-.finance-bar-row {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) 100px;
-    align-items: center;
-    gap: 10px;
-    min-height: 14px;
-}
-.finance-bar-track {
-    height: 12px;
     overflow: hidden;
-    border-radius: 99px;
-    background-color: #faf8f6;
-    background-image: linear-gradient(to right, var(--line) 1px, transparent 1px);
-    background-size: calc(100% / var(--tick-count, 4)) 100%;
-}
-.finance-bar {
-    height: 100%;
-    border-radius: inherit;
-}
-.finance-bar-value {
-    color: var(--muted);
+    padding-top: 6px;
+    color: var(--ink);
     font-size: 0.7rem;
-    text-align: right;
+    font-weight: 600;
+    text-align: center;
+    text-overflow: ellipsis;
     white-space: nowrap;
 }
 .finance-chart-empty {

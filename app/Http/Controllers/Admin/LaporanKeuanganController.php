@@ -19,6 +19,8 @@ class LaporanKeuanganController extends Controller
 {
     private const BOOKING_PAID_STATUSES = ['lunas', 'selesai'];
 
+    private const CHART_BOOKING_STATUSES = ['dikonfirmasi', 'lunas', 'selesai'];
+
     private const PAYMENT_PAID_STATUSES = [
         'lunas', 'terverifikasi', 'disetujui', 'approved', 'paid', 'success', 'berhasil',
     ];
@@ -226,7 +228,11 @@ class LaporanKeuanganController extends Controller
                 : 'YEAR(booking.tgl_main)',
         };
 
-        $hasil = $this->paidBookings()
+        $hasil = DB::table('booking')
+            ->whereIn(
+                DB::raw('LOWER(booking.status_booking)'),
+                self::CHART_BOOKING_STATUSES
+            )
             ->whereBetween('booking.tgl_main', [$awal->toDateString(), $akhir->toDateString()])
             ->select('booking.id_lapangan')
             ->selectRaw("{$bucket} as bucket")

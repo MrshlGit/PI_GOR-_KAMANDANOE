@@ -81,6 +81,57 @@ class AdminLapanganTest extends TestCase
             ->assertSee('img/images.jpg');
     }
 
+    public function test_online_booking_is_saved_and_visible_in_admin_court_schedule(): void
+    {
+        $admin = User::create([
+            'username' => 'Admin',
+            'password' => 'password',
+            'role' => 'admin',
+        ]);
+        $user = User::create([
+            'username' => 'Pemain Online',
+            'password' => 'password',
+            'role' => 'user',
+        ]);
+        Lapangan::create([
+            'id_lapangan' => '1',
+            'nama_lapangan' => 'Lapangan A',
+            'tipe_lantai' => 'Vinyl',
+            'harga_per_jam' => 50000,
+            'kapasitas' => 4,
+            'status_lapangan' => 'Aktif',
+        ]);
+        $tanggal = now()->addDays(2)->toDateString();
+
+        $this->actingAs($user)
+            ->post(route('booking.store'), [
+                'id_lapangan' => '1',
+                'tanggal' => $tanggal,
+                'jam' => '10:00',
+                'durasi' => 2,
+            ])
+            ->assertRedirect(route('booking.create', ['tanggal' => $tanggal]))
+            ->assertSessionHas('booking_result', fn (array $result) => $result['type'] === 'success');
+
+        $this->assertDatabaseHas('booking', [
+            'id_user' => $user->id,
+            'id_lapangan' => '1',
+            'jam_mulai' => '10:00:00',
+            'durasi' => 2,
+            'status_booking' => 'menunggu',
+        ]);
+        $this->assertTrue(
+            DB::table('booking')->where('id_user', $user->id)->whereDate('tgl_main', $tanggal)->exists()
+        );
+
+        $this->actingAs($admin)
+            ->get(route('admin.lapangan.index', ['tanggal' => $tanggal]))
+            ->assertOk()
+            ->assertSee('data-status="pending"', false)
+            ->assertSee('data-pemesan="Pemain Online"', false)
+            ->assertSee('data-pesan="Sedang dibooking oleh"', false);
+    }
+
     public function test_admin_can_confirm_a_pending_booking_from_the_schedule(): void
     {
         $admin = User::create([

@@ -40,8 +40,8 @@
     <section class="box finance-chart" aria-labelledby="finance-chart-title">
         <div class="box-h">
             <div>
-                <h2 id="finance-chart-title">Grafik Penjualan Lapangan</h2>
-                <small class="muted">Pendapatan booking terbayar per lapangan.</small>
+                <h2 id="finance-chart-title">Grafik Nilai Pemesanan Lapangan</h2>
+                <small class="muted">Nilai booking berstatus Dikonfirmasi, Lunas, atau Selesai per lapangan.</small>
             </div>
             <form method="GET" action="{{ route('admin.laporan-keuangan.index') }}" class="finance-period-form">
                 <label for="periode">Tampilkan</label>

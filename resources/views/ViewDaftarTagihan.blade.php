@@ -2,9 +2,9 @@
 
 @section('title', 'Daftar Tagihan')
 
-@push('styles')
+<!-- @push('styles')
     <link rel="stylesheet" href="{{ asset('css/daftartagihan.css') }}">
-@endpush
+@endpush -->
 
 @section('content')
     <link rel="stylesheet" href="{{ asset('css/daftartagihan.css') }}">

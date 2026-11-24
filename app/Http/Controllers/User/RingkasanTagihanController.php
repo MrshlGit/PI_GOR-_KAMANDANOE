@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
@@ -13,11 +14,8 @@ class RingkasanTagihanController extends Controller
     public function index()
     {
         $user = auth()->user();
-        
-        // Ambil SEMUA data booking milik user yang berstatus 'menunggu'
-        $bookings = DB::table('booking')
-            ->where('id_user', $user->id)
-            ->where('status_booking', 'menunggu')
+
+        $bookings = $this->bookingsAwaitingPayment((int) $user->id)
             ->orderBy('tgl_main', 'desc')
             ->orderBy('jam_mulai', 'desc')
             ->get();
@@ -28,9 +26,9 @@ class RingkasanTagihanController extends Controller
         foreach ($bookings as $item) {
             $lapangan = DB::table('lapangan')->where('id_lapangan', $item->id_lapangan)->first();
 
-            $namaLapangan  = $lapangan->nama_lapangan ?? 'Lapangan';
-            $tipeLantai    = $lapangan->tipe_lantai ?? '-';
-            $hargaPerJam   = (float) ($lapangan->harga_per_jam ?? 0);
+            $namaLapangan = $lapangan->nama_lapangan ?? 'Lapangan';
+            $tipeLantai = $lapangan->tipe_lantai ?? '-';
+            $hargaPerJam = (float) ($lapangan->harga_per_jam ?? 0);
             $durasiBooking = (int) ($item->durasi ?? 1);
 
             // Ambil total_bayar dari database; jika nilainya 0 atau < 1000, hitung dari harga_per_jam * durasi
@@ -38,56 +36,63 @@ class RingkasanTagihanController extends Controller
             $hargaBooking = ($hargaDb >= 1000) ? $hargaDb : ($hargaPerJam * $durasiBooking);
 
             $items[] = [
-                'nama'  => $namaLapangan . ' (' . $tipeLantai . ') - Tgl: ' . $item->tgl_main . ' (' . $durasiBooking . ' Jam)',
-                'harga' => 'Rp ' . number_format($hargaBooking, 0, ',', '.')
+                'id_booking' => $item->id_booking,
+                'nama' => $namaLapangan.' ('.$tipeLantai.') - Tgl: '.$item->tgl_main.' ('.$durasiBooking.' Jam)',
+                'harga' => 'Rp '.number_format($hargaBooking, 0, ',', '.'),
             ];
 
             $subtotal += $hargaBooking;
         }
 
         $summary = [
-            'tanggal'         => date('d M Y'),
-            'petugas'         => 'System GOR',
-            'subtotal'        => 'Rp ' . number_format($subtotal, 0, ',', '.'),
-            'potongan'        => 'Rp 0',
-            'ppn'             => 'Rp 0',
-            'nilai_transaksi' => 'Rp ' . number_format($subtotal, 0, ',', '.'),
-            'total'           => 'Rp ' . number_format($subtotal, 0, ',', '.')
+            'tanggal' => date('d M Y'),
+            'petugas' => 'System GOR',
+            'subtotal' => 'Rp '.number_format($subtotal, 0, ',', '.'),
+            'potongan' => 'Rp 0',
+            'ppn' => 'Rp 0',
+            'nilai_transaksi' => 'Rp '.number_format($subtotal, 0, ',', '.'),
+            'total' => 'Rp '.number_format($subtotal, 0, ',', '.'),
         ];
 
-        // Ambil 1 booking terbaru sebagai referensi ID jika view membutuhkannya
-        $booking = $bookings->first();
-
-        return view('ViewRingkasanTagihan', compact('items', 'summary', 'user', 'booking'));
+        return view('ViewRingkasanTagihan', compact('items', 'summary', 'user'));
     }
 
     public function store(Request $request)
     {
         $request->validate([
-            'bukti_bayar' => 'required|image|mimes:jpeg,png,jpg|max:5120',
+            'bukti_bayar' => 'required|file|mimes:jpeg,png,jpg,pdf|max:5120',
+            'booking_ids' => ['required', 'array', 'min:1'],
+            'booking_ids.*' => ['required', 'string', 'distinct'],
         ]);
 
         $user = auth()->user();
-        
-        // Ambil booking terbaru yang statusnya 'menunggu' untuk referensi bukti bayar
-        $booking = DB::table('booking')
-            ->where('id_user', $user->id)
-            ->where('status_booking', 'menunggu')
-            ->latest('id_booking')
-            ->first();
+        $bookingIds = array_map('strval', $request->input('booking_ids'));
+        $bookings = $this->bookingsAwaitingPayment((int) $user->id)
+            ->whereIn('id_booking', $bookingIds)
+            ->get();
 
-        if (!$booking) {
-            return redirect()->back()->with('error', 'Tidak ada data pemesanan aktif.');
+        if ($bookings->count() !== count($bookingIds)) {
+            return redirect()->route('pembayaran.index')
+                ->with('error', 'Daftar pemesanan berubah. Muat ulang halaman sebelum mengirim pembayaran.');
         }
 
-        if ($request->hasFile('bukti_bayar')) {
-            $file = $request->file('bukti_bayar');
-            $directory = public_path('uploads/bukti_pembayaran');
-            File::ensureDirectoryExists($directory);
-            $namaFile = $file->hashName();
-            $file->move($directory, $namaFile);
+        $file = $request->file('bukti_bayar');
+        $directory = public_path('uploads/bukti_pembayaran');
+        File::ensureDirectoryExists($directory);
+        $namaFile = $file->hashName();
+        $file->move($directory, $namaFile);
 
-            DB::transaction(function () use ($booking, $namaFile): void {
+        $created = DB::transaction(function () use ($user, $bookingIds, $namaFile): bool {
+            $bookings = $this->bookingsAwaitingPayment((int) $user->id)
+                ->whereIn('id_booking', $bookingIds)
+                ->lockForUpdate()
+                ->get();
+
+            if ($bookings->count() !== count($bookingIds)) {
+                return false;
+            }
+
+            foreach ($bookings as $booking) {
                 $idDetail = (string) Str::uuid();
 
                 DB::table('detail_item_booking')->insert([
@@ -106,12 +111,39 @@ class RingkasanTagihanController extends Controller
                     'status_pembayaran' => 'Pending',
                     'bukti_transfer' => $namaFile,
                 ]);
-            });
+            }
+
+            return true;
+        });
+
+        if (! $created) {
+            File::delete($directory.'/'.$namaFile);
 
             return redirect()->route('pembayaran.index')
-                ->with('success', 'Bukti pembayaran berhasil dikirim! Menunggu verifikasi dari Admin.');
+                ->with('error', 'Pemesanan ini sudah dikirim untuk verifikasi.');
         }
 
-        return redirect()->back()->with('error', 'Gagal mengunggah bukti pembayaran.');
+        $request->session()->flash('booking_notification_open', true);
+
+        return redirect()->route('pembayaran.index')
+            ->with('success', 'Bukti pembayaran berhasil dikirim.');
+    }
+
+    private function bookingsAwaitingPayment(int $userId): Builder
+    {
+        return DB::table('booking')
+            ->where('id_user', $userId)
+            ->whereRaw('LOWER(status_booking) = ?', ['menunggu'])
+            ->whereNotExists(function (Builder $payments): void {
+                $payments->selectRaw('1')
+                    ->from('detail_item_booking as booking_detail')
+                    ->join(
+                        'pembayaran as payment',
+                        'payment.id_detail_item_booking',
+                        '=',
+                        'booking_detail.id_detail'
+                    )
+                    ->whereColumn('booking_detail.id_booking', 'booking.id_booking');
+            });
     }
 }

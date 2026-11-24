@@ -16,7 +16,10 @@
 
     <section class="box schedule-box">
         <div class="box-h">
-            <h2>Jadwal Lapangan</h2>
+            <div class="section-heading">
+                <h2>Jadwal Lapangan</h2>
+                <p>Pilih slot untuk melihat detail atau menindaklanjuti pemesanan.</p>
+            </div>
             <form method="GET" action="{{ route('admin.lapangan.index') }}" class="date-filter">
                 <label for="tanggal-jadwal">Tanggal</label>
                 <input id="tanggal-jadwal" type="date" name="tanggal" value="{{ $tanggal }}">
@@ -24,10 +27,13 @@
             </form>
         </div>
 
-        <div class="schedule-legend">
-            <span><i class="legend-dot available"></i>Tersedia</span>
-            <span><i class="legend-dot pending"></i>Menunggu konfirmasi</span>
-            <span><i class="legend-dot booked"></i>Dipesan</span>
+        <div class="schedule-meta">
+            <p class="schedule-hint">Jam operasional 07.00–23.00</p>
+            <div class="schedule-legend" aria-label="Keterangan status jadwal">
+                <span><i class="legend-dot available"></i>Tersedia</span>
+                <span><i class="legend-dot pending"></i>Menunggu konfirmasi</span>
+                <span><i class="legend-dot booked"></i>Dipesan</span>
+            </div>
         </div>
 
         <div class="schedule-scroll">
@@ -93,15 +99,22 @@
 
     <section class="box courts-box">
         <div class="box-h">
-            <h2>Status &amp; Konfigurasi Lapangan</h2>
+            <div class="section-heading">
+                <h2>Status &amp; Konfigurasi Lapangan</h2>
+            </div>
+            @if ($lapangans->isNotEmpty())
+                <p class="court-results">{{ $lapangans->count() }} lapangan</p>
+            @endif
         </div>
 
         <div class="court-grid">
             @forelse ($lapangans as $lapangan)
                 @php($aktif = strtolower((string) $lapangan->status_lapangan) !== 'nonaktif')
                 @php($jumlahSlot = count($jadwal[$lapangan->id_lapangan] ?? []))
+                @php($tipeLantai = strtolower(trim((string) $lapangan->tipe_lantai)))
+                @php($gambarLapangan = $tipeLantai === 'kayu' ? 'lapangankayu.jpg' : ($tipeLantai === 'karpet' ? 'lapangankarpet.jpg' : 'images.jpg'))
                 <article class="court-card">
-                    <img src="{{ asset('img/images.jpg') }}" alt="Foto {{ $lapangan->nama_lapangan }}" loading="lazy">
+                    <img src="{{ asset('img/'.$gambarLapangan) }}" alt="Lapangan {{ $lapangan->nama_lapangan }} dengan lantai {{ $lapangan->tipe_lantai ?: 'belum ditentukan' }}" loading="lazy">
                     <div class="court-card-body">
                         <div class="court-card-title">
                             <h3>{{ $lapangan->nama_lapangan }}</h3>

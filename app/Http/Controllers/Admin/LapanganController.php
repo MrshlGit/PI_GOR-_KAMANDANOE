@@ -9,6 +9,7 @@ use App\Http\Requests\Admin\UpdateLapanganRequest;
 use App\Http\Requests\Admin\UpdateScheduleBookingStatusRequest;
 use App\Models\Admin\Booking;
 use App\Models\Admin\Lapangan;
+use App\Services\BookingPaymentVerificationService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
@@ -28,10 +29,28 @@ class LapanganController extends Controller
 
     public function updateBookingStatus(
         UpdateScheduleBookingStatusRequest $request,
-        Booking $booking
+        Booking $booking,
+        BookingPaymentVerificationService $paymentVerification
     ): RedirectResponse
     {
         $data = $request->validated();
+
+        if ($data['status_booking'] === 'dikonfirmasi') {
+            $bookingId = (string) $booking->getKey();
+            if ($paymentVerification->hasPendingPaymentForBooking($bookingId)) {
+                $verifiedCount = $paymentVerification->verifyForBooking($bookingId);
+
+                if ($verifiedCount === 0) {
+                    return redirect()->route('admin.lapangan.index', ['tanggal' => $data['tanggal']])
+                        ->with('galat', 'Bukti pembayaran tidak tersedia atau pemesanan sudah diproses.');
+                }
+
+                return redirect()->route('admin.lapangan.index', ['tanggal' => $data['tanggal']])
+                    ->with('sukses', $verifiedCount === 1
+                        ? 'Pembayaran berhasil diverifikasi.'
+                        : "Pembayaran untuk {$verifiedCount} pemesanan berhasil diverifikasi.");
+            }
+        }
 
         $updated = DB::transaction(function () use ($booking, $data): bool {
             $booking = Booking::whereKey($booking->getKey())->lockForUpdate()->firstOrFail();

@@ -13,6 +13,65 @@
     $user = auth()->user();
     $bookingNotifications = session('booking_notifications', []);
     $bookingNotificationsOpen = session('booking_notification_open', false);
+    $paymentNotificationStates = session('payment_notification_states', []);
+    $paymentNotifications = collect();
+    if (\Illuminate\Support\Facades\Schema::hasTable('pembayaran')
+        && \Illuminate\Support\Facades\Schema::hasTable('detail_item_booking')) {
+        $paymentNotifications = \Illuminate\Support\Facades\DB::table('pembayaran as payment')
+            ->join(
+                'detail_item_booking as booking_detail',
+                'booking_detail.id_detail',
+                '=',
+                'payment.id_detail_item_booking'
+            )
+            ->join('booking', 'booking.id_booking', '=', 'booking_detail.id_booking')
+            ->where('booking.id_user', $user->getAuthIdentifier())
+            ->whereNotNull('payment.bukti_transfer')
+            ->where('payment.bukti_transfer', '!=', '')
+            ->whereRaw('LOWER(payment.status_pembayaran) IN (?, ?, ?, ?, ?, ?, ?, ?)', [
+                'pending', 'lunas', 'terverifikasi', 'disetujui',
+                'approved', 'paid', 'success', 'berhasil',
+            ])
+            ->whereRaw('LOWER(booking.status_booking) NOT IN (?, ?, ?)', [
+                'batal', 'dibatalkan', 'cancelled',
+            ])
+            ->groupBy('payment.bukti_transfer')
+            ->orderByRaw('MAX(payment.tgl_bayar) DESC')
+            ->limit(5)
+            ->get([
+                'payment.bukti_transfer',
+                \Illuminate\Support\Facades\DB::raw('MAX(payment.id_pembayaran) AS notification_id'),
+                \Illuminate\Support\Facades\DB::raw('COUNT(DISTINCT booking.id_booking) AS booking_count'),
+                \Illuminate\Support\Facades\DB::raw("SUM(CASE WHEN LOWER(payment.status_pembayaran) = 'pending' THEN 1 ELSE 0 END) AS pending_count"),
+            ]);
+    }
+    $notifications = collect($bookingNotifications)
+        ->map(fn (array $notification) => [
+            'title' => $notification['title'],
+            'message' => $notification['message'],
+            'url' => route('tagihan.index'),
+            'action' => 'Lihat tagihan',
+        ])
+        ->merge($paymentNotifications->map(function ($notification) {
+            $isPending = (int) $notification->pending_count > 0;
+            $bookingCount = (int) $notification->booking_count;
+
+            return [
+                'title' => $isPending ? 'Pembayaran menunggu verifikasi' : 'Pesanan berhasil diverifikasi',
+                'message' => $isPending
+                    ? 'Menunggu verifikasi oleh admin untuk '.$bookingCount.' pemesanan.'
+                    : 'Pembayaran untuk '.$bookingCount.' pemesanan berhasil diverifikasi oleh admin.',
+                'url' => route('notifications.show', $notification->notification_id),
+                'action' => 'Lihat transaksi',
+            ];
+        }))
+        ->take(5);
+    $jumlahNotifikasiBelumDibaca = count($bookingNotifications)
+        + $paymentNotifications->filter(function ($notification) use ($paymentNotificationStates) {
+            $status = (int) $notification->pending_count > 0 ? 'pending' : 'verified';
+
+            return ($paymentNotificationStates[sha1($notification->bukti_transfer)] ?? null) !== $status;
+        })->count();
     $menu = [
         ['label' => 'Dashboard',          'url' => '/dashboard', 'is' => 'dashboard*', 'ready' => true,
          'icon' => '<path d="m3 11 9-8 9 8"/><path d="M5 10v10h14V10"/>'],
@@ -70,16 +129,16 @@
                 <div @class(['dropdown notification-dropdown', 'open' => $bookingNotificationsOpen])>
                     <button class="icon-btn ring trigger" aria-label="Notifikasi">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9a6 6 0 0 1 12 0c0 6 2 7 2 7H4s2-1 2-7"/><path d="M10 20a2 2 0 0 0 4 0"/></svg>
-                        @if (count($bookingNotifications) > 0)
+                        @if ($jumlahNotifikasiBelumDibaca > 0)
                             <i></i>
                         @endif
                     </button>
                     <div class="drop">
-                        @forelse ($bookingNotifications as $notification)
-                            <a class="notification-item" href="{{ route('tagihan.index') }}">
+                        @forelse ($notifications as $notification)
+                            <a class="notification-item" href="{{ $notification['url'] }}">
                                 <strong>{{ $notification['title'] }}</strong>
                                 <span>{{ $notification['message'] }}</span>
-                                <small>Lihat tagihan</small>
+                                <small>{{ $notification['action'] }}</small>
                             </a>
                         @empty
                             <p class="empty">Belum ada notifikasi</p>

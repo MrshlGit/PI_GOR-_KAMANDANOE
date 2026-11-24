@@ -190,7 +190,7 @@ class AdminLaporanKeuanganTest extends TestCase
         $report
             ->assertOk()
             ->assertSee('Jumlah Pendapatan')
-            ->assertSee('Rp 130.000')
+            ->assertSee('Rp 210.000')
             ->assertSee('Grafik Nilai Pemesanan Lapangan')
             ->assertSee('Total Transaksi')
             ->assertSee('Belum ada data')
@@ -201,7 +201,7 @@ class AdminLaporanKeuanganTest extends TestCase
             ->assertSee('Penyewaan Alat')
             ->assertSee('href="'.route('admin.laporan-keuangan.index').'"', false)
             ->assertSee(route('admin.laporan-keuangan.bukti', 'PAYMENT-PAID'), false)
-            ->assertDontSee('Rp 180.000');
+            ->assertDontSee('Rp 260.000');
         $report->assertViewHas('grafik', function (array $grafik): bool {
             $valuesToday = $grafik['periods'][count($grafik['periods']) - 1]['values'];
 
@@ -216,8 +216,17 @@ class AdminLaporanKeuanganTest extends TestCase
             ->assertOk();
 
         $this->actingAs($admin)
+            ->get(route('admin.pemesanan.index'))
+            ->assertOk()
+            ->assertSee(
+                '<img src="'.route('admin.laporan-keuangan.bukti', 'PAYMENT-PAID').'"',
+                false
+            );
+
+        $this->actingAs($admin)
             ->get(route('admin.laporan-keuangan.bukti', 'PAYMENT-PAID'))
-            ->assertOk();
+            ->assertOk()
+            ->assertHeader('content-type', 'image/png');
     }
 
     public function test_payment_upload_creates_the_booking_detail_reference_used_by_reports(): void
@@ -236,6 +245,7 @@ class AdminLaporanKeuanganTest extends TestCase
 
         $response = $this->actingAs($user)
             ->post(route('pembayaran.store'), [
+                'booking_ids' => ['BOOKING-UPLOAD'],
                 'bukti_bayar' => UploadedFile::fake()->createWithContent(
                     'proof.png',
                     base64_decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/xYkAAAAASUVORK5CYII=')
@@ -252,6 +262,101 @@ class AdminLaporanKeuanganTest extends TestCase
         $this->assertSame('BOOKING-UPLOAD', $detail->id_booking);
         $this->assertSame(50000.0, (float) $detail->subtotal);
         $this->assertFileExists($this->temporaryProofPath);
+    }
+
+    public function test_admin_verification_updates_all_bookings_and_shows_the_result_in_the_bell(): void
+    {
+        $admin = $this->createUser('verification-admin', 'admin');
+        $customer = $this->createUser('verification-customer', 'user');
+        DB::table('lapangan')->insert([
+            'id_lapangan' => '1',
+            'nama_lapangan' => 'Lapangan 1',
+            'tipe_lantai' => 'Karpet',
+            'harga_per_jam' => 50000,
+            'kapasitas' => 4,
+            'status_lapangan' => 'Aktif',
+        ]);
+        DB::table('booking')->insert([
+            [
+                'id_booking' => 'BOOKING-VERIFY-1',
+                'id_user' => $customer->id,
+                'id_lapangan' => '1',
+                'tgl_main' => today()->toDateString(),
+                'jam_mulai' => '10:00:00',
+                'durasi' => 1,
+                'status_booking' => 'menunggu',
+                'total_bayar' => 50000,
+            ],
+            [
+                'id_booking' => 'BOOKING-VERIFY-2',
+                'id_user' => $customer->id,
+                'id_lapangan' => '1',
+                'tgl_main' => today()->toDateString(),
+                'jam_mulai' => '11:00:00',
+                'durasi' => 2,
+                'status_booking' => 'menunggu',
+                'total_bayar' => 100000,
+            ],
+        ]);
+
+        $this->actingAs($customer)
+            ->post(route('pembayaran.store'), [
+                'booking_ids' => ['BOOKING-VERIFY-1', 'BOOKING-VERIFY-2'],
+                'bukti_bayar' => UploadedFile::fake()->createWithContent(
+                    'proof.png',
+                    base64_decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/xYkAAAAASUVORK5CYII=')
+                ),
+            ])
+            ->assertRedirect(route('pembayaran.index'))
+            ->assertSessionHas('success', 'Bukti pembayaran berhasil dikirim.');
+
+        $this->actingAs($customer)
+            ->get(route('pembayaran.index'))
+            ->assertOk()
+            ->assertSee('Bukti pembayaran berhasil dikirim.')
+            ->assertSee('Pembayaran menunggu verifikasi')
+            ->assertSee('Menunggu verifikasi oleh admin untuk 2 pemesanan.')
+            ->assertSee('notification-dropdown open', false)
+            ->assertDontSee('payment-pending-status', false);
+
+        $payments = DB::table('pembayaran')->get();
+        $this->assertCount(2, $payments);
+        $this->assertSame($payments[0]->bukti_transfer, $payments[1]->bukti_transfer);
+        $this->temporaryProofPath = public_path('uploads/bukti_pembayaran/'.$payments[0]->bukti_transfer);
+
+        $this->actingAs($admin)
+            ->patch(route('admin.pemesanan.status', 'BOOKING-VERIFY-1'), [
+                'status_booking' => 'dikonfirmasi',
+            ])
+            ->assertRedirect(route('admin.pemesanan.index'))
+            ->assertSessionHas('sukses', 'Pembayaran untuk 2 pemesanan berhasil diverifikasi.');
+
+        $this->assertDatabaseCount('pembayaran', 2);
+        $this->assertDatabaseHas('booking', [
+            'id_booking' => 'BOOKING-VERIFY-1',
+            'status_booking' => 'dikonfirmasi',
+        ]);
+        $this->assertDatabaseHas('booking', [
+            'id_booking' => 'BOOKING-VERIFY-2',
+            'status_booking' => 'dikonfirmasi',
+        ]);
+        $this->assertDatabaseMissing('pembayaran', ['status_pembayaran' => 'Pending']);
+
+        $this->actingAs($customer)
+            ->get(route('tagihan.index'))
+            ->assertOk()
+            ->assertSee('Terverifikasi')
+            ->assertSee('Pesanan berhasil diverifikasi')
+            ->assertSee('Pembayaran untuk 2 pemesanan berhasil diverifikasi oleh admin.')
+            ->assertDontSee('Bayar Tagihan');
+
+        $this->actingAs($customer)
+            ->get(route('notifications.show', $payments[0]->id_pembayaran))
+            ->assertRedirect(route('tagihan.index'));
+        $this->assertSame(
+            'verified',
+            session('payment_notification_states')[sha1($payments[0]->bukti_transfer)]
+        );
     }
 
     private function createUser(string $username, string $role): User

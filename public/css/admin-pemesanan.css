@@ -65,7 +65,7 @@
     white-space: nowrap;
 }
 .booking-table {
-    min-width: 850px;
+    min-width: 1040px;
 }
 .booking-table td.kanan,
 .booking-table th.kanan {
@@ -78,6 +78,35 @@
 .booking-table .booking-actions {
     text-align: right;
     white-space: nowrap;
+}
+.booking-table td small {
+    display: block;
+    margin-top: 4px;
+}
+.booking-table .booking-proof {
+    white-space: nowrap;
+}
+.booking-proof .btn {
+    padding: 6px 9px;
+    font-size: 0.68rem;
+}
+.booking-proof-image {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    color: var(--ink);
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-decoration: none;
+}
+.booking-proof-image img {
+    display: block;
+    width: 76px;
+    height: 52px;
+    border: 1px solid #e8dfd3;
+    border-radius: 6px;
+    object-fit: cover;
 }
 .booking-actions form {
     display: inline-flex;

@@ -8,9 +8,12 @@ use App\Http\Requests\Admin\StoreOfflineBookingRequest;
 use App\Http\Requests\Admin\UpdateBookingStatusRequest;
 use App\Models\Admin\Booking;
 use App\Models\Admin\Lapangan;
+use App\Services\BookingPaymentVerificationService;
 use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
@@ -19,13 +22,16 @@ class PemesananController extends Controller
     public function index(BookingFilterRequest $request): View
     {
         $filter = $request->validated();
+        $bookings = Booking::daftarAdmin($filter)
+            ->orderByDesc('tgl_main')
+            ->orderByDesc('jam_mulai')
+            ->paginate(10)
+            ->withQueryString();
+
+        $this->attachPaymentProofs($bookings);
 
         return view('admin.pemesanan.index', [
-            'bookings' => Booking::daftarAdmin($filter)
-                ->orderByDesc('tgl_main')
-                ->orderByDesc('jam_mulai')
-                ->paginate(10)
-                ->withQueryString(),
+            'bookings' => $bookings,
             'lapangans' => Lapangan::orderBy('nama_lapangan')->get(),
             'filter' => $filter,
             'statistik' => Booking::statistikAdmin(),
@@ -76,13 +82,78 @@ class PemesananController extends Controller
             ->with('sukses', 'Pemesanan offline berhasil dicatat.');
     }
 
-    public function updateStatus(UpdateBookingStatusRequest $request, Booking $booking): RedirectResponse
-    {
+    public function updateStatus(
+        UpdateBookingStatusRequest $request,
+        Booking $booking,
+        BookingPaymentVerificationService $paymentVerification
+    ): RedirectResponse {
         $data = $request->validated();
+        $routeParameters = $request->only(['q', 'status', 'tanggal', 'id_lapangan']);
+
+        if ($data['status_booking'] === 'dikonfirmasi') {
+            $bookingId = (string) $booking->getKey();
+            if ($paymentVerification->hasPendingPaymentForBooking($bookingId)) {
+                $verifiedCount = $paymentVerification->verifyForBooking($bookingId);
+
+                if ($verifiedCount === 0) {
+                    return redirect()->route('admin.pemesanan.index', $routeParameters)
+                        ->with('galat', 'Bukti pembayaran tidak tersedia atau pemesanan sudah diproses.');
+                }
+
+                return redirect()->route('admin.pemesanan.index', $routeParameters)
+                    ->with('sukses', $verifiedCount === 1
+                        ? 'Pembayaran berhasil diverifikasi.'
+                        : "Pembayaran untuk {$verifiedCount} pemesanan berhasil diverifikasi.");
+            }
+        }
 
         $booking->update($data);
 
-        return redirect()->route('admin.pemesanan.index', $request->only(['q', 'status', 'tanggal', 'id_lapangan']))
+        return redirect()->route('admin.pemesanan.index', $routeParameters)
             ->with('sukses', 'Status pemesanan berhasil diperbarui.');
+    }
+
+    private function attachPaymentProofs(LengthAwarePaginator $bookings): void
+    {
+        $bookingIds = $bookings->getCollection()->pluck('id_booking')->all();
+        $proofByBooking = [];
+
+        if ($bookingIds !== [] && Schema::hasTable('pembayaran') && Schema::hasTable('detail_item_booking')) {
+            $proofs = DB::table('pembayaran as payment')
+                ->join(
+                    'detail_item_booking as booking_detail',
+                    'booking_detail.id_detail',
+                    '=',
+                    'payment.id_detail_item_booking'
+                )
+                ->whereIn('booking_detail.id_booking', $bookingIds)
+                ->orderByDesc('payment.tgl_bayar')
+                ->orderByDesc('payment.id_pembayaran')
+                ->get([
+                    'booking_detail.id_booking',
+                    'payment.id_pembayaran',
+                    'payment.bukti_transfer',
+                    'payment.status_pembayaran',
+                ]);
+
+            foreach ($proofs as $proof) {
+                $idBooking = (string) $proof->id_booking;
+                if (isset($proofByBooking[$idBooking])) {
+                    continue;
+                }
+
+                $filename = basename(str_replace('\\', '/', (string) $proof->bukti_transfer));
+                $proof->available = $filename !== ''
+                    && is_file(public_path('uploads/bukti_pembayaran/'.$filename));
+                $proofByBooking[$idBooking] = $proof;
+            }
+        }
+
+        $bookings->getCollection()->each(function (Booking $booking) use ($proofByBooking): void {
+            $booking->setAttribute(
+                'payment_proof',
+                $proofByBooking[(string) $booking->id_booking] ?? null
+            );
+        });
     }
 }

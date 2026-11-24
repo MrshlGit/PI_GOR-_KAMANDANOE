@@ -17,7 +17,7 @@ use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class LaporanKeuanganController extends Controller
 {
-    private const BOOKING_PAID_STATUSES = ['lunas', 'selesai'];
+    private const BOOKING_PAID_STATUSES = ['dikonfirmasi', 'lunas', 'selesai'];
 
     private const CHART_BOOKING_STATUSES = ['dikonfirmasi', 'lunas', 'selesai'];
 
@@ -83,7 +83,12 @@ class LaporanKeuanganController extends Controller
         $path = public_path('uploads/bukti_pembayaran/'.$filename);
         abort_unless(is_file($path), 404);
 
-        return response()->file($path);
+        $mimeType = mime_content_type($path) ?: 'application/octet-stream';
+
+        return response()->file($path, [
+            'Content-Type' => $mimeType,
+            'X-Content-Type-Options' => 'nosniff',
+        ]);
     }
 
     private function paidBookings(): Builder

@@ -16,6 +16,7 @@ use App\Http\Controllers\PilihBookingController;
 use App\Http\Controllers\User\RingkasanTagihanController;
 use App\Http\Controllers\User\AlatController;
 use App\Http\Controllers\User\MakananController;
+use App\Http\Controllers\User\NotificationController;
 // use App\Http\Controllers\User\RingkasanTagihanController;
 use App\Http\Controllers\User\LayananInformasiController;
 use App\Http\Controllers\User\TurnamenController;
@@ -55,6 +56,8 @@ Route::middleware(['auth', 'admin'])
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+    Route::get('/notifikasi/{notification}', [NotificationController::class, 'show'])
+        ->name('notifications.show');
 
     Route::get('/layanan', [LayananInformasiController::class, 'index'])->name('layanan.index');
     Route::post('/layanan/saran', [LayananInformasiController::class, 'kirimSaran'])->name('layanan.saran');

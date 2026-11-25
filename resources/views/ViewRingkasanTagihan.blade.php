@@ -1,25 +1,12 @@
 
 @extends('layouts.dashboard')
 
-@section('title', 'Rimgkasan Tagihan')
+@section('title', 'Pembayaran')
 @push('styles')
     <link rel="stylesheet" href="{{ asset('css/ringkasantagihan.css') }}">
 @endpush
 
 @section('content')
-
-{{-- LETAKKAN DI SINI (sebelum <section class="content-body">) --}}
-@if(session('success'))
-    <div style="background:#d1fae5;color:#065f46;padding:12px 18px;border-radius:10px;margin-bottom:16px;font-weight:600;">
-        {{ session('success') }}
-    </div>
-@endif
-
-@if(session('error') || $errors->any())
-    <div style="background:#fee2e2;color:#991b1b;padding:12px 18px;border-radius:10px;margin-bottom:16px;font-weight:600;">
-        {{ session('error') ?? $errors->first() }}
-    </div>
-@endif
 
 <section class="content-body">
 
@@ -29,15 +16,6 @@
         <p>Silahkan upload file/foto transaksi bayar Anda pada tempat file yang telah disediakan</p>
     </div>
 
-    @if (session('success'))
-        <div class="payment-feedback payment-feedback-success" role="status">{{ session('success') }}</div>
-    @endif
-    @if (session('error'))
-        <div class="payment-feedback payment-feedback-error" role="alert">{{ session('error') }}</div>
-    @endif
-    @if ($errors->any())
-        <div class="payment-feedback payment-feedback-error" role="alert">{{ $errors->first() }}</div>
-    @endif
     {{-- FORM UTAMA PEMBAYARAN --}}
     <form action="{{ route('pembayaran.store') }}"
           method="POST"
@@ -45,9 +23,6 @@
           class="payment-grid-form">
 
         @csrf
-        @foreach ($items as $item)
-            <input type="hidden" name="booking_ids[]" value="{{ $item['id_booking'] }}">
-        @endforeach
 
         <div class="payment-grid">
 
@@ -64,22 +39,17 @@
                         </thead>
 
                         <tbody>
-                            @forelse($items as $item)
+                            @foreach($items as $item)
                                 <tr>
                                     <td>{{ $item['nama'] }}</td>
                                     <td>{{ $item['harga'] }}</td>
                                 </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="2">Belum ada pemesanan yang siap dibayar.</td>
-                                </tr>
-                            @endforelse
+                            @endforeach
                         </tbody>
                     </table>
                 </div>
 
                 {{-- UPLOAD BUKTI PEMBAYARAN --}}
-                @if (count($items) > 0)
                 <div class="upload-section">
 
                     <h3 class="section-title">Bukti Pembayaran</h3>
@@ -139,26 +109,19 @@
                             <input type="file"
                                    id="file_upload"
                                    name="bukti_bayar"
-                                   accept=".jpeg,.jpg,.jpeg,.png,.pdf"
+                                   accept=".jpg,.jpeg,.png,.pdf"
                                    style="display:none;"
                                    onchange="handleFileSelect(this)"
                                    required>
 
                             <span class="file-hint">
-                                Format JPG, PNG, atau PDF (Maks. 5MB; foto besar dikompres otomatis)
-                                Format JPEG, JPG, PNG, atau PDF (Maks. 5MB)
+                                Format JPG, PNG, atau PDF (Maks. 5MB)
                             </span>
 
                         </div>
 
                     </div>
                 </div>
-                @else
-                    <div class="payment-empty-state">
-                        <strong>Tidak ada tagihan yang siap dibayar.</strong>
-                        <span>Booking dengan bukti pembayaran akan muncul di bagian status verifikasi.</span>
-                    </div>
-                @endif
 
             </div>
 
@@ -214,16 +177,12 @@
 
                     {{-- TOMBOL BAYAR --}}
                     <div class="pay-action-wrapper">
-                        @if (count($items) > 0)
                         <button type="submit"
                                 id="btnPay"
                                 class="btn-pay disabled"
                                 disabled>
                             Bayar
                         </button>
-                        @else
-                            <button type="button" class="btn-pay disabled" disabled>Tidak ada tagihan</button>
-                        @endif
                     </div>
 
                 </div>
@@ -332,113 +291,37 @@
         document.getElementById('qrModal').style.display = 'none';
     }
 
-    const MAX_IMAGE_UPLOAD_BYTES = 1700 * 1024;
-
+    // Mengaktifkan tombol Bayar setelah file dipilih
     function handleFileSelect(input) {
+
         const btnPay = document.getElementById('btnPay');
         const fileLabelText = document.getElementById('fileLabelText');
 
-        if (!input.files || !input.files[0]) {
-            fileLabelText.textContent = 'Tarik & Lepas bukti bayar di sini, atau';
-            fileLabelText.style.color = '#666';
+        if (input.files && input.files[0]) {
+
+            const file = input.files[0];
+
+            const fileName = file.name;
+
+            fileLabelText.textContent = "File dipilih: " + fileName;
+
+            fileLabelText.style.color = "#0a8a18";
+            fileLabelText.style.fontWeight = "600";
+
+            btnPay.classList.remove('disabled');
+            btnPay.removeAttribute('disabled');
+
+        } else {
+
+            fileLabelText.textContent = "Tarik & Lepas bukti bayar di sini, atau";
+
+            fileLabelText.style.color = "#666";
+
             btnPay.classList.add('disabled');
             btnPay.setAttribute('disabled', 'true');
-            return;
+
         }
 
-        const file = input.files[0];
-        const isImage = file.type.startsWith('image/') || /\.(png|jpe?g)$/i.test(file.name);
-        btnPay.classList.add('disabled');
-        btnPay.setAttribute('disabled', 'true');
-
-        if (isImage && file.size > MAX_IMAGE_UPLOAD_BYTES) {
-            fileLabelText.textContent = 'Mengoptimalkan foto...';
-            compressPaymentImage(file).then(function (compressedFile) {
-                const transfer = new DataTransfer();
-                transfer.items.add(compressedFile);
-                input.files = transfer.files;
-                showSelectedFile(compressedFile);
-            }).catch(function () {
-                fileLabelText.textContent = 'Foto gagal dikompres. Coba pilih foto yang lebih kecil.';
-                fileLabelText.style.color = '#b42318';
-            });
-            return;
-        }
-
-        showSelectedFile(file);
-    }
-
-    function showSelectedFile(file) {
-        const btnPay = document.getElementById('btnPay');
-        const fileLabelText = document.getElementById('fileLabelText');
-        const sizeMb = (file.size / (1024 * 1024)).toFixed(2);
-
-        fileLabelText.textContent = 'File siap dikirim: ' + file.name + ' (' + sizeMb + ' MB)';
-        fileLabelText.style.color = '#0a8a18';
-        fileLabelText.style.fontWeight = '600';
-        btnPay.classList.remove('disabled');
-        btnPay.removeAttribute('disabled');
-    }
-
-    function compressPaymentImage(file) {
-        return new Promise(function (resolve, reject) {
-            const image = new Image();
-            const objectUrl = URL.createObjectURL(file);
-
-            image.onload = function () {
-                URL.revokeObjectURL(objectUrl);
-                if (!image.width || !image.height) {
-                    reject(new Error('Foto tidak memiliki dimensi yang valid.'));
-                    return;
-                }
-
-                const maxDimension = 2000;
-                const scale = Math.min(1, maxDimension / Math.max(image.width, image.height));
-                const canvas = document.createElement('canvas');
-                canvas.width = Math.round(image.width * scale);
-                canvas.height = Math.round(image.height * scale);
-                const context = canvas.getContext('2d');
-                if (!context) {
-                    reject(new Error('Browser tidak dapat memproses foto.'));
-                    return;
-                }
-                context.drawImage(image, 0, 0, canvas.width, canvas.height);
-
-                let quality = 0.88;
-                const encode = function () {
-                    canvas.toBlob(function (blob) {
-                        if (!blob) {
-                            reject(new Error('Foto tidak dapat dikompres.'));
-                            return;
-                        }
-                        if (blob.size > MAX_IMAGE_UPLOAD_BYTES && quality > 0.64) {
-                            quality -= 0.08;
-                            encode();
-                            return;
-                        }
-                        if (blob.size > MAX_IMAGE_UPLOAD_BYTES) {
-                            reject(new Error('Foto masih terlalu besar setelah dikompres.'));
-                            return;
-                        }
-
-                        const baseName = file.name.replace(/\.[^.]+$/, '');
-                        resolve(new File([blob], baseName + '.jpg', {
-                            type: 'image/jpeg',
-                            lastModified: Date.now(),
-                        }));
-                    }, 'image/jpeg', quality);
-                };
-
-                encode();
-            };
-
-            image.onerror = function () {
-                URL.revokeObjectURL(objectUrl);
-                reject(new Error('Foto tidak dapat dibaca.'));
-            };
-
-            image.src = objectUrl;
-        });
     }
 
 </script>

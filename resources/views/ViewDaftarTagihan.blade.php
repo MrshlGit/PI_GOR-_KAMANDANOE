@@ -45,7 +45,6 @@
                             <th>JUMLAH</th>
                             <th>DURASI</th>
                             <th>HARGA</th>
-                            <th>STATUS</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -56,20 +55,18 @@
                                 <td>{{ $item['jumlah'] }}</td>
                                 <td>{{ $item['durasi'] }}</td>
                                 <td>Rp {{ number_format($item['harga'], 0, ',', '.') }}</td>
-                                <td><span class="transaction-status {{ $item['status_class'] }}">{{ $item['status'] }}</span></td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="6" style="padding: 20px; color: #666;">Belum ada transaksi.</td>
+                                <td colspan="5" style="padding: 20px; color: #666;">Belum ada tagihan atau pemesanan aktif.</td>
                             </tr>
                         @endforelse
                     </tbody>
                     @if(!empty($tagihans) && count($tagihans) > 0)
                         <tfoot>
                             <tr style="font-weight: bold; background: #f9f9f9;">
-                                <td colspan="4" style="text-align: right; padding: 12px;">Total Belum Dibayar:</td>
+                                <td colspan="4" style="text-align: right; padding: 12px;">Total Kumulatif:</td>
                                 <td style="padding: 12px;">Rp {{ number_format($totalKumulatif ?? 0, 0, ',', '.') }}</td>
-                                <td></td>
                             </tr>
                         </tfoot>
                     @endif
@@ -78,13 +75,9 @@
         </div>
 
         <div class="action-footer">
-            @if ($jumlahBelumDibayar > 0)
-                <a href="{{ route('pembayaran.index') }}" class="btn btn-confirm" style="text-decoration: none;">
-                    Bayar Tagihan ({{ $jumlahBelumDibayar }})
-                </a>
-            @else
-                <span class="muted">Tidak ada tagihan yang perlu dibayar.</span>
-            @endif
+            <a href="{{ route('pembayaran.index') }}" class="btn btn-confirm" style="text-decoration: none;">
+                Konfirmasi Pembayaran
+            </a>
         </div>
     </section>
 @endsection

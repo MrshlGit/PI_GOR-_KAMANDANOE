@@ -360,36 +360,3 @@
     align-items: stretch;
   }
 }
-
-.payment-feedback,
-.payment-empty-state {
-  border: 1px solid #e6e9e6;
-  border-radius: 12px;
-  padding: 14px 18px;
-  background: #fff;
-  color: #334139;
-  font-size: 0.9rem;
-  line-height: 1.5;
-}
-
-.payment-feedback-success {
-  border-color: #b9ddc1;
-  background: #eff8f1;
-  color: #205a32;
-}
-
-.payment-feedback-error {
-  border-color: #e9c2bd;
-  background: #fff3f1;
-  color: #8d3028;
-}
-
-.payment-empty-state {
-  display: grid;
-  gap: 4px;
-  background: #f8faf8;
-}
-
-.payment-empty-state span {
-  color: #647168;
-}

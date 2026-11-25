@@ -1,12 +1,25 @@
 
 @extends('layouts.dashboard')
 
-@section('title', 'Pembayaran')
+@section('title', 'Rimgkasan Tagihan')
 @push('styles')
     <link rel="stylesheet" href="{{ asset('css/ringkasantagihan.css') }}">
 @endpush
 
 @section('content')
+
+{{-- LETAKKAN DI SINI (sebelum <section class="content-body">) --}}
+@if(session('success'))
+    <div style="background:#d1fae5;color:#065f46;padding:12px 18px;border-radius:10px;margin-bottom:16px;font-weight:600;">
+        {{ session('success') }}
+    </div>
+@endif
+
+@if(session('error') || $errors->any())
+    <div style="background:#fee2e2;color:#991b1b;padding:12px 18px;border-radius:10px;margin-bottom:16px;font-weight:600;">
+        {{ session('error') ?? $errors->first() }}
+    </div>
+@endif
 
 <section class="content-body">
 
@@ -126,13 +139,14 @@
                             <input type="file"
                                    id="file_upload"
                                    name="bukti_bayar"
-                                   accept=".jpg,.jpeg,.png,.pdf"
+                                   accept=".jpeg,.jpg,.jpeg,.png,.pdf"
                                    style="display:none;"
                                    onchange="handleFileSelect(this)"
                                    required>
 
                             <span class="file-hint">
                                 Format JPG, PNG, atau PDF (Maks. 5MB; foto besar dikompres otomatis)
+                                Format JPEG, JPG, PNG, atau PDF (Maks. 5MB)
                             </span>
 
                         </div>

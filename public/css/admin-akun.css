@@ -1,0 +1,272 @@
+.account-table-panel {
+    padding: 20px;
+}
+.tbl.akun {
+    min-width: 1040px;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 0.8rem;
+}
+.tbl.akun th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    padding: 13px 14px;
+    border-top: 1px solid #eee8e2;
+    border-bottom: 1px solid #e8dfd8;
+    border-right: 1px solid #eee8e2;
+    background: #faf9f7;
+    color: #625a54;
+    font-size: 0.7rem;
+    letter-spacing: 0.035em;
+    white-space: nowrap;
+}
+.tbl.akun th:first-child {
+    border-left: 1px solid #eee8e2;
+    border-radius: 9px 0 0;
+}
+.tbl.akun th:last-child {
+    border-radius: 0 9px 0 0;
+}
+.tbl.akun td {
+    height: 54px;
+    padding: 10px 14px;
+    border-bottom: 1px solid #eee8e2;
+    border-right: 1px solid #f0ece8;
+    color: #433d38;
+    background: #fff;
+    transition: background-color 140ms ease;
+}
+.tbl.akun td:first-child {
+    min-width: 205px;
+    border-left: 1px solid #eee8e2;
+    color: #25211e;
+    font-weight: 600;
+    white-space: nowrap;
+}
+.tbl.akun td:nth-child(2) {
+    min-width: 105px;
+}
+.tbl.akun td:nth-child(3) {
+    min-width: 220px;
+    overflow-wrap: anywhere;
+}
+.tbl.akun td:nth-child(4),
+.tbl.akun td:nth-child(5) {
+    min-width: 150px;
+    white-space: nowrap;
+}
+.tbl.akun td:last-child {
+    min-width: 170px;
+}
+.tbl.akun tbody tr:hover td {
+    background: #fffaf5;
+}
+.tbl.akun tbody tr:last-child td:first-child {
+    border-radius: 0 0 0 9px;
+}
+.tbl.akun tbody tr:last-child td:last-child {
+    border-radius: 0 0 9px;
+}
+.tbl.akun .avatar {
+    width: 30px;
+    height: 30px;
+    margin-right: 10px;
+    background: #f0edf5;
+    color: #6a6380;
+    font-size: 0.72rem;
+}
+.tbl.akun .badge {
+    min-width: 64px;
+    padding: 5px 10px;
+    font-size: 0.7rem;
+}
+.tbl.akun .badge.user {
+    background: #f3f1ed;
+    color: #625a54;
+}
+.tbl.akun td.aksi {
+    padding-right: 12px;
+}
+.tbl.akun td.aksi .btn {
+    min-height: 31px;
+    margin-left: 4px;
+    padding: 6px 10px;
+    border-radius: 8px;
+    font-size: 0.72rem;
+    box-shadow: none;
+}
+.account-table-panel > .scroll {
+    overflow: auto;
+    border-radius: 9px;
+    scrollbar-color: #d7ccc2 #f7f4f1;
+    scrollbar-width: thin;
+}
+.account-table-toolbar {
+    position: relative;
+    z-index: 3;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin: 0 0 8px;
+}
+.account-tool {
+    position: relative;
+}
+.account-tool-trigger {
+    display: flex;
+    min-height: 36px;
+    align-items: center;
+    gap: 7px;
+    padding: 7px 10px;
+    border: 1px solid transparent;
+    border-radius: 9px;
+    color: #39332f;
+    cursor: pointer;
+    font-size: 0.78rem;
+    font-weight: 650;
+    list-style: none;
+    transition: background-color 140ms ease, border-color 140ms ease;
+}
+.account-tool-trigger::-webkit-details-marker {
+    display: none;
+}
+.account-tool-trigger::marker {
+    content: "";
+}
+.account-tool-trigger .ic {
+    width: 16px;
+    height: 16px;
+    color: #655b54;
+}
+.account-tool-trigger:hover,
+.account-tool[open] > .account-tool-trigger {
+    border-color: #f0dfd1;
+    background: #fff8f2;
+    color: var(--o-d);
+}
+.account-tool[open] > .account-tool-trigger .ic {
+    color: var(--o-d);
+}
+.account-tool-menu {
+    position: absolute;
+    top: calc(100% + 7px);
+    left: 0;
+    z-index: 10;
+    display: grid;
+    min-width: 220px;
+    gap: 9px;
+    padding: 13px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: 0 12px 30px rgba(44, 32, 21, 0.14);
+}
+.account-tool-menu > strong {
+    color: #39332f;
+    font-size: 0.78rem;
+}
+.account-fields-menu label {
+    display: flex;
+    min-height: 28px;
+    align-items: center;
+    gap: 8px;
+    color: #45403b;
+    font-size: 0.76rem;
+    cursor: pointer;
+}
+.account-fields-menu input {
+    width: 15px;
+    height: 15px;
+    margin: 0;
+    accent-color: var(--o-d);
+}
+.account-fields-menu label:has(input:disabled) {
+    cursor: default;
+}
+.account-fields-menu small {
+    margin-left: auto;
+    color: var(--muted);
+    font-size: 0.65rem;
+}
+.account-filter-menu label,
+.account-sort-menu label {
+    display: grid;
+    gap: 5px;
+    color: #59514b;
+    font-size: 0.7rem;
+    font-weight: 600;
+}
+.account-filter-menu select,
+.account-sort-menu select {
+    width: 100%;
+    min-height: 36px;
+    padding: 7px 9px;
+    border: 1px solid #e8dfd8;
+    border-radius: 8px;
+    background: #fff;
+    color: #39332f;
+    font: inherit;
+    font-size: 0.75rem;
+}
+.account-filter-menu select:focus-visible,
+.account-sort-menu select:focus-visible {
+    border-color: var(--o);
+    outline: 2px solid #fbe0cc;
+    outline-offset: 1px;
+}
+.account-sort-direction {
+    min-height: 34px;
+    padding: 6px 9px;
+    border: 1px solid #f0dfd1;
+    border-radius: 8px;
+    background: #fff8f2;
+    color: var(--o-d);
+    font: inherit;
+    font-size: 0.74rem;
+    font-weight: 650;
+    text-align: left;
+}
+.account-sort-direction:hover {
+    background: #ffefe2;
+}
+.account-table-summary {
+    min-height: 17px;
+    margin: 0 0 9px;
+    color: var(--muted);
+    font-size: 0.7rem;
+}
+.tbl.akun [data-account-column].is-column-hidden {
+    display: none !important;
+}
+.tbl.akun [data-account-row][hidden],
+.tbl.akun [data-account-empty][hidden],
+.tbl.akun [data-account-no-results][hidden] {
+    display: none !important;
+}
+.tbl.akun [data-account-no-results] td,
+.tbl.akun [data-account-empty] td {
+    height: 100px;
+    color: var(--muted);
+    text-align: center;
+}
+@media (max-width: 700px) {
+    .account-table-panel {
+        padding: 15px;
+    }
+    .account-table-panel > .box-h {
+        align-items: flex-start;
+    }
+    .account-table-toolbar {
+        gap: 3px;
+    }
+}
+@media (prefers-reduced-motion: reduce) {
+    .tbl.akun td {
+        transition: none;
+    }
+    .account-tool-trigger {
+        transition: none;
+    }
+}

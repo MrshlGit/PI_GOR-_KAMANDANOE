@@ -20,7 +20,7 @@
     ];
 @endphp
 
-<link rel="stylesheet" href="{{ asset('css/turnamen.css') }}">
+<link rel="stylesheet" href="{{ asset('css/Turnamen.css') }}">
 
 <div class="tn">
 
@@ -77,6 +77,9 @@
         @endphp
 
         <article class="tn-card">
+            @if ($t->poster)
+                <img class="tn-poster" src="{{ asset($t->poster) }}" alt="Poster {{ $t->nama_turnamen }}" loading="lazy">
+            @endif
             <div class="tn-top">
                 <div class="tn-chips">
                     @if ($t->kategori) <span class="tn-chip">{{ $t->kategori }}</span> @endif
@@ -174,7 +177,7 @@
 
 {{-- ===== POP-UP AJUKAN TURNAMEN ===== --}}
 <dialog id="dlg-ajukan" class="tn-dlg wide">
-    <form method="POST" action="{{ route('turnamen.store') }}">
+    <form method="POST" action="{{ route('turnamen.store') }}" enctype="multipart/form-data">
         @csrf
         <h3>Ajukan Turnamen</h3>
         <p class="tn-sub">
@@ -204,11 +207,11 @@
 
         <div class="tn-row">
             <label>Tanggal pelaksanaan
-                <input type="date" name="tgl_pelaksanaan" value="{{ old('tgl_pelaksanaan') }}" required>
+                <input id="tn-tgl-pelaksanaan" type="date" name="tgl_pelaksanaan" min="{{ today()->toDateString() }}" value="{{ old('tgl_pelaksanaan') }}" required>
                 @error('tgl_pelaksanaan', 'ajukan') <small class="tn-fe">{{ $message }}</small> @enderror
             </label>
             <label>Batas pendaftaran
-                <input type="date" name="batas_pendaftaran" value="{{ old('batas_pendaftaran') }}">
+                <input id="tn-batas-pendaftaran" type="date" name="batas_pendaftaran" min="{{ today()->toDateString() }}" value="{{ old('batas_pendaftaran') }}">
                 @error('batas_pendaftaran', 'ajukan') <small class="tn-fe">{{ $message }}</small> @enderror
             </label>
         </div>
@@ -240,6 +243,11 @@
             @error('deskripsi', 'ajukan') <small class="tn-fe">{{ $message }}</small> @enderror
         </label>
 
+        <label>Poster turnamen (opsional, JPG/PNG/WEBP maks. 5 MB)
+            <input type="file" name="poster" accept="image/jpeg,image/png,image/webp">
+            @error('poster', 'ajukan') <small class="tn-fe">{{ $message }}</small> @enderror
+        </label>
+
         <div class="tn-dact">
             <button type="button" class="tn-btn ghost" data-close>Batal</button>
             <button type="submit" class="tn-btn">Ajukan</button>
@@ -248,6 +256,28 @@
 </dialog>
 
 <script>
+    var tglPelaksanaan = document.getElementById('tn-tgl-pelaksanaan');
+    var batasPendaftaran = document.getElementById('tn-batas-pendaftaran');
+    if (tglPelaksanaan && batasPendaftaran) {
+        function sesuaikanBatasPendaftaran() {
+            if (tglPelaksanaan.value) {
+                batasPendaftaran.max = tglPelaksanaan.value;
+                batasPendaftaran.setCustomValidity(
+                    batasPendaftaran.value && batasPendaftaran.value > tglPelaksanaan.value
+                        ? 'Batas pendaftaran harus sebelum atau sama dengan tanggal pelaksanaan.'
+                        : ''
+                );
+            } else {
+                batasPendaftaran.removeAttribute('max');
+                batasPendaftaran.setCustomValidity('');
+            }
+        }
+
+        tglPelaksanaan.addEventListener('change', sesuaikanBatasPendaftaran);
+        batasPendaftaran.addEventListener('change', sesuaikanBatasPendaftaran);
+        sesuaikanBatasPendaftaran();
+    }
+
     document.querySelectorAll('[data-open]').forEach(function (b) {
         b.addEventListener('click', function () { document.getElementById(b.dataset.open).showModal(); });
     });

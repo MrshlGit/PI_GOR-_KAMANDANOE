@@ -23,6 +23,10 @@ $$('.dropdown').forEach(dd => {
   });
 });
 document.addEventListener('click', () => $$('.dropdown').forEach(x => x.classList.remove('open')));
+const notificationDropdown = $('.notification-dropdown');
+if (notificationDropdown?.classList.contains('open')) {
+  window.setTimeout(() => notificationDropdown.classList.remove('open'), 5000);
+}
 
 // ---- cari lapangan ----
 $('#cari')?.addEventListener('input', e => {

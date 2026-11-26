@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\LapanganController;
 use App\Http\Controllers\Admin\LaporanKeuanganController;
 use App\Http\Controllers\Admin\PemesananController;
 use App\Http\Controllers\Admin\SaranKritikController;
+use App\Http\Controllers\Admin\TurnamenController as AdminTurnamenController;
 use App\Http\Controllers\User\BookingController;
 use App\Http\Controllers\User\DashboardController;
 use App\Http\Controllers\User\LoginController;
@@ -16,6 +17,7 @@ use App\Http\Controllers\PilihBookingController;
 use App\Http\Controllers\User\RingkasanTagihanController;
 use App\Http\Controllers\User\AlatController;
 use App\Http\Controllers\User\MakananController;
+use App\Http\Controllers\User\NotificationController;
 // use App\Http\Controllers\User\RingkasanTagihanController;
 use App\Http\Controllers\User\LayananInformasiController;
 use App\Http\Controllers\User\TurnamenController;
@@ -45,6 +47,9 @@ Route::middleware(['auth', 'admin'])
             ->name('pemesanan.status');
         Route::get('/saran-kritik', [SaranKritikController::class, 'index'])
             ->name('saran-kritik.index');
+        Route::get('/turnamen', [AdminTurnamenController::class, 'index'])->name('turnamen.index');
+        Route::patch('/turnamen/{id}/status', [AdminTurnamenController::class, 'updateStatus'])
+            ->name('turnamen.status');
         Route::get('/laporan-keuangan', [LaporanKeuanganController::class, 'index'])
             ->name('laporan-keuangan.index');
         Route::get('/laporan-keuangan/bukti/{pembayaran}', [LaporanKeuanganController::class, 'buktiPembayaran'])
@@ -55,6 +60,8 @@ Route::middleware(['auth', 'admin'])
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+    Route::get('/notifikasi/{notification}', [NotificationController::class, 'show'])
+        ->name('notifications.show');
 
     Route::get('/layanan', [LayananInformasiController::class, 'index'])->name('layanan.index');
     Route::post('/layanan/saran', [LayananInformasiController::class, 'kirimSaran'])->name('layanan.saran');

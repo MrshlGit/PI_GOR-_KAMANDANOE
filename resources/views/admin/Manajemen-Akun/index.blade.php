@@ -1,6 +1,10 @@
 @extends('layouts.admin')
 @section('title', 'Manajemen Akun')
 
+@push('styles')
+    <link rel="stylesheet" href="{{ asset('css/admin-akun.css') }}">
+@endpush
+
 @section('content')
     <div class="top">
         <button class="burger" id="burger" aria-label="Menu"><svg class="ic"><use href="#i-menu"/></svg></button>
@@ -9,40 +13,108 @@
         </div>
         <label class="search">
             <svg class="ic"><use href="#i-search"/></svg>
-            <input id="cari" type="text" placeholder="Cari pengguna...">
+            <input id="account-search" type="text" placeholder="Cari pengguna..." aria-label="Cari pengguna">
         </label>
     </div>
 
-    <section class="box">
+    <section class="box account-table-panel">
         <div class="box-h">
             <h2>Daftar Pengguna Terdaftar</h2>
             <button type="button" class="btn kuning" data-modal="m-tambah">+ Tambah Akun</button>
         </div>
 
+        <div class="account-table-toolbar" aria-label="Kontrol tabel akun">
+            <details class="account-tool">
+                <summary class="account-tool-trigger">
+                    <svg class="ic" aria-hidden="true" viewBox="0 0 24 24"><path d="M4 5h16M4 12h16M4 19h16"/><path d="M8 3v4M15 10v4M11 17v4"/></svg>
+                    Fields
+                </summary>
+                <div class="account-tool-menu account-fields-menu">
+                    <strong>Tampilkan kolom</strong>
+                    <label><input type="checkbox" data-account-field="username" checked disabled> Username <small>Wajib</small></label>
+                    <label><input type="checkbox" data-account-field="role" checked> Role</label>
+                    <label><input type="checkbox" data-account-field="email" checked> Email</label>
+                    <label><input type="checkbox" data-account-field="created" checked> Terdaftar</label>
+                    <label><input type="checkbox" data-account-field="last-online" checked> Terakhir online</label>
+                    <label><input type="checkbox" data-account-field="actions" checked disabled> Aksi <small>Wajib</small></label>
+                </div>
+            </details>
+
+            <details class="account-tool">
+                <summary class="account-tool-trigger">
+                    <svg class="ic" aria-hidden="true" viewBox="0 0 24 24"><path d="M4 6h16M7 12h10m-7 6h4"/></svg>
+                    Filter
+                </summary>
+                <div class="account-tool-menu account-filter-menu">
+                    <label>Role
+                        <select data-account-role-filter>
+                            <option value="">Semua role</option>
+                            <option value="admin">Admin</option>
+                            <option value="user">User</option>
+                        </select>
+                    </label>
+                    <label>Aktivitas akun
+                        <select data-account-online-filter>
+                            <option value="">Semua akun</option>
+                            <option value="online">Pernah online</option>
+                            <option value="offline">Belum pernah online</option>
+                        </select>
+                    </label>
+                </div>
+            </details>
+
+            <details class="account-tool">
+                <summary class="account-tool-trigger">
+                    <svg class="ic" aria-hidden="true" viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13"/><path d="m3 7 2-2v6m-2 6 2-2v6"/></svg>
+                    Sort
+                </summary>
+                <div class="account-tool-menu account-sort-menu">
+                    <label>Urutkan berdasarkan
+                        <select data-account-sort>
+                            <option value="">Urutan awal</option>
+                            <option value="username">Username</option>
+                            <option value="role">Role</option>
+                            <option value="email">Email</option>
+                            <option value="created">Tanggal terdaftar</option>
+                            <option value="last-online">Terakhir online</option>
+                        </select>
+                    </label>
+                    <button class="account-sort-direction" type="button" data-account-sort-direction="asc" aria-label="Urutan menaik">Menaik (A–Z)</button>
+                </div>
+            </details>
+        </div>
+        <p class="account-table-summary" id="account-results-summary" aria-live="polite"></p>
+
         <div class="scroll">
-            <table class="tbl akun">
+            <table class="tbl akun" data-account-table>
                 <thead>
                     <tr>
-                        <th>USERNAME</th>
-                        <th>ROLE</th>
-                        <th>EMAIL</th>
-                        <th>TERDAFTAR</th>
-                        <th>TERAKHIR ONLINE</th>
-                        <th class="kanan">AKSI</th>
+                        <th data-account-column="username">USERNAME</th>
+                        <th data-account-column="role">ROLE</th>
+                        <th data-account-column="email">EMAIL</th>
+                        <th data-account-column="created">TERDAFTAR</th>
+                        <th data-account-column="last-online">TERAKHIR ONLINE</th>
+                        <th class="kanan" data-account-column="actions">AKSI</th>
                     </tr>
                 </thead>
                 <tbody id="tbody">
                     @forelse ($users as $u)
-                        <tr>
-                            <td>
+                        <tr data-account-row
+                            data-role="{{ strtolower((string) $u->role) }}"
+                            data-search="{{ $u->username }} {{ $u->role }} {{ $u->email }} {{ $u->created_at?->locale('id')->translatedFormat('d M Y') }} {{ $u->last_online_at?->locale('id')->diffForHumans() ?? 'Belum pernah' }}"
+                            data-username="{{ $u->username }}"
+                            data-email="{{ $u->email }}"
+                            data-created="{{ $u->created_at?->timestamp ?? '' }}"
+                            data-last-online="{{ $u->last_online_at?->timestamp ?? '' }}">
+                            <td data-account-column="username">
                                 <span class="avatar a{{ $u->id % 5 }}">{{ $u->inisial }}</span>
                                 {{ $u->username ?? '-' }}
                             </td>
-                            <td><span class="badge {{ $u->role }}">{{ ucfirst((string) $u->role) }}</span></td>
-                            <td>{{ $u->email ?: '—' }}</td>
-                            <td>{{ $u->created_at?->locale('id')->translatedFormat('d M Y') ?? '—' }}</td>
-                            <td>{{ $u->last_online_at?->locale('id')->diffForHumans() ?? 'Belum pernah' }}</td>
-                            <td class="aksi">
+                            <td data-account-column="role"><span class="badge {{ $u->role }}">{{ ucfirst((string) $u->role) }}</span></td>
+                            <td data-account-column="email">{{ $u->email ?: '—' }}</td>
+                            <td data-account-column="created">{{ $u->created_at?->locale('id')->translatedFormat('d M Y') ?? '—' }}</td>
+                            <td data-account-column="last-online">{{ $u->last_online_at?->locale('id')->diffForHumans() ?? 'Belum pernah' }}</td>
+                            <td class="aksi" data-account-column="actions">
                                 <button type="button" class="btn"
                                         data-modal="m-edit"
                                         data-action="{{ route('admin.akun.update', $u) }}"
@@ -58,8 +130,11 @@
                             </td>
                         </tr>
                     @empty
-                        <tr><td colspan="6">Belum ada pengguna.</td></tr>
+                        <tr data-account-empty><td colspan="6">Belum ada pengguna.</td></tr>
                     @endforelse
+                    @if ($users->isNotEmpty())
+                        <tr data-account-no-results hidden><td colspan="6">Tidak ada akun yang sesuai dengan pencarian atau filter.</td></tr>
+                    @endif
                 </tbody>
             </table>
         </div>
@@ -168,3 +243,7 @@
         </div>
     </div>
 @endsection
+
+@push('scripts')
+    <script src="{{ asset('js/admin-akun.js') }}" defer></script>
+@endpush

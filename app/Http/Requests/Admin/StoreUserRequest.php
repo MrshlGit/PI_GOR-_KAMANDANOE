@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Admin;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -19,7 +19,7 @@ class StoreUserRequest extends FormRequest
         return [
             'username' => ['required', 'string', 'min:4', 'max:100', 'unique:user,username'],
             'password' => ['required', 'string', 'min:8'],
-            'role'     => ['required', Rule::in(['admin', 'user'])],
+            'role' => ['required', Rule::in(['admin', 'user'])],
         ];
     }
 
@@ -27,12 +27,12 @@ class StoreUserRequest extends FormRequest
     {
         return [
             'username.required' => 'Username wajib diisi.',
-            'username.min'      => 'Username minimal 4 karakter.',
-            'username.unique'   => 'Username sudah digunakan.',
+            'username.min' => 'Username minimal 4 karakter.',
+            'username.unique' => 'Username sudah digunakan.',
             'password.required' => 'Password wajib diisi.',
-            'password.min'      => 'Password minimal 8 karakter.',
-            'role.required'     => 'Role wajib dipilih.',
-            'role.in'           => 'Role tidak valid.',
+            'password.min' => 'Password minimal 8 karakter.',
+            'role.required' => 'Role wajib dipilih.',
+            'role.in' => 'Role tidak valid.',
         ];
     }
 }

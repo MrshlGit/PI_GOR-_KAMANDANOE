@@ -71,6 +71,7 @@
                         <th>JADWAL</th>
                         <th class="kanan">TOTAL</th>
                         <th>STATUS</th>
+                        <th>BUKTI BAYAR</th>
                         <th class="kanan">AKSI</th>
                     </tr>
                 </thead>
@@ -83,6 +84,12 @@
                                 'dikonfirmasi', 'lunas', 'selesai' => 'ok',
                                 'batal', 'dibatalkan', 'cancelled' => 'busy',
                                 default => '',
+                            };
+                            $bukti = $booking->payment_proof;
+                            $statusPembayaran = match (strtolower((string) $bukti?->status_pembayaran)) {
+                                'pending' => 'Menunggu verifikasi',
+                                'terverifikasi', 'approved', 'success', 'berhasil' => 'Terverifikasi',
+                                default => $bukti?->status_pembayaran,
                             };
                         @endphp
                         <tr>
@@ -97,14 +104,39 @@
                                 <small>{{ substr((string) $booking->jam_mulai, 0, 5) }} · {{ max(1, (int) $booking->durasi) }} jam</small>
                             </td>
                             <td class="kanan">Rp {{ number_format((float) $booking->total_bayar, 0, ',', '.') }}</td>
-                            <td><span class="pill {{ $kelas }}">{{ ucfirst($booking->status_booking) }}</span></td>
+                            <td>
+                                <span class="pill {{ $kelas }}">{{ ucfirst($booking->status_booking) }}</span>
+                                @if ($bukti)
+                                    <small>Pembayaran: {{ $statusPembayaran }}</small>
+                                @endif
+                            </td>
+                            <td class="booking-proof">
+                                @if ($bukti?->available)
+                                    @php
+                                        $buktiUrl = route('admin.laporan-keuangan.bukti', $bukti->id_pembayaran);
+                                        $ekstensiBukti = strtolower(pathinfo((string) $bukti->bukti_transfer, PATHINFO_EXTENSION));
+                                    @endphp
+                                    @if (in_array($ekstensiBukti, ['jpg', 'jpeg', 'png'], true))
+                                        <a class="booking-proof-image" href="{{ $buktiUrl }}" target="_blank" rel="noopener" aria-label="Lihat foto bukti pembayaran">
+                                            <img src="{{ $buktiUrl }}" alt="Bukti pembayaran" loading="lazy">
+                                            <span>Lihat foto</span>
+                                        </a>
+                                    @else
+                                        <a class="btn kuning" href="{{ $buktiUrl }}" target="_blank" rel="noopener">Lihat bukti</a>
+                                    @endif
+                                @elseif ($bukti)
+                                    <span class="muted">File tidak tersedia</span>
+                                @else
+                                    <span class="muted">Belum ada</span>
+                                @endif
+                            </td>
                             <td class="booking-actions">
                                 @if ($status === 'menunggu')
                                     <form method="POST" action="{{ route('admin.pemesanan.status', $booking) }}">
                                         @csrf
                                         @method('PATCH')
                                         <input type="hidden" name="status_booking" value="dikonfirmasi">
-                                        <button class="btn confirm-btn" type="submit">Konfirmasi</button>
+                                        <button class="btn confirm-btn" type="submit">{{ strtolower((string) $bukti?->status_pembayaran) === 'pending' ? 'Verifikasi pembayaran' : 'Konfirmasi' }}</button>
                                     </form>
                                     <form method="POST" action="{{ route('admin.pemesanan.status', $booking) }}">
                                         @csrf
@@ -118,7 +150,7 @@
                             </td>
                         </tr>
                     @empty
-                        <tr><td class="empty-bookings" colspan="7">Belum ada pemesanan yang sesuai filter.</td></tr>
+                        <tr><td class="empty-bookings" colspan="8">Belum ada pemesanan yang sesuai filter.</td></tr>
                     @endforelse
                 </tbody>
             </table>

@@ -20,6 +20,8 @@ use App\Http\Controllers\User\NotificationController;
 // use App\Http\Controllers\User\RingkasanTagihanController;
 use App\Http\Controllers\User\LayananInformasiController;
 use App\Http\Controllers\User\TurnamenController;
+use App\Http\Controllers\User\MenungguVerifikasiController;
+use App\Http\Controllers\User\RiwayatPembayaranController;
 
 Route::view('/', 'home_view')->name('home');
 
@@ -117,3 +119,11 @@ Route::post('/booking-makanan/konfirmasi', [MakananController::class, 'konfirmas
 Route::get('/pembayaran', [RingkasanTagihanController::class, 'index'])->name('pembayaran.index');
 Route::post('/pembayaran', [RingkasanTagihanController::class, 'store'])->name('pembayaran.store');
 
+Route::middleware('auth')->group(function () {
+    // ... route lainnya ...
+    Route::get('/pembayaran/{id}/menunggu-verifikasi', [MenungguVerifikasiController::class, 'index'])
+        ->name('pembayaran.menunggu');
+
+    Route::get('/pembayaran/riwayat', [RiwayatPembayaranController::class, 'index'])
+        ->name('pembayaran.riwayat');
+});

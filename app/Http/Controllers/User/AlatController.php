@@ -14,7 +14,7 @@ class AlatController extends Controller
     {
         $keranjang = $request->session()->get('keranjang_alat', []);
 
-        if ($request->query->has('id_alat')) {
+        if ($request->isMethod('post')) {
             $data = $request->validate([
                 'id_alat' => ['required', 'integer', 'exists:alats,id_alat'],
                 'jumlah' => ['required', 'integer', 'min:1'],

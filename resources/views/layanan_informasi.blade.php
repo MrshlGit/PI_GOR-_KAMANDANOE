@@ -4,11 +4,13 @@
 @section('content')
 @php
     $legenda = [
-        'saya'        => 'Booking saya',
-        'menunggu'    => 'Menunggu konfirmasi',
-        'terisi'      => 'Terisi',
+        'kosong' => 'Tersedia',
+        'menunggu' => 'Menunggu',
+        'terisi' => 'Terisi',
+        'saya' => 'Booking saya',
         'maintenance' => 'Maintenance',
     ];
+
     $aturan = [
         ['ban',   'Dilarang merokok',    'Area lapangan bebas asap rokok demi kenyamanan semua pemain.'],
         ['star',  'Jaga sportivitas',    'Hormati lawan, wasit, dan sesama pengguna lapangan.'],
@@ -17,6 +19,7 @@
         ['clean', 'Jagalah kebersihan',  'Buang sampah pada tempatnya setelah selesai bermain.'],
         ['ban',   'Dilarang berkelahi',  'Perselisihan diselesaikan baik-baik, pelanggar bisa dikeluarkan.'],
     ];
+
     $ikon = [
         'ban'   => '<circle cx="12" cy="12" r="9"/><path d="M5.6 5.6l12.8 12.8"/>',
         'star'  => '<path d="m12 3 2.7 5.5 6 .9-4.4 4.2 1 6-5.3-2.8-5.3 2.8 1-6L3.3 9.4l6-.9z"/>',
@@ -26,6 +29,7 @@
 @endphp
 
 <link rel="stylesheet" href="{{ asset('css/layanan.css') }}">
+<link rel="stylesheet" href="{{ asset('css/boking.css') }}">
 
 <div class="li">
 
@@ -44,7 +48,7 @@
             </form>
         </header>
 
-        <div class="li-card">
+        <!-- <div class="li-card">
             <div class="li-bar">
                 <div>
                     <h2>{{ $labelTanggal }}</h2>
@@ -83,7 +87,71 @@
                     </tbody>
                 </table>
             </div>
-        </div>
+        </div> -->
+        <section class="schedule-panel" aria-labelledby="schedule-title">
+            <header class="schedule-header">
+                <div>
+                    <h2 id="schedule-title">{{ $labelTanggal }}</h2>
+                    <p>Ringkasan jadwal lapangan per jam.</p>
+                    <form method="GET" action="{{ route('booking.create') }}" class="schedule-date">
+                        <label for="schedule-date">Pilih tanggal</label>
+                        <input
+                            type="date"
+                            name="tanggal"
+                            id="schedule-date"
+                            value="{{ $tanggal->toDateString() }}"
+                            required
+                        >
+                        <button type="submit">Lihat</button>
+                    </form>
+                </div>
+                <label class="schedule-booking-button" for="booking-confirm-toggle">
+                    Booking <span aria-hidden="true">→</span>
+                </label>
+            </header>
+
+            <div class="schedule-legend" aria-label="Keterangan status jadwal">
+                <strong>Status Jadwal</strong>
+                <span><i class="legend-color legend-color--available"></i>Tersedia</span>
+                <span><i class="legend-color legend-color--waiting"></i>Menunggu</span>
+                <span><i class="legend-color legend-color--occupied"></i>Terisi</span>
+                <span><i class="legend-color legend-color--mine"></i>Booking saya</span>
+                <span><i class="legend-color legend-color--maintenance"></i>Maintenance</span>
+            </div>
+
+            <div class="schedule-table-wrap">
+                <table class="schedule-table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Waktu</th>
+                            @forelse ($lapangans as $lapangan)
+                                <th scope="col">{{ $lapangan->nama_lapangan }} ({{ $lapangan->tipe_lantai }})</th>
+                            @empty
+                                <th scope="col">Belum ada lapangan aktif</th>
+                            @endforelse
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($jadwal as $hour => $baris)
+                            <tr>
+                                <th scope="row">
+                                    {{ sprintf('%02d:00 - %02d:00', $hour, $hour + 1) }}
+                                </th>
+                                @foreach ($lapangans as $lapangan)
+                                    @php
+                                        $status = $baris[$lapangan->id_lapangan];
+                                    @endphp
+                                    <td class="schedule-cell schedule-cell--{{ $status }}">
+                                        {{ $legenda[$status] }}
+                                    </td>
+                                @endforeach
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
     </section>
 
     {{-- ===== PERATURAN ===== --}}

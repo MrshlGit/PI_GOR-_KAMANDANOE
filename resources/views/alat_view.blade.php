@@ -50,7 +50,8 @@
                                 <span>/ {{ $alat->satuan }}</span>
                             </p>
                         </div>
-                        <form class="alat-card__actions" method="GET" action="{{ route('alat.create') }}">
+                        <form class="alat-card__actions" method="POST" action="{{ route('alat.add') }}">
+                            @csrf
                             <input type="hidden" name="id_alat" value="{{ $alat->id_alat }}">
                             <label class="alat-card__quantity">
                                 <input

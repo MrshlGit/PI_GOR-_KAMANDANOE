@@ -1,0 +1,123 @@
+.admin-tn {
+    padding: 22px;
+}
+.admin-tn-tabs {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+.admin-tn-tabs a {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 14px;
+    border: 1px solid var(--line, #e6e8ed);
+    border-radius: 999px;
+    color: inherit;
+    font-weight: 600;
+    text-decoration: none;
+}
+.admin-tn-tabs a.on {
+    background: #243fbb;
+    border-color: #243fbb;
+    color: #fff;
+}
+.admin-tn-tabs b {
+    opacity: .8;
+}
+.admin-tn-list {
+    display: grid;
+    gap: 14px;
+}
+.admin-tn-card {
+    display: grid;
+    grid-template-columns: minmax(130px, 190px) minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 18px;
+    padding: 16px;
+    border: 1px solid var(--line, #e6e8ed);
+    border-radius: 14px;
+    background: #fff;
+}
+.admin-tn-poster img {
+    display: block;
+    width: 100%;
+    max-height: 180px;
+    border-radius: 9px;
+    object-fit: cover;
+}
+.admin-tn-info h2 {
+    margin: 8px 0;
+    font-size: 1.05rem;
+}
+.admin-tn-info p,
+.admin-tn-info summary {
+    margin: 4px 0;
+    color: var(--muted, #687080);
+    font-size: .82rem;
+}
+.admin-tn-info summary {
+    cursor: pointer;
+    font-weight: 600;
+}
+.admin-tn-description {
+    white-space: pre-line;
+}
+.admin-tn-state {
+    display: inline-block;
+    padding: 4px 9px;
+    border-radius: 99px;
+    background: #fff0c2;
+    color: #765900;
+    font-size: .7rem;
+    font-weight: 700;
+}
+.admin-tn-state.disetujui {
+    background: #e4f1e6;
+    color: #2f6b3d;
+}
+.admin-tn-state.ditolak {
+    background: #f7e4e1;
+    color: #a8372e;
+}
+.admin-tn-actions {
+    display: grid;
+    gap: 8px;
+}
+.admin-tn-actions form {
+    margin: 0;
+}
+.admin-tn-actions button {
+    width: 100%;
+    padding: 9px 13px;
+    border: 0;
+    border-radius: 9px;
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+}
+.admin-tn-approve {
+    background: #243fbb;
+    color: #fff;
+}
+.admin-tn-reject {
+    background: #f7e4e1;
+    color: #a8372e;
+}
+.admin-tn-empty {
+    padding: 34px 16px;
+    text-align: center;
+    color: var(--muted, #687080);
+}
+@media (max-width: 760px) {
+    .admin-tn-card {
+        grid-template-columns: 1fr;
+    }
+    .admin-tn-poster img {
+        max-height: 260px;
+    }
+    .admin-tn-actions {
+        grid-template-columns: 1fr 1fr;
+    }
+}

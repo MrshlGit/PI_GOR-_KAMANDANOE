@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\LapanganController;
 use App\Http\Controllers\Admin\LaporanKeuanganController;
 use App\Http\Controllers\Admin\PemesananController;
 use App\Http\Controllers\Admin\SaranKritikController;
+use App\Http\Controllers\Admin\TurnamenController as AdminTurnamenController;
 use App\Http\Controllers\User\BookingController;
 use App\Http\Controllers\User\DashboardController;
 use App\Http\Controllers\User\LoginController;
@@ -46,6 +47,9 @@ Route::middleware(['auth', 'admin'])
             ->name('pemesanan.status');
         Route::get('/saran-kritik', [SaranKritikController::class, 'index'])
             ->name('saran-kritik.index');
+        Route::get('/turnamen', [AdminTurnamenController::class, 'index'])->name('turnamen.index');
+        Route::patch('/turnamen/{id}/status', [AdminTurnamenController::class, 'updateStatus'])
+            ->name('turnamen.status');
         Route::get('/laporan-keuangan', [LaporanKeuanganController::class, 'index'])
             ->name('laporan-keuangan.index');
         Route::get('/laporan-keuangan/bukti/{pembayaran}', [LaporanKeuanganController::class, 'buktiPembayaran'])

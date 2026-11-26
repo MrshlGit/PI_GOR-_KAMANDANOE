@@ -3,20 +3,17 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\TurnamenFilterRequest;
+use App\Http\Requests\Admin\UpdateTurnamenStatusRequest;
 use App\Models\Admin\Turnamen;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
 class TurnamenController extends Controller
 {
-    public function index(Request $request): View
+    public function index(TurnamenFilterRequest $request): View
     {
-        $status = $request->query('status', 'menunggu');
-        if (! in_array($status, ['menunggu', 'disetujui', 'ditolak'], true)) {
-            $status = 'menunggu';
-        }
+        $status = $request->validated()['status'] ?? Turnamen::STATUS_PENDING;
 
         return view('admin.turnamen.index', [
             'turnamen' => Turnamen::query()
@@ -27,23 +24,17 @@ class TurnamenController extends Controller
                 ->paginate(12)
                 ->withQueryString(),
             'status' => $status,
-            'jumlah' => [
-                'menunggu' => Turnamen::where('status', 'menunggu')->count(),
-                'disetujui' => Turnamen::where('status', 'disetujui')->count(),
-                'ditolak' => Turnamen::where('status', 'ditolak')->count(),
-            ],
+            'jumlah' => Turnamen::jumlahPerStatus(),
         ]);
     }
 
-    public function updateStatus(Request $request, string $id): RedirectResponse
+    public function updateStatus(UpdateTurnamenStatusRequest $request, string $id): RedirectResponse
     {
-        $validated = $request->validate([
-            'status' => ['required', Rule::in(['disetujui', 'ditolak'])],
-        ]);
+        $validated = $request->validated();
 
         $updated = Turnamen::query()
             ->whereKey($id)
-            ->where('status', 'menunggu')
+            ->where('status', Turnamen::STATUS_PENDING)
             ->update(['status' => $validated['status']]);
 
         if (! $updated) {

@@ -11,6 +11,18 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Turnamen extends Model
 {
+    public const STATUS_PENDING = 'menunggu';
+
+    public const STATUS_APPROVED = 'disetujui';
+
+    public const STATUS_REJECTED = 'ditolak';
+
+    public const STATUS_ADMIN = [
+        self::STATUS_PENDING,
+        self::STATUS_APPROVED,
+        self::STATUS_REJECTED,
+    ];
+
     public const KATEGORI = [
         'Tunggal Putra', 'Tunggal Putri', 'Ganda Putra', 'Ganda Putri', 'Ganda Campuran', 'Beregu',
     ];
@@ -47,6 +59,17 @@ class Turnamen extends Model
         return static::where('status', 'disetujui')
             ->whereDate('tgl_pelaksanaan', '>=', today())
             ->count();
+    }
+
+    public static function jumlahPerStatus(): array
+    {
+        $jumlah = static::query()
+            ->selectRaw('status, COUNT(*) as jumlah')
+            ->whereIn('status', self::STATUS_ADMIN)
+            ->groupBy('status')
+            ->pluck('jumlah', 'status');
+
+        return array_replace(array_fill_keys(self::STATUS_ADMIN, 0), $jumlah->all());
     }
 
     public function peserta(): HasMany

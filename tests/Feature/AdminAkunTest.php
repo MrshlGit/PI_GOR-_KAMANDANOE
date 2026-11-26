@@ -62,4 +62,45 @@ class AdminAkunTest extends TestCase
 
         $this->assertNotNull($user->fresh()->last_online_at);
     }
+
+    public function test_admin_account_forms_use_admin_requests_to_create_and_update_accounts(): void
+    {
+        $admin = User::create([
+            'username' => 'admin-user',
+            'password' => 'admin-password',
+            'role' => 'admin',
+        ]);
+        $member = User::create([
+            'username' => 'member-user',
+            'password' => 'member-password',
+            'role' => 'user',
+        ]);
+
+        $this->actingAs($admin)
+            ->post(route('admin.akun.store'), [
+                'username' => 'new-member',
+                'password' => 'new-member-password',
+                'role' => 'user',
+            ])
+            ->assertRedirect(route('admin.akun.index'));
+
+        $this->assertDatabaseHas('user', [
+            'username' => 'new-member',
+            'role' => 'user',
+        ]);
+
+        $this->actingAs($admin)
+            ->put(route('admin.akun.update', $member), [
+                'username' => 'updated-member',
+                'password' => '',
+                'role' => 'user',
+            ])
+            ->assertRedirect(route('admin.akun.index'));
+
+        $this->assertDatabaseHas('user', [
+            'id' => $member->id,
+            'username' => 'updated-member',
+            'role' => 'user',
+        ]);
+    }
 }

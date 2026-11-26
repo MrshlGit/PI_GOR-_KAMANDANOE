@@ -48,6 +48,7 @@ Route::middleware(['auth', 'admin'])
         Route::get('/saran-kritik', [SaranKritikController::class, 'index'])
             ->name('saran-kritik.index');
         Route::get('/turnamen', [AdminTurnamenController::class, 'index'])->name('turnamen.index');
+        Route::post('/turnamen', [AdminTurnamenController::class, 'store'])->name('turnamen.store');
         Route::patch('/turnamen/{id}/status', [AdminTurnamenController::class, 'updateStatus'])
             ->name('turnamen.status');
         Route::get('/laporan-keuangan', [LaporanKeuanganController::class, 'index'])

@@ -23,14 +23,15 @@
 <link rel="stylesheet" href="{{ asset('css/Turnamen.css') }}">
 
 <div class="tn">
-
-    {{-- ===== HEADER ===== --}}
     <header class="tn-head">
         <div>
-            <h1>Info Turnamen</h1>
-            <p>Lihat turnamen yang akan berlangsung, daftarkan timmu, atau ajukan turnamenmu sendiri di GOR Kamandanoe.</p>
+            <h1>Event</h1>
+            <p>Temukan turnamen yang akan berlangsung dan daftarkan timmu.</p>
         </div>
-        <button type="button" class="tn-btn" data-open="dlg-ajukan">+ Ajukan Turnamen</button>
+        <div class="tn-head-actions">
+            <a class="tn-view-all" href="{{ route('turnamen.index', ['tab' => 'semua']) }}">Lihat Semua</a>
+            <button type="button" class="tn-btn" data-open="dlg-ajukan">+ Ajukan Turnamen</button>
+        </div>
     </header>
 
     @if (session('tn_ok'))  <p class="tn-note ok">{{ session('tn_ok') }}</p>  @endif
@@ -61,7 +62,7 @@
         <p class="tn-hint">Pengajuanmu akan tampil di daftar umum setelah disetujui admin.</p>
     @endif
 
-    {{-- ===== DAFTAR TURNAMEN ===== --}}
+    <div class="tn-grid">
     @forelse ($turnamen as $t)
         @php
             $fase = $t->fase();
@@ -69,7 +70,6 @@
             $milikku = $t->id_user == auth()->id();
             $terdaftar = in_array($t->id_turnamen, $idIkut, true);
             $jml = $t->jumlahPeserta();
-            $persen = $t->kuota_tim > 0 ? min(100, round($jml / $t->kuota_tim * 100)) : 0;
             $sisa = $t->sisaHari();
             $hitung = $sisa === null ? '' : ($sisa > 1 ? "H-{$sisa}" : ($sisa === 1 ? 'Besok' : ($sisa === 0 ? 'Hari ini' : '')));
             $share = rawurlencode("Yuk ikut turnamen {$t->nama_turnamen} di GOR Kamandanoe, "
@@ -78,9 +78,17 @@
 
         <article class="tn-card">
             @if ($t->poster)
-                <img class="tn-poster" src="{{ asset($t->poster) }}" alt="Poster {{ $t->nama_turnamen }}" loading="lazy">
+                <a class="tn-card-image" href="{{ asset($t->poster) }}" target="_blank" rel="noopener">
+                    <img class="tn-poster" src="{{ asset($t->poster) }}" alt="Poster {{ $t->nama_turnamen }}" loading="lazy">
+                </a>
+            @else
+                <div class="tn-poster-placeholder" aria-label="Poster belum tersedia">
+                    <span>GOR KAMANDANOE</span>
+                    <strong>TURNAMEN</strong>
+                </div>
             @endif
-            <div class="tn-top">
+            <div class="tn-card-body">
+              <div class="tn-top">
                 <div class="tn-chips">
                     @if ($t->kategori) <span class="tn-chip">{{ $t->kategori }}</span> @endif
                     <span class="tn-chip {{ $warnaFase }}">{{ $teksFase }}</span>
@@ -90,32 +98,36 @@
                 @if ($hitung !== '' && $fase !== 'selesai')
                     <span class="tn-count">{{ $hitung }}</span>
                 @endif
-            </div>
+              </div>
 
-            <h2>{{ $t->nama_turnamen }}</h2>
+              <h2>{{ $t->nama_turnamen }}</h2>
+              <p class="tn-event-date">
+                  {{ $t->tgl_pelaksanaan?->locale('id')->translatedFormat('j F Y') ?? '-' }}
+                  @if ($t->jam_mulai)
+                      <span aria-hidden="true">·</span> {{ substr($t->jam_mulai, 0, 5) }} WIB
+                      @if ($t->jam_selesai) - {{ substr($t->jam_selesai, 0, 5) }} WIB @endif
+                  @endif
+              </p>
+              <p class="tn-event-location">{{ $t->lokasi ?: 'GOR Kamandanoe' }}</p>
+              <div class="tn-event-price">
+                  <span>Biaya pendaftaran</span>
+                  <strong>{{ $rupiah($t->biaya_pendaftaran) }}</strong>
+              </div>
 
-            <dl class="tn-meta">
-                <div><dt>Tanggal</dt><dd>{{ $t->tgl_pelaksanaan?->locale('id')->translatedFormat('l, j F Y') ?? '-' }}</dd></div>
-                <div><dt>Lokasi</dt><dd>{{ $t->lokasi ?: 'GOR Kamandanoe' }}</dd></div>
-                <div><dt>Biaya</dt><dd>{{ $rupiah($t->biaya_pendaftaran) }}</dd></div>
-                <div><dt>Hadiah</dt><dd>{{ $t->hadiah ?: '-' }}</dd></div>
-                @if ($t->batas_pendaftaran)
-                    <div><dt>Batas daftar</dt><dd>{{ $t->batas_pendaftaran->locale('id')->translatedFormat('j F Y') }}</dd></div>
-                @endif
-                <div><dt>Kontak</dt><dd>{{ $t->kontak ?: '-' }}</dd></div>
-            </dl>
-
-            <div class="tn-kuota">
-                <div class="tn-bar"><i style="width: {{ $persen }}%"></i></div>
-                <span>{{ $jml }} / {{ $t->kuota_tim }} tim terdaftar</span>
-            </div>
-
-            @if ($t->deskripsi)
-                <details class="tn-desc">
-                    <summary>Lihat deskripsi</summary>
-                    <p>{{ $t->deskripsi }}</p>
-                </details>
-            @endif
+              <details class="tn-desc">
+                  <summary>Detail turnamen</summary>
+                  <dl class="tn-meta">
+                      <div><dt>Hadiah</dt><dd>{{ $t->hadiah ?: '-' }}</dd></div>
+                      @if ($t->batas_pendaftaran)
+                          <div><dt>Batas daftar</dt><dd>{{ $t->batas_pendaftaran->locale('id')->translatedFormat('j F Y') }}</dd></div>
+                      @endif
+                      <div><dt>Kontak</dt><dd>{{ $t->kontak ?: '-' }}</dd></div>
+                      <div><dt>Peserta</dt><dd>{{ $jml }} / {{ $t->kuota_tim }} tim</dd></div>
+                  </dl>
+                  @if ($t->deskripsi)
+                      <p>{{ $t->deskripsi }}</p>
+                  @endif
+              </details>
 
             <footer class="tn-act">
                 <small>Diajukan oleh {{ $t->penyelenggara->username ?? 'Admin' }}</small>
@@ -143,6 +155,7 @@
                     @endif
                 </div>
             </footer>
+            </div>
         </article>
 
         {{-- pop-up daftar tim (hanya untuk turnamen yang bisa didaftar) --}}
@@ -173,6 +186,7 @@
     @empty
         <p class="tn-empty">{{ $kosong[$tab] }}</p>
     @endforelse
+    </div>
 </div>
 
 {{-- ===== POP-UP AJUKAN TURNAMEN ===== --}}
@@ -213,6 +227,17 @@
             <label>Batas pendaftaran
                 <input id="tn-batas-pendaftaran" type="date" name="batas_pendaftaran" min="{{ today()->toDateString() }}" value="{{ old('batas_pendaftaran') }}">
                 @error('batas_pendaftaran', 'ajukan') <small class="tn-fe">{{ $message }}</small> @enderror
+            </label>
+        </div>
+
+        <div class="tn-row">
+            <label>Jam mulai
+                <input type="time" name="jam_mulai" value="{{ old('jam_mulai') }}">
+                @error('jam_mulai', 'ajukan') <small class="tn-fe">{{ $message }}</small> @enderror
+            </label>
+            <label>Jam selesai
+                <input type="time" name="jam_selesai" value="{{ old('jam_selesai') }}">
+                @error('jam_selesai', 'ajukan') <small class="tn-fe">{{ $message }}</small> @enderror
             </label>
         </div>
 

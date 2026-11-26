@@ -5,12 +5,10 @@ namespace App\Http\Controllers\User;
 use App\Http\Controllers\Controller;
 use App\Models\Admin\Turnamen;
 use App\Models\TurnamenPeserta;
-use Illuminate\Database\QueryException;
+use App\Services\TurnamenCreator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 
 class TurnamenController extends Controller
@@ -74,12 +72,14 @@ class TurnamenController extends Controller
     }
 
     /** User mengajukan / menambahkan turnamen baru. */
-    public function store(Request $request)
+    public function store(Request $request, TurnamenCreator $turnamenCreator)
     {
         $validator = Validator::make($request->all(), [
             'nama_turnamen' => ['required', 'string', 'max:100'],
             'kategori' => ['required', Rule::in(Turnamen::KATEGORI)],
             'tgl_pelaksanaan' => ['required', 'date', 'after_or_equal:today'],
+            'jam_mulai' => ['nullable', 'date_format:H:i'],
+            'jam_selesai' => ['nullable', 'date_format:H:i', 'after:jam_mulai'],
             'batas_pendaftaran' => ['nullable', 'date', 'after_or_equal:today', 'before_or_equal:tgl_pelaksanaan'],
             'lokasi' => ['nullable', 'string', 'max:150'],
             'biaya_pendaftaran' => ['required', 'numeric', 'min:0', 'max:99999999'],
@@ -92,6 +92,7 @@ class TurnamenController extends Controller
             'required' => ':attribute wajib diisi.',
             'max' => ':attribute terlalu panjang.',
             'tgl_pelaksanaan.after_or_equal' => 'Tanggal pelaksanaan tidak boleh sebelum hari ini.',
+            'jam_selesai.after' => 'Jam selesai harus setelah jam mulai.',
             'batas_pendaftaran.after_or_equal' => 'Batas pendaftaran tidak boleh sebelum hari ini.',
             'batas_pendaftaran.before_or_equal' => 'Batas pendaftaran harus sebelum atau sama dengan tanggal pelaksanaan.',
             'kontak.regex' => 'Nomor kontak tidak valid.',
@@ -109,31 +110,11 @@ class TurnamenController extends Controller
             return back()->withErrors($validator, 'ajukan')->withInput()->with('buka_ajukan', true);
         }
 
-        $data = $validator->validated();
-        $poster = $request->file('poster');
-        unset($data['poster']);
-
-        if ($poster) {
-            $directory = public_path('uploads/turnamen');
-            File::ensureDirectoryExists($directory);
-            $filename = $poster->hashName();
-            $poster->move($directory, $filename);
-            $data['poster'] = 'uploads/turnamen/' . $filename;
-        }
-
-        try {
-            Turnamen::create($data + [
-                'id_turnamen' => $this->buatId(),
-                'id_user' => $request->user()->id,
-                'status' => self::PERLU_PERSETUJUAN ? 'menunggu' : 'disetujui',
-            ]);
-        } catch (QueryException $e) {
-            if (isset($data['poster'])) {
-                File::delete(public_path($data['poster']));
-            }
-
-            throw $e;
-        }
+        $turnamenCreator->create(
+            $validator->validated(),
+            $request->user(),
+            self::PERLU_PERSETUJUAN ? Turnamen::STATUS_PENDING : Turnamen::STATUS_APPROVED
+        );
 
         return redirect()->route('turnamen.index', ['tab' => 'saya'])->with(
             'tn_ok',
@@ -223,12 +204,4 @@ class TurnamenController extends Controller
         return back()->with('tn_ok', 'Pengajuan turnamen dihapus.');
     }
 
-    private function buatId(): string
-    {
-        do {
-            $id = 'TRN' . now()->format('ymd') . strtoupper(Str::random(5));
-        } while (Turnamen::whereKey($id)->exists());
-
-        return $id;
-    }
 }

@@ -96,6 +96,87 @@ class TurnamenTest extends TestCase
             ->assertSee('Kejuaraan Pemain');
     }
 
+    public function test_admin_can_create_and_publish_a_tournament_with_its_schedule(): void
+    {
+        $admin = User::create([
+            'username' => 'Admin',
+            'password' => 'password',
+            'role' => 'admin',
+        ]);
+        $data = array_merge($this->dataTurnamen(), [
+            'nama_turnamen' => 'Event Admin',
+            'jam_mulai' => '09:00',
+            'jam_selesai' => '12:00',
+        ]);
+
+        $this->actingAs($admin)
+            ->post(route('admin.turnamen.store'), $data)
+            ->assertRedirect(route('admin.turnamen.index', ['tab' => 'akan_datang']));
+
+        $turnamen = Turnamen::firstOrFail();
+        $this->assertSame(Turnamen::STATUS_APPROVED, $turnamen->status);
+        $this->assertSame($admin->id, $turnamen->id_user);
+        $this->assertSame('09:00', substr($turnamen->jam_mulai, 0, 5));
+        $this->assertSame('12:00', substr($turnamen->jam_selesai, 0, 5));
+
+        $this->actingAs($admin)
+            ->get(route('turnamen.index'))
+            ->assertOk()
+            ->assertSee('Event Admin')
+            ->assertSee('tn-poster-placeholder')
+            ->assertSee('09:00 WIB')
+            ->assertSee('12:00 WIB');
+    }
+
+    public function test_admin_event_tabs_filter_ended_and_archived_tournaments(): void
+    {
+        $organizer = User::create([
+            'username' => 'Penyelenggara',
+            'password' => 'password',
+            'role' => 'user',
+        ]);
+        $admin = User::create([
+            'username' => 'Admin',
+            'password' => 'password',
+            'role' => 'admin',
+        ]);
+
+        Turnamen::create(array_merge($this->dataTurnamen(), [
+            'id_turnamen' => 'TRN-END-001',
+            'id_user' => $organizer->id,
+            'nama_turnamen' => 'Event Berakhir',
+            'tgl_pelaksanaan' => today()->subDay()->toDateString(),
+            'status' => Turnamen::STATUS_APPROVED,
+        ]));
+        Turnamen::create(array_merge($this->dataTurnamen(), [
+            'id_turnamen' => 'TRN-OLD-001',
+            'id_user' => $organizer->id,
+            'nama_turnamen' => 'Event Otomatis Arsip',
+            'tgl_pelaksanaan' => today()->subDays(31)->toDateString(),
+            'status' => Turnamen::STATUS_APPROVED,
+        ]));
+        Turnamen::create(array_merge($this->dataTurnamen(), [
+            'id_turnamen' => 'TRN-ARC-001',
+            'id_user' => $organizer->id,
+            'nama_turnamen' => 'Event Arsip',
+            'status' => Turnamen::STATUS_REJECTED,
+        ]));
+
+        $this->actingAs($admin)
+            ->get(route('admin.turnamen.index', ['tab' => 'berakhir']))
+            ->assertOk()
+            ->assertSee('Event Berakhir')
+            ->assertDontSee('Event Arsip')
+            ->assertDontSee('Event Otomatis Arsip');
+
+        $this->actingAs($admin)
+            ->get(route('admin.turnamen.index', ['tab' => 'arsip']))
+            ->assertOk()
+            ->assertSee('Event Arsip')
+            ->assertSee('Event Otomatis Arsip')
+            ->assertDontSee('Event Berakhir');
+    }
+
     public function test_user_can_submit_tournament_today_and_is_redirected_to_own_submissions(): void
     {
         $user = User::create([

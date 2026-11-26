@@ -39,7 +39,7 @@ class Turnamen extends Model
 
     protected $fillable = [
         'id_turnamen', 'id_user', 'nama_turnamen', 'kategori', 'tgl_pelaksanaan',
-        'batas_pendaftaran', 'lokasi', 'biaya_pendaftaran', 'kuota_tim',
+        'jam_mulai', 'jam_selesai', 'batas_pendaftaran', 'lokasi', 'biaya_pendaftaran', 'kuota_tim',
         'hadiah', 'kontak', 'deskripsi', 'poster', 'status',
     ];
 

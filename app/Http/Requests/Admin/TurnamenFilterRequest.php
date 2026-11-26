@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests\Admin;
 
-use App\Models\Admin\Turnamen;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -10,10 +9,10 @@ class TurnamenFilterRequest extends FormRequest
 {
     protected function prepareForValidation(): void
     {
-        $status = $this->query('status', Turnamen::STATUS_PENDING);
+        $tab = $this->query('tab', 'akan_datang');
 
-        if (! is_string($status) || ! in_array($status, Turnamen::STATUS_ADMIN, true)) {
-            $this->merge(['status' => Turnamen::STATUS_PENDING]);
+        if (! is_string($tab) || ! in_array($tab, ['akan_datang', 'berakhir', 'arsip'], true)) {
+            $this->merge(['tab' => 'akan_datang']);
         }
     }
 
@@ -25,7 +24,8 @@ class TurnamenFilterRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'status' => ['nullable', Rule::in(Turnamen::STATUS_ADMIN)],
+            'tab' => ['nullable', Rule::in(['akan_datang', 'berakhir', 'arsip'])],
+            'q' => ['nullable', 'string', 'max:100'],
         ];
     }
 }

@@ -24,7 +24,7 @@ class LapanganController extends Controller
         $jam = range(7, 22);
         $jadwal = Lapangan::jadwalUntukTanggal($tanggal, $jam);
 
-        return view('admin.lapangan.index', compact('tanggal', 'jam', 'jadwal', 'lapangans'));
+        return view('admin.Manajemen-lapangan.index', compact('tanggal', 'jam', 'jadwal', 'lapangans'));
     }
 
     public function updateBookingStatus(

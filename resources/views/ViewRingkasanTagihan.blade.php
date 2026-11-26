@@ -39,12 +39,32 @@
     <input type="checkbox"
            id="showPaymentToggle"
            class="state-checkbox"
-           {{ ($errors->any() || session('error')) ? 'checked' : '' }}>
+           {{ ($errors->any() || session('error') || request()->boolean('show_upload') || session('show_upload')) ? 'checked' : '' }}>
 
     {{-- TOGGLE MODAL QRIS TANPA JS --}}
     <input type="checkbox"
            id="qrModalToggle"
            class="state-checkbox">
+
+    {{-- MODAL POPUP QRIS (TERSEMBUNYI SAMPAI ICON QR DIKLIK) --}}
+    <div id="qrModal" class="modal-overlay">
+        <div class="modal-content">
+            <h3>Scan QRIS Pembayaran</h3>
+            <p>Silahkan scan QR di bawah ini menggunakan m-Banking atau E-Wallet Anda.</p>
+
+            <div style="margin: 20px 0;">
+                <img src="{{ asset('img/QR.jpeg') }}"
+                     alt="QRIS GOR Kamandanoe"
+                     style="width: 220px; height: 220px; border: 2px solid #ddd; border-radius: 10px; object-fit: contain;">
+            </div>
+
+            <label for="qrModalToggle"
+                   class="btn-select-file"
+                   style="background:#333; color:#fff; border:none; cursor:pointer; display:inline-block;">
+                Tutup
+            </label>
+        </div>
+    </div>
 
     {{-- FORM UTAMA PEMBAYARAN --}}
     <form action="{{ route('pembayaran.store') }}"
@@ -91,17 +111,17 @@
 
                     <h3 class="section-title">Bukti Pembayaran</h3>
 
-                    <div class="upload-row">
+                    <div class="upload-row" style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap;">
 
-                        {{-- TOMBOL QRIS (MEMICU CHECKBOX MODAL) --}}
+                        {{-- ICON QRIS (MEMICU CHECKBOX MODAL) --}}
                         <label for="qrModalToggle"
                                class="qr-trigger"
-                               style="cursor: pointer;">
+                               style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-width: 110px; padding: 14px; border: 1px solid #f78333; border-radius: 10px; background: #fff; cursor: pointer;">
 
                             <svg viewBox="0 0 24 24"
                                  width="32"
                                  height="32"
-                                 stroke="currentColor"
+                                 stroke="#f78333"
                                  stroke-width="2"
                                  fill="none">
 
@@ -112,13 +132,13 @@
 
                             </svg>
 
-                            <span style="font-size: 13px; font-weight: 600; color: #f78333;">
+                            <span style="font-size: 13px; font-weight: 600; color: #f78333; margin-top: 6px;">
                                 Klik (QRIS)
                             </span>
                         </label>
 
                         {{-- BOX UPLOAD FILE --}}
-                        <div class="dropzone-box" id="dropzoneBox">
+                        <div class="dropzone-box" id="dropzoneBox" style="flex: 1; min-width: 240px;">
 
                             <div class="upload-icon-circle">
                                 <svg viewBox="0 0 24 24"
@@ -144,6 +164,7 @@
                                    name="bukti_bayar"
                                    accept=".jpg,.jpeg,.png,.pdf"
                                    class="native-file-input"
+                                   style="display: inline-block; width: auto; max-width: 100%; color: #333; overflow: visible;"
                                    required>
 
                             <span class="file-hint">
@@ -152,15 +173,6 @@
 
                         </div>
 
-                    </div>
-
-                    {{-- TOMBOL SUBMIT BUKTI KE DATABASE --}}
-                    <div class="submit-proof-wrapper">
-                        <button type="submit"
-                                id="btnSubmitPayment"
-                                class="btn-pay">
-                            Kirim Bukti Pembayaran
-                        </button>
                     </div>
 
                 </div>
@@ -217,13 +229,19 @@
                         <strong>{{ $summary['total'] }}</strong>
                     </div>
 
-                    {{-- TOMBOL BAYAR (LABEL UNTUK CHECKBOX #showPaymentToggle) --}}
+                    {{-- TOMBOL BAYAR: MEMBUKA PANEL UPLOAD, LALU MENJADI TOMBOL SUBMIT --}}
                     <div class="pay-action-wrapper">
                         <label for="showPaymentToggle"
                                id="btnShowPayment"
                                class="btn-pay btn-pay-label">
                             Bayar
                         </label>
+
+                        <button type="submit"
+                                id="btnSubmitPayment"
+                                class="btn-pay">
+                            Bayar
+                        </button>
                     </div>
 
                 </div>
@@ -235,38 +253,6 @@
     </form>
 
 </section>
-
-
-{{-- MODAL POPUP QRIS (TANPA JS) --}}
-<div id="qrModal" class="modal-overlay">
-
-    <div class="modal-content">
-
-        <h3>Scan QRIS Pembayaran</h3>
-
-        <p>
-            Silahkan scan QR di bawah ini menggunakan m-Banking atau E-Wallet Anda.
-        </p>
-
-        <div style="margin: 20px 0;">
-
-            <img src="{{ asset('img/QR.jpeg') }}"
-                 alt="QRIS GOR Kamandanoe"
-                 style="width: 220px; height: 220px; border: 2px solid #ddd; border-radius: 10px; object-fit: contain;">
-
-        </div>
-
-        <label for="qrModalToggle"
-               class="btn-select-file"
-               style="background:#333; color:#fff; border:none; cursor:pointer; display:inline-block;">
-
-            Tutup
-
-        </label>
-
-    </div>
-
-</div>
 
 
 {{-- MODAL POPUP MENUNGGU VERIFIKASI (TANPA JS) --}}
@@ -323,17 +309,35 @@
     }
 
     #showPaymentToggle:checked ~ .payment-grid-form #uploadSection {
+        display: block !important;
+    }
+
+    /* Sebelum panel terbuka: tampilkan label Bayar, sembunyikan tombol submit */
+    #btnShowPayment {
         display: block;
     }
 
-    .native-file-input {
-        margin: 10px 0;
-        font-size: 13px;
-        max-width: 100%;
+    #btnSubmitPayment {
+        display: none;
     }
 
-    .submit-proof-wrapper {
-        margin-top: 18px;
+    /* Setelah panel terbuka: sembunyikan label Bayar, tampilkan tombol submit Bayar */
+    #showPaymentToggle:checked ~ .payment-grid-form #btnShowPayment {
+        display: none !important;
+    }
+
+    #showPaymentToggle:checked ~ .payment-grid-form #btnSubmitPayment {
+        display: block !important;
+    }
+
+    .native-file-input {
+        display: inline-block !important;
+        width: auto !important;
+        max-width: 100% !important;
+        color: #333 !important;
+        overflow: visible !important;
+        margin: 10px 0 !important;
+        font-size: 13px !important;
     }
 
     .btn-pay {
@@ -373,7 +377,7 @@
     }
 
     #qrModalToggle:checked ~ #qrModal {
-        display: flex;
+        display: flex !important;
     }
 
     /* Tutup modal verifikasi saat #verifyModalDismiss dicentang */

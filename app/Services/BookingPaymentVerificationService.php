@@ -7,6 +7,15 @@ use Illuminate\Support\Facades\Schema;
 
 class BookingPaymentVerificationService
 {
+    public function verifyPendingPaymentForConfirmation(string $bookingId, string $requestedStatus): ?int
+    {
+        if ($requestedStatus !== 'dikonfirmasi' || ! $this->hasPendingPaymentForBooking($bookingId)) {
+            return null;
+        }
+
+        return $this->verifyForBooking($bookingId);
+    }
+
     public function hasPendingPaymentForBooking(string $bookingId): bool
     {
         if (! Schema::hasTable('pembayaran') || ! Schema::hasTable('detail_item_booking')) {

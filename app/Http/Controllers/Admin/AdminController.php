@@ -15,19 +15,15 @@ class AdminController extends Controller
 {
     public function dashboard(): View
     {
-        $bulanIni = Booking::pendapatanBulanIni();
-
-        $stat = [
-            'pengguna' => User::query()->count(),
-            'turnamen' => Turnamen::jumlahMendatang(),
-            'pendapatan' => $bulanIni >= 1000000
-                ? 'Rp '.number_format($bulanIni / 1000000, 1, ',', '.').' jt'
-                : 'Rp '.number_format($bulanIni, 0, ',', '.'),
-            'baru' => Booking::jumlahMenunggu(),
+        $statistik = [
+            'total_pengguna' => User::query()->count(),
+            'turnamen_aktif' => Turnamen::jumlahMendatang(),
+            'pendapatan_bulan_ini' => Booking::pendapatanBulanIni(),
+            'pemesanan_baru' => Booking::jumlahMenunggu(),
         ];
 
         return view('admin.dashboard', [
-            'stat' => $stat,
+            'statistik' => $statistik,
             'booking' => Booking::terbaru(6),
             'lapangan' => Lapangan::denganStatus(),
             'grafik' => Booking::grafik('hari'),

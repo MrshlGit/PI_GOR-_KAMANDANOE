@@ -32,7 +32,7 @@
     $menu = [
         ['Dashboard',            'grid',   'admin.dashboard',  'admin.dashboard', true],
         ['Manajemen Akun',       'user',   'admin.akun.index', 'admin.akun.*', true],
-        ['Manajemen Turnamen',   'trophy', null,               null, true],
+        ['Manajemen Turnamen',   'trophy', 'admin.turnamen.index', 'admin.turnamen.*', true],
         ['Manajemen Lapangan',   'pin',    'admin.lapangan.index', 'admin.lapangan.*', true],
         ['Manajemen Pemesanan',  'cal',    'admin.pemesanan.index', 'admin.pemesanan.*', $manajemenPemesananAktif],
         ['Saran & Kritik',       'message', 'admin.saran-kritik.index', 'admin.saran-kritik.*', true],

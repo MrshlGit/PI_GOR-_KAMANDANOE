@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Admin;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -25,7 +25,7 @@ class UpdateUserRequest extends FormRequest
                 Rule::unique('user', 'username')->ignore($this->route('akun')->id),
             ],
             'password' => ['nullable', 'string', 'min:8'],
-            'role'     => ['required', Rule::in(['admin', 'user'])],
+            'role' => ['required', Rule::in(['admin', 'user'])],
         ];
     }
 
@@ -33,11 +33,11 @@ class UpdateUserRequest extends FormRequest
     {
         return [
             'username.required' => 'Username wajib diisi.',
-            'username.min'      => 'Username minimal 4 karakter.',
-            'username.unique'   => 'Username sudah digunakan.',
-            'password.min'      => 'Password minimal 8 karakter.',
-            'role.required'     => 'Role wajib dipilih.',
-            'role.in'           => 'Role tidak valid.',
+            'username.min' => 'Username minimal 4 karakter.',
+            'username.unique' => 'Username sudah digunakan.',
+            'password.min' => 'Password minimal 8 karakter.',
+            'role.required' => 'Role wajib dipilih.',
+            'role.in' => 'Role tidak valid.',
         ];
     }
 }

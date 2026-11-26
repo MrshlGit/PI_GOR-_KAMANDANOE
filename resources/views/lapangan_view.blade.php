@@ -180,7 +180,16 @@
                         </span>
                         <h2 id="booking-result-title">{{ $hasilBooking['title'] }}</h2>
                         <p>{{ $hasilBooking['message'] }}</p>
-                        <a href="{{ route('booking.create', ['tanggal' => $tanggal->toDateString()]) }}" class="booking-result-modal__close">Kembali ke jadwal</a>
+                        
+                        @if ($hasilBooking['type'] === 'success')
+                            <a href="{{ route('tagihan.index') }}" class="booking-result-modal__close">
+                                Lanjutkan ke pembayaran
+                            </a>
+                        @else 
+                             <a href="{{ route('booking.create') }}" class="booking-result-modal__close">
+                                Kembali
+                            </a>
+                        @endif
                     </div>
                 </div>
             @endif

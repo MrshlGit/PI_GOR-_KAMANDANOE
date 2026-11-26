@@ -9,9 +9,9 @@ use App\Http\Requests\Admin\UpdateLapanganRequest;
 use App\Http\Requests\Admin\UpdateScheduleBookingStatusRequest;
 use App\Models\Admin\Booking;
 use App\Models\Admin\Lapangan;
+use App\Services\Admin\BookingManagementService;
 use App\Services\BookingPaymentVerificationService;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 
 class LapanganController extends Controller
@@ -24,45 +24,34 @@ class LapanganController extends Controller
         $jam = range(7, 22);
         $jadwal = Lapangan::jadwalUntukTanggal($tanggal, $jam);
 
-        return view('admin.lapangan.index', compact('tanggal', 'jam', 'jadwal', 'lapangans'));
+        return view('admin.Manajemen-lapangan.index', compact('tanggal', 'jam', 'jadwal', 'lapangans'));
     }
 
     public function updateBookingStatus(
         UpdateScheduleBookingStatusRequest $request,
         Booking $booking,
-        BookingPaymentVerificationService $paymentVerification
-    ): RedirectResponse
-    {
+        BookingPaymentVerificationService $paymentVerification,
+        BookingManagementService $bookingManagement
+    ): RedirectResponse {
         $data = $request->validated();
 
-        if ($data['status_booking'] === 'dikonfirmasi') {
-            $bookingId = (string) $booking->getKey();
-            if ($paymentVerification->hasPendingPaymentForBooking($bookingId)) {
-                $verifiedCount = $paymentVerification->verifyForBooking($bookingId);
-
-                if ($verifiedCount === 0) {
-                    return redirect()->route('admin.lapangan.index', ['tanggal' => $data['tanggal']])
-                        ->with('galat', 'Bukti pembayaran tidak tersedia atau pemesanan sudah diproses.');
-                }
-
+        $verifiedCount = $paymentVerification->verifyPendingPaymentForConfirmation(
+            (string) $booking->getKey(),
+            $data['status_booking']
+        );
+        if ($verifiedCount !== null) {
+            if ($verifiedCount === 0) {
                 return redirect()->route('admin.lapangan.index', ['tanggal' => $data['tanggal']])
-                    ->with('sukses', $verifiedCount === 1
-                        ? 'Pembayaran berhasil diverifikasi.'
-                        : "Pembayaran untuk {$verifiedCount} pemesanan berhasil diverifikasi.");
+                    ->with('galat', 'Bukti pembayaran tidak tersedia atau pemesanan sudah diproses.');
             }
+
+            return redirect()->route('admin.lapangan.index', ['tanggal' => $data['tanggal']])
+                ->with('sukses', $verifiedCount === 1
+                    ? 'Pembayaran berhasil diverifikasi.'
+                    : "Pembayaran untuk {$verifiedCount} pemesanan berhasil diverifikasi.");
         }
 
-        $updated = DB::transaction(function () use ($booking, $data): bool {
-            $booking = Booking::whereKey($booking->getKey())->lockForUpdate()->firstOrFail();
-
-            if (strtolower((string) $booking->status_booking) !== 'menunggu') {
-                return false;
-            }
-
-            $booking->update(['status_booking' => $data['status_booking']]);
-
-            return true;
-        });
+        $updated = $bookingManagement->updatePendingStatus($booking, $data['status_booking']);
 
         if (! $updated) {
             return redirect()->route('admin.lapangan.index', ['tanggal' => $data['tanggal']])
@@ -100,7 +89,7 @@ class LapanganController extends Controller
                 ->with('galat', 'Lapangan tidak dapat dihapus karena memiliki riwayat pemesanan. Nonaktifkan lapangan jika tidak digunakan lagi.');
         }
 
-        DB::transaction(fn () => $lapangan->delete());
+        $lapangan->delete();
 
         return redirect()->route('admin.lapangan.index')
             ->with('sukses', 'Lapangan berhasil dihapus.');

@@ -152,7 +152,7 @@
                         <div><b>{{ $user->username }}</b><small>{{ ucfirst($user->role) }}</small></div>
                     </button>
                     <div class="drop">
-                        <a href="#">Profil Saya (segera)</a>
+                        <a href="{{ route('profil') }}">Profil Saya</a>
                         <form method="POST" action="/logout">@csrf<button type="submit">Logout</button></form>
                     </div>
                 </div>

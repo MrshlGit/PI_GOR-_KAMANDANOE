@@ -3,11 +3,15 @@
 
 @section('content')
     @php
+        $pendapatan = (float) $statistik['pendapatan_bulan_ini'];
+        $pendapatanTeks = $pendapatan >= 1000000
+            ? 'Rp '.number_format($pendapatan / 1000000, 1, ',', '.').' jt'
+            : 'Rp '.number_format($pendapatan, 0, ',', '.');
         $kartu = [
-            ['Total Pengguna',       $stat['pengguna'],   'users',  true],
-            ['Turnamen Aktif',       $stat['turnamen'],   'trophy', true],
-            ['Pendapatan Bulan Ini', $stat['pendapatan'], 'act',    false],
-            ['Pemesanan Baru',       $stat['baru'],       'cart',   true],
+            ['Total Pengguna',       $statistik['total_pengguna'], 'users', true],
+            ['Turnamen Aktif',       $statistik['turnamen_aktif'], 'trophy', true],
+            ['Pendapatan Bulan Ini', $pendapatanTeks,         'act', false],
+            ['Pemesanan Baru',       $statistik['pemesanan_baru'], 'cart', true],
         ];
         $periode = ['hari' => 'Hari', 'minggu' => 'Minggu', 'bulan' => 'Bulan', 'tahun' => 'Tahun'];
     @endphp

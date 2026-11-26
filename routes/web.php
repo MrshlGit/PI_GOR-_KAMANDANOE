@@ -6,22 +6,25 @@ use App\Http\Controllers\Admin\LapanganController;
 use App\Http\Controllers\Admin\LaporanKeuanganController;
 use App\Http\Controllers\Admin\PemesananController;
 use App\Http\Controllers\Admin\SaranKritikController;
+use App\Http\Controllers\Admin\TurnamenController as AdminTurnamenController;
 use App\Http\Controllers\User\BookingController;
 use App\Http\Controllers\User\DashboardController;
 use App\Http\Controllers\User\LoginController;
 use App\Http\Controllers\User\RegisterController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\User\DaftarTagihanController; // <-- Tambahkan \User di sini
 use App\Http\Controllers\PilihBookingController;
-use App\Http\Controllers\User\RingkasanTagihanController;
 use App\Http\Controllers\User\AlatController;
 use App\Http\Controllers\User\MakananController;
 use App\Http\Controllers\User\NotificationController;
-// use App\Http\Controllers\User\RingkasanTagihanController;
 use App\Http\Controllers\User\LayananInformasiController;
 use App\Http\Controllers\User\TurnamenController;
+use App\Http\Controllers\User\ProfilController;
+
+// Pembayaran
 use App\Http\Controllers\User\MenungguVerifikasiController;
 use App\Http\Controllers\User\RiwayatPembayaranController;
+use App\Http\Controllers\User\RingkasanTagihanController;
+use App\Http\Controllers\User\DaftarTagihanController; // <-- Tambahkan \User di sini
 
 Route::view('/', 'home_view')->name('home');
 
@@ -48,6 +51,10 @@ Route::middleware(['auth', 'admin'])
             ->name('pemesanan.status');
         Route::get('/saran-kritik', [SaranKritikController::class, 'index'])
             ->name('saran-kritik.index');
+        Route::get('/turnamen', [AdminTurnamenController::class, 'index'])->name('turnamen.index');
+        Route::post('/turnamen', [AdminTurnamenController::class, 'store'])->name('turnamen.store');
+        Route::patch('/turnamen/{id}/status', [AdminTurnamenController::class, 'updateStatus'])
+            ->name('turnamen.status');
         Route::get('/laporan-keuangan', [LaporanKeuanganController::class, 'index'])
             ->name('laporan-keuangan.index');
         Route::get('/laporan-keuangan/bukti/{pembayaran}', [LaporanKeuanganController::class, 'buktiPembayaran'])
@@ -77,12 +84,13 @@ Route::middleware('auth')->group(function () {
     Route::post('/turnamen/{id}/daftar', [TurnamenController::class, 'daftar'])->name('turnamen.daftar');
     Route::delete('/turnamen/{id}/daftar', [TurnamenController::class, 'batalDaftar'])->name('turnamen.batal');
     Route::delete('/turnamen/{id}', [TurnamenController::class, 'destroy'])->name('turnamen.destroy');
+    Route::get('/profil', [ProfilController::class, 'show'])->name('profil');
 });
 
 Route::get('/bookingLapangan', [pilihBookingController::class, 'create1'])
     ->name('lapangan_view');
 
-Route::get('/bookingAlat', [pilihBookingController::class, 'create2'])
+Route::get('/bookingAlat', [AlatController::class, 'ambil'])
     ->name('alat_view');
 
 Route::get('/bookingMakanan', [pilihBookingController::class, 'create3'])
@@ -106,6 +114,10 @@ Route::post('/booking-lapangan', [BookingController::class, 'store'])
 
 Route::get('/booking-alat', [AlatController::class, 'ambil'])
     ->name('alat.create');
+
+Route::post('/booking-alat', [AlatController::class, 'ambil'])
+    ->name('alat.add');
+
 Route::post('/booking-alat/konfirmasi', [AlatController::class, 'konfirmasi'])
     ->name('alat.confirm');
 
@@ -116,6 +128,7 @@ Route::post('/booking-makanan/konfirmasi', [MakananController::class, 'konfirmas
 
 
 // Ringkasan Pembayaran / Tagihan
+Route::get('/pembayaran', [RingkasanTagihanController::class, 'index'])->name('pembayaran.index');
 Route::get('/pembayaran', [RingkasanTagihanController::class, 'index'])->name('pembayaran.index');
 Route::post('/pembayaran', [RingkasanTagihanController::class, 'store'])->name('pembayaran.store');
 

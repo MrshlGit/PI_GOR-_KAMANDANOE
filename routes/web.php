@@ -104,8 +104,14 @@ Route::get('/pilih-booking', [pilihBookingController::class, 'create'])
 Route::get('/booking-lapangan', [BookingController::class, 'create'])
     ->name('booking.create');
 
+Route::get('/booking-lapangan2', [BookingController::class, 'create2'])
+    ->name('booking.create2');
+
 Route::post('/booking-lapangan', [BookingController::class, 'store'])
     ->name('booking.store');
+
+Route::post('/booking-lapangan2', [BookingController::class, 'store2'])
+    ->name('booking.store2');
 
 Route::get('/booking-alat', [AlatController::class, 'ambil'])
     ->name('alat.create');

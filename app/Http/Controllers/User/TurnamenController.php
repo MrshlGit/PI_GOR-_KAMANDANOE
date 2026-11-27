@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
+use App\Models\Admin\Booking;
 use App\Models\Admin\Turnamen;
 use App\Models\TurnamenPeserta;
 use App\Services\TurnamenCreator;
@@ -24,6 +25,7 @@ class TurnamenController extends Controller
     public function index(Request $request)
     {
         $user = $request->user();
+        $sudahBookingAktif = $this->userHasActiveCourtBooking($user->getAuthIdentifier());
         $tab = in_array($request->query('tab'), ['semua', 'ikut', 'saya'], true) ? $request->query('tab') : 'semua';
         $q = trim((string) $request->query('q', ''));
         $kategori = $request->query('kategori');
@@ -68,12 +70,19 @@ class TurnamenController extends Controller
                 'saya' => Turnamen::where('id_user', $user->id)->count(),
             ],
             'perluPersetujuan' => self::PERLU_PERSETUJUAN,
+            'sudahBookingAktif' => $sudahBookingAktif,
         ]);
     }
 
     /** User mengajukan / menambahkan turnamen baru. */
     public function store(Request $request, TurnamenCreator $turnamenCreator)
     {
+        if (! $this->userHasActiveCourtBooking($request->user()->getAuthIdentifier())) {
+            return redirect()->route('turnamen.index')
+                ->with('tn_err', 'Silakan booking lapangan terlebih dahulu sebelum mengajukan turnamen.')
+                ->with('buka_form_turnamen', true);
+        }
+
         $validator = Validator::make($request->all(), [
             'nama_turnamen' => ['required', 'string', 'max:100'],
             'kategori' => ['required', Rule::in(Turnamen::KATEGORI)],
@@ -202,6 +211,13 @@ class TurnamenController extends Controller
         $t->delete();
 
         return back()->with('tn_ok', 'Pengajuan turnamen dihapus.');
+    }
+
+    private function userHasActiveCourtBooking(int|string $userId): bool
+    {
+        return Booking::where('id_user', $userId)
+            ->whereRaw('LOWER(status_booking) IN (?, ?, ?)', ['menunggu', 'dikonfirmasi', 'lunas'])
+            ->exists();
     }
 
 }

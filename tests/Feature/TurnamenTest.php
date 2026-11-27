@@ -6,7 +6,10 @@ use App\Models\Admin\Turnamen;
 use App\Models\User\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Schema;
 use Tests\TestCase;
 
 class TurnamenTest extends TestCase
@@ -14,6 +17,24 @@ class TurnamenTest extends TestCase
     use RefreshDatabase;
 
     private ?string $posterPath = null;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        if (! Schema::hasTable('booking')) {
+            Schema::create('booking', function (Blueprint $table): void {
+                $table->string('id_booking')->primary();
+                $table->unsignedInteger('id_user');
+                $table->string('id_lapangan');
+                $table->date('tgl_main');
+                $table->time('jam_mulai');
+                $table->unsignedTinyInteger('durasi')->default(1);
+                $table->string('status_booking');
+                $table->decimal('total_bayar', 12, 2);
+            });
+        }
+    }
 
     protected function tearDown(): void
     {
@@ -31,6 +52,7 @@ class TurnamenTest extends TestCase
             'password' => 'password',
             'role' => 'user',
         ]);
+        $this->createActiveBooking($user);
         $data = $this->dataTurnamen() + [
             'poster' => UploadedFile::fake()->createWithContent(
                 'poster.png',
@@ -73,6 +95,7 @@ class TurnamenTest extends TestCase
             'role' => 'admin',
         ]);
 
+        $this->createActiveBooking($user);
         $this->actingAs($user)->post(route('turnamen.store'), $this->dataTurnamen());
         $turnamen = Turnamen::firstOrFail();
 
@@ -184,6 +207,7 @@ class TurnamenTest extends TestCase
             'password' => 'password',
             'role' => 'user',
         ]);
+        $this->createActiveBooking($user);
         $data = $this->dataTurnamen();
         $data['tgl_pelaksanaan'] = today()->toDateString();
         $data['batas_pendaftaran'] = today()->toDateString();
@@ -199,6 +223,23 @@ class TurnamenTest extends TestCase
         ]);
     }
 
+    public function test_user_cannot_submit_tournament_without_active_court_booking(): void
+    {
+        $user = User::create([
+            'username' => 'Pemain',
+            'password' => 'password',
+            'role' => 'user',
+        ]);
+
+        $this->actingAs($user)
+            ->post(route('turnamen.store'), $this->dataTurnamen())
+            ->assertRedirect(route('turnamen.index'))
+            ->assertSessionHas('tn_err')
+            ->assertSessionHas('buka_form_turnamen', true);
+
+        $this->assertDatabaseCount('turnamen', 0);
+    }
+
     private function dataTurnamen(): array
     {
         return [
@@ -212,5 +253,19 @@ class TurnamenTest extends TestCase
             'kontak' => '081234567890',
             'deskripsi' => 'Turnamen internal.',
         ];
+    }
+
+    private function createActiveBooking(User $user): void
+    {
+        DB::table('booking')->insert([
+            'id_booking' => uniqid('BOOK-', true),
+            'id_user' => $user->id,
+            'id_lapangan' => 'LAP-1',
+            'tgl_main' => today()->toDateString(),
+            'jam_mulai' => '09:00:00',
+            'durasi' => 1,
+            'status_booking' => 'menunggu',
+            'total_bayar' => 50000,
+        ]);
     }
 }

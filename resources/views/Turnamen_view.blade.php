@@ -30,7 +30,7 @@
         </div>
         <div class="tn-head-actions">
             <a class="tn-view-all" href="{{ route('turnamen.index', ['tab' => 'semua']) }}">Lihat Semua</a>
-            <button type="button" class="tn-btn" data-open="dlg-ajukan">+ Ajukan Turnamen</button>
+            <label for="dlg-ajukan-toggle" class="tn-btn">+ Ajukan Turnamen</label>
         </div>
     </header>
 
@@ -189,14 +189,28 @@
     </div>
 </div>
 
+
+
+
 {{-- ===== POP-UP AJUKAN TURNAMEN ===== --}}
-<dialog id="dlg-ajukan" class="tn-dlg wide">
-    <form method="POST" action="{{ route('turnamen.store') }}" enctype="multipart/form-data">
+<input
+    type="checkbox"
+    id="dlg-ajukan-toggle"
+    class="tn-modal-toggle"
+    aria-label="Buka form pengajuan turnamen"
+    @checked(request()->boolean('buka_form_turnamen') || session('buka_form_turnamen') || session('buka_ajukan'))
+>
+<div class="tn-ajukan-modal">
+    <div class="tn-dlg wide tn-ajukan-panel">
+        <form method="POST" action="{{ route('turnamen.store') }}" enctype="multipart/form-data">
         @csrf
         <h3>Ajukan Turnamen</h3>
         <p class="tn-sub">
             {{ $perluPersetujuan ? 'Pengajuan akan diperiksa admin sebelum tampil di daftar.' : 'Turnamen langsung tampil di daftar.' }}
         </p>
+        @unless ($sudahBookingAktif)
+            <p class="tn-note bad">Silakan booking lapangan terlebih dahulu sebelum mengajukan turnamen.</p>
+        @endunless
 
         <label>Nama turnamen
             <input type="text" name="nama_turnamen" maxlength="100" value="{{ old('nama_turnamen') }}" required>
@@ -273,12 +287,34 @@
             @error('poster', 'ajukan') <small class="tn-fe">{{ $message }}</small> @enderror
         </label>
 
-        <div class="tn-dact">
-            <button type="button" class="tn-btn ghost" data-close>Batal</button>
-            <button type="submit" class="tn-btn">Ajukan</button>
+        <label for="dlg-ajukan-lapangan" class="tn-btn tn-lapangan-trigger">Booking Lapangan</label>
+
+
+        <!-- POP UP ICE PESAN LAPANGAN -->
+
+        <input
+            type="checkbox"
+            id="dlg-ajukan-lapangan"
+            class="tn-lapangan-toggle"
+            aria-label="Buka form pengajuan turnamen"
+            @checked(session('buka_ajukan'))
+        >
+        <div class="tn-ajukan-lapangan">
+            <section class="tn-lapangan-panel" role="dialog" aria-modal="true" aria-labelledby="tn-lapangan-title">
+                <h2 id="tn-lapangan-title">Pesan Lapangan</h2>
+                <p>Silakan pesan lapangan terlebih dahulu sebelum mengajukan turnamen.</p>
+                <a href="{{ route('booking.create2') }}" class="tn-btn ghost">Pesan Lapangan</a>
+                <label for="dlg-ajukan-lapangan" class="tn-btn ghost">Tutup</label>
+            </section>
         </div>
-    </form>
-</dialog>
+
+        <div class="tn-dact">
+            <label for="dlg-ajukan-toggle" class="tn-btn ghost">Batal</label>
+            <button type="submit" class="tn-btn" @disabled(! $sudahBookingAktif)>Ajukan</button>
+        </div>
+        </form>
+    </div>
+</div>
 
 <script>
     var tglPelaksanaan = document.getElementById('tn-tgl-pelaksanaan');
@@ -312,9 +348,6 @@
     document.querySelectorAll('dialog').forEach(function (d) {
         d.addEventListener('click', function (e) { if (e.target === d) d.close(); });
     });
-    @if (session('buka_ajukan'))
-        document.getElementById('dlg-ajukan').showModal();
-    @endif
     @if (session('buka_daftar'))
         (function () {
             var d = document.getElementById('dlg-daftar-' + @json(session('buka_daftar')));

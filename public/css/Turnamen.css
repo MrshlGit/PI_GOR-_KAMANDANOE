@@ -45,7 +45,7 @@
     border: 1px solid var(--c-o);
     border-radius: 10px;
     background: var(--c-o);
-    color: #fff;
+    color: #f98a2e;
     font: inherit;
     font-weight: 700;
     font-size: 0.8rem;
@@ -330,6 +330,83 @@
 .tn-dlg.wide {
     width: min(640px, calc(100% - 32px));
 }
+.tn-modal-toggle {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+}
+.tn-ajukan-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    background: rgba(25, 22, 20, 0.45);
+}
+.tn-modal-toggle:checked ~ .tn-ajukan-modal {
+    display: flex;
+}
+
+.tn-lapangan-toggle {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+}
+.tn-ajukan-lapangan {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    background: rgba(25, 22, 20, 0.45);
+}
+.tn-lapangan-toggle:checked ~ .tn-ajukan-lapangan {
+    display: flex;
+}
+.tn-lapangan-panel {
+    display: grid;
+    width: min(440px, 100%);
+    gap: 16px;
+    padding: 26px;
+    border: 1px solid var(--line, #eadfd5);
+    border-radius: 18px;
+    background: #fff;
+    box-shadow: 0 24px 60px rgba(34, 24, 16, 0.2);
+}
+.tn-lapangan-panel h2 {
+    margin: 0;
+    color: var(--ink, #211c18);
+    font-size: 1.25rem;
+    font-weight: 750;
+}
+.tn-lapangan-panel p {
+    margin: 0;
+    color: var(--muted, #666);
+    font-size: 0.88rem;
+    line-height: 1.65;
+}
+.tn-lapangan-panel .tn-btn {
+    text-align: center;
+}
+.tn-lapangan-panel .tn-btn.ghost {
+    justify-self: end;
+}
+
+.tn-ajukan-panel {
+    max-height: 90vh;
+    overflow-y: auto;
+    background: #fff;
+}
+.tn-head-actions > label.tn-btn,
+.tn-dact > label.tn-btn {
+    cursor: pointer;
+}
 .tn-dlg::backdrop {
     background: rgba(25, 22, 20, 0.45);
 }
@@ -404,6 +481,62 @@
     justify-content: center;
     min-width: 88px;
     min-height: 40px;
+}
+.tn-ajukan-panel .tn-lapangan-trigger {
+    display: inline-flex;
+    width: fit-content;
+    min-height: 40px;
+    align-items: center;
+    justify-content: center;
+    padding: 9px 16px;
+    border: 1px solid var(--c-o);
+    border-radius: 10px;
+    background: var(--c-ol);
+    color: var(--c-od);
+    font-size: 0.8rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.2s;
+}
+.tn-ajukan-panel .tn-lapangan-trigger:hover {
+    border-color: var(--c-od);
+    background: #ffe6d2;
+}
+.tn-ajukan-panel .tn-dact {
+    position: sticky;
+    bottom: 0;
+    z-index: 3;
+    align-items: center;
+    gap: 10px;
+    margin-top: 4px;
+    padding: 12px 0 0;
+    border-top: 1px solid var(--c-line);
+    background: #fff;
+}
+.tn-ajukan-panel .tn-dact > label.tn-btn {
+    display: inline-flex;
+    width: auto;
+    min-width: 88px;
+    min-height: 40px;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    padding: 9px 16px;
+    cursor: pointer;
+}
+.tn-ajukan-panel .tn-dact > button.tn-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 104px;
+    min-height: 40px;
+}
+.tn-ajukan-panel .tn-dact > button.tn-btn:disabled {
+    border-color: #d2c8bc;
+    background: #e8e1d8;
+    color: #51483f;
+    opacity: 1;
+    cursor: not-allowed;
 }
 
 @media (max-width: 700px) {

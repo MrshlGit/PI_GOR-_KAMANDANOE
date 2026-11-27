@@ -1,0 +1,263 @@
+.pf {
+    --c-o: var(--o, #f98a2e);
+    --c-od: var(--o-d, #e97a1d);
+    --c-ol: var(--o-l, #fff1e5);
+    --c-line: var(--line, #eadfd5);
+    --c-mut: var(--muted, #666);
+    display: grid;
+    gap: 20px;
+    width: 100%;
+    max-width: 1100px;
+    margin-inline: auto;
+}
+.pf h1,
+.pf h2,
+.pf h3,
+.pf p,
+.pf dl,
+.pf dd {
+    margin: 0;
+}
+
+.pf-head h1 {
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin-bottom: 6px;
+}
+.pf-head p {
+    font-size: 0.85rem;
+    color: var(--c-mut);
+}
+
+.pf-grid {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: 20px;
+    align-items: start;
+}
+.pf-card {
+    padding: 22px;
+    background: #fff;
+    border: 1px solid var(--c-line);
+    border-radius: 16px;
+}
+.pf-card h3 {
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 16px;
+}
+
+/* kartu profil kiri */
+.pf-me {
+    display: grid;
+    justify-items: center;
+    gap: 8px;
+    text-align: center;
+}
+.pf-avatar {
+    display: grid;
+    place-items: center;
+    width: 84px;
+    height: 84px;
+    margin-bottom: 6px;
+    border-radius: 50%;
+    background: var(--c-o);
+    color: #fff;
+    font-size: 1.9rem;
+    font-weight: 700;
+}
+.pf-me h2 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    word-break: break-word;
+}
+.pf-role {
+    padding: 3px 12px;
+    border-radius: 99px;
+    background: var(--c-ol);
+    color: var(--c-od);
+    font-size: 0.72rem;
+    font-weight: 700;
+}
+.pf-online {
+    font-size: 0.78rem;
+    color: var(--c-mut);
+}
+.pf-btns {
+    display: grid;
+    gap: 8px;
+    width: 100%;
+    margin-top: 10px;
+}
+.pf-btn {
+    display: block;
+    padding: 10px 16px;
+    border: 1px solid var(--c-o);
+    border-radius: 10px;
+    background: var(--c-o);
+    color: #fff;
+    font-weight: 700;
+    font-size: 0.8rem;
+    text-decoration: none;
+    transition: 0.2s;
+}
+.pf-btn:hover {
+    background: var(--c-od);
+    border-color: var(--c-od);
+}
+.pf-btn.ghost {
+    background: #fff;
+    color: var(--ink, #111);
+    border-color: var(--c-line);
+}
+.pf-btn.ghost:hover {
+    background: var(--c-ol);
+}
+
+/* data akun */
+.pf-data {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px 24px;
+}
+.pf-data dt {
+    margin-bottom: 3px;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--c-mut);
+}
+.pf-data dd {
+    font-size: 0.92rem;
+    font-weight: 600;
+    word-break: break-word;
+}
+
+/* statistik */
+.pf-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+}
+.pf-stat {
+    display: grid;
+    gap: 6px;
+    padding: 16px 18px;
+    background: #fff;
+    border: 1px solid var(--c-line);
+    border-radius: 14px;
+}
+.pf-stat span {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--c-mut);
+}
+.pf-stat strong {
+    font-size: 1.45rem;
+    font-weight: 700;
+}
+.pf-stat:nth-child(2) {
+    background: var(--c-ol);
+}
+
+/* tabel booking */
+.pf-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+.pf-bar h3 {
+    margin: 0;
+}
+.pf-bar a {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--c-od);
+    text-decoration: none;
+}
+.pf-scroll {
+    overflow-x: auto;
+}
+.pf-table {
+    width: 100%;
+    min-width: 560px;
+    border-collapse: collapse;
+    font-size: 0.82rem;
+}
+.pf-table th {
+    padding: 10px 12px;
+    background: var(--c-ol);
+    color: var(--c-od);
+    font-size: 0.68rem;
+    letter-spacing: 0.05em;
+    text-align: left;
+    text-transform: uppercase;
+}
+.pf-table th:first-child {
+    border-radius: 10px 0 0 10px;
+}
+.pf-table th:last-child {
+    border-radius: 0 10px 10px 0;
+}
+.pf-table td {
+    padding: 12px;
+    border-bottom: 1px solid var(--c-line);
+}
+.pf-table tbody tr:last-child td {
+    border-bottom: 0;
+}
+.pf-table .kanan {
+    text-align: right;
+}
+.pf-chip {
+    padding: 3px 10px;
+    border-radius: 99px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    background: #efeae4;
+    color: #6d645b;
+}
+.pf-chip.wait {
+    background: #f6ecc9;
+    color: #7a5c10;
+}
+.pf-chip.info {
+    background: #dfeaf8;
+    color: #2b5a99;
+}
+.pf-chip.ok {
+    background: #e4f1e6;
+    color: #2f6b3d;
+}
+.pf-chip.bad {
+    background: #f7e4e1;
+    color: #a8372e;
+}
+.pf-empty {
+    padding: 26px 10px;
+    text-align: center;
+    color: var(--c-mut);
+    font-size: 0.86rem;
+}
+
+@media (max-width: 900px) {
+    .pf-grid {
+        grid-template-columns: 1fr;
+    }
+    .pf-stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+@media (max-width: 520px) {
+    .pf-data {
+        grid-template-columns: 1fr;
+    }
+    .pf-stats {
+        grid-template-columns: 1fr;
+    }
+}

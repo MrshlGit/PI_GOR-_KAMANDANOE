@@ -87,8 +87,9 @@ class RingkasanTagihanController extends Controller
             $namaFile = $file->hashName();
             $file->move($directory, $namaFile);
 
-            DB::transaction(function () use ($booking, $namaFile): void {
+           $idPembayaran = DB::transaction(function () use ($booking, $namaFile): string {
                 $idDetail = (string) Str::uuid();
+                $idBayar  = (string) Str::uuid();
 
                 DB::table('detail_item_booking')->insert([
                     'id_detail' => $idDetail,
@@ -99,19 +100,19 @@ class RingkasanTagihanController extends Controller
                 ]);
 
                 DB::table('pembayaran')->insert([
-                    'id_pembayaran' => (string) Str::uuid(),
+                    'id_pembayaran' => $idBayar,
                     'tgl_bayar' => now()->toDateString(),
                     'id_detail_item_booking' => $idDetail,
                     'metode_bayar' => 'QRIS / Transfer Bank',
                     'status_pembayaran' => 'Pending',
                     'bukti_transfer' => $namaFile,
                 ]);
+
+                return $idBayar;
             });
 
-            return redirect()->route('pembayaran.index')
+            return redirect()->route('pembayaran.menunggu', ['id' => $idPembayaran])
                 ->with('success', 'Bukti pembayaran berhasil dikirim! Menunggu verifikasi dari Admin.');
         }
-
-        return redirect()->back()->with('error', 'Gagal mengunggah bukti pembayaran.');
     }
 }

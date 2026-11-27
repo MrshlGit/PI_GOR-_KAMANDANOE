@@ -12,15 +12,19 @@ use App\Http\Controllers\User\DashboardController;
 use App\Http\Controllers\User\LoginController;
 use App\Http\Controllers\User\RegisterController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\User\DaftarTagihanController; // <-- Tambahkan \User di sini
 use App\Http\Controllers\PilihBookingController;
-use App\Http\Controllers\User\RingkasanTagihanController;
 use App\Http\Controllers\User\AlatController;
 use App\Http\Controllers\User\MakananController;
 use App\Http\Controllers\User\NotificationController;
-// use App\Http\Controllers\User\RingkasanTagihanController;
 use App\Http\Controllers\User\LayananInformasiController;
 use App\Http\Controllers\User\TurnamenController;
+use App\Http\Controllers\User\ProfilController;
+
+// Pembayaran
+use App\Http\Controllers\User\MenungguVerifikasiController;
+use App\Http\Controllers\User\RiwayatPembayaranController;
+use App\Http\Controllers\User\RingkasanTagihanController;
+use App\Http\Controllers\User\DaftarTagihanController; // <-- Tambahkan \User di sini
 
 Route::view('/', 'home_view')->name('home');
 
@@ -80,6 +84,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/turnamen/{id}/daftar', [TurnamenController::class, 'daftar'])->name('turnamen.daftar');
     Route::delete('/turnamen/{id}/daftar', [TurnamenController::class, 'batalDaftar'])->name('turnamen.batal');
     Route::delete('/turnamen/{id}', [TurnamenController::class, 'destroy'])->name('turnamen.destroy');
+    Route::get('/profil', [ProfilController::class, 'show'])->name('profil');
 });
 
 Route::get('/bookingLapangan', [pilihBookingController::class, 'create1'])
@@ -133,3 +138,11 @@ Route::get('/pembayaran', [RingkasanTagihanController::class, 'index'])->name('p
 Route::get('/pembayaran', [RingkasanTagihanController::class, 'index'])->name('pembayaran.index');
 Route::post('/pembayaran', [RingkasanTagihanController::class, 'store'])->name('pembayaran.store');
 
+Route::middleware('auth')->group(function () {
+    // ... route lainnya ...
+    Route::get('/pembayaran/{id}/menunggu-verifikasi', [MenungguVerifikasiController::class, 'index'])
+        ->name('pembayaran.menunggu');
+
+    Route::get('/pembayaran/riwayat', [RiwayatPembayaranController::class, 'index'])
+        ->name('pembayaran.riwayat');
+});

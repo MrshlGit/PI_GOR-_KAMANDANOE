@@ -17,9 +17,11 @@ class DaftarTagihanController extends Controller
             'email'   => $user->email ?? '-',
         ];
 
-        // 1. Ambil booking milik user yang belum dibayar / menunggu beserta data lapangannya
+        $excludedStatuses = ['lunas', 'selesai', 'batal', 'dibatalkan', 'cancelled', 'paid'];
+
+        // 1. Ambil booking milik user yang belum lunas / belum selesai
         $bookings = DB::table('booking as b')
-            ->join('lapangan as l', 'b.id_lapangan', '=', 'l.id_lapangan')
+            ->leftJoin('lapangan as l', 'b.id_lapangan', '=', 'l.id_lapangan')
             ->select(
                 'b.id_booking',
                 'b.id_user',
@@ -34,10 +36,43 @@ class DaftarTagihanController extends Controller
                 'l.harga_per_jam'
             )
             ->where('b.id_user', $user->id)
-            ->whereIn('b.status_booking', ['menunggu', 'pending', 'belum_bayar', 'belum bayar'])
+            ->where(function ($query) use ($excludedStatuses) {
+                $query->whereNull('b.status_booking')
+                    ->orWhereNotIn(DB::raw('LOWER(TRIM(b.status_booking))'), $excludedStatuses);
+            })
             ->orderBy('b.tgl_main', 'desc')
             ->orderBy('b.jam_mulai', 'desc')
             ->get();
+
+        // Fallback: jika booking milik $user->id kosong, cek apakah ada booking belum lunas yang berelasi ke id_pesanan di detail_items
+        if ($bookings->isEmpty()) {
+            $pesananIds = DB::table('detail_items')->pluck('id_pesanan')->filter()->unique()->values();
+            if ($pesananIds->isNotEmpty()) {
+                $bookings = DB::table('booking as b')
+                    ->leftJoin('lapangan as l', 'b.id_lapangan', '=', 'l.id_lapangan')
+                    ->select(
+                        'b.id_booking',
+                        'b.id_user',
+                        'b.id_lapangan',
+                        'b.tgl_main',
+                        'b.jam_mulai',
+                        'b.status_booking',
+                        'b.total_bayar',
+                        'b.durasi',
+                        'l.nama_lapangan',
+                        'l.tipe_lantai',
+                        'l.harga_per_jam'
+                    )
+                    ->whereIn('b.id_booking', $pesananIds)
+                    ->where(function ($query) use ($excludedStatuses) {
+                        $query->whereNull('b.status_booking')
+                            ->orWhereNotIn(DB::raw('LOWER(TRIM(b.status_booking))'), $excludedStatuses);
+                    })
+                    ->orderBy('b.tgl_main', 'desc')
+                    ->orderBy('b.jam_mulai', 'desc')
+                    ->get();
+            }
+        }
 
         // 2. Susun data item tagihan (booking lapangan) dan hitung total kumulatif
         $tagihans = [];
@@ -49,7 +84,7 @@ class DaftarTagihanController extends Controller
             $hargaPerJam   = (float) ($item->harga_per_jam ?? 0);
             $durasiBooking = max(1, (int) ($item->durasi ?? 1));
 
-            // Hitung dari harga_per_jam * durasi jika tersedia, atau pakai total_bayar dari DB
+            // Hitung harga sewa lapangan: utamakan harga_per_jam * durasi jika ada, lalu total_bayar
             $hargaHitung = $hargaPerJam * $durasiBooking;
             $hargaDb     = (float) ($item->total_bayar ?? 0);
 

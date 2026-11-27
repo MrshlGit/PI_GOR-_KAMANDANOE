@@ -21,6 +21,7 @@ use App\Http\Controllers\User\NotificationController;
 // use App\Http\Controllers\User\RingkasanTagihanController;
 use App\Http\Controllers\User\LayananInformasiController;
 use App\Http\Controllers\User\TurnamenController;
+use App\Http\Controllers\User\ProfilController;
 
 Route::view('/', 'home_view')->name('home');
 
@@ -80,6 +81,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/turnamen/{id}/daftar', [TurnamenController::class, 'daftar'])->name('turnamen.daftar');
     Route::delete('/turnamen/{id}/daftar', [TurnamenController::class, 'batalDaftar'])->name('turnamen.batal');
     Route::delete('/turnamen/{id}', [TurnamenController::class, 'destroy'])->name('turnamen.destroy');
+    Route::get('/profil', [ProfilController::class, 'show'])->name('profil');
 });
 
 Route::get('/bookingLapangan', [pilihBookingController::class, 'create1'])
